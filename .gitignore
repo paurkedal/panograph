@@ -1,0 +1,10 @@
+*.byte
+*.docdir
+*.native
+/Makefile
+/_build
+/_var
+/configure
+/setup.data
+/setup.log
+/setup.ml

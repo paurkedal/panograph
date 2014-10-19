@@ -1,0 +1,6 @@
+body {
+	background-color: white;
+	color: black;
+}
+.dirty { border-color: #0000ff; }
+.error { color: #990000; font-weight: bold; }

@@ -1,0 +1,47 @@
+OASISFormat: 0.4
+Name: panograph
+Version: 0.1
+Synopsis: Data-Centric Widgets for Eliom
+Authors: Petter A. Urkedal
+License: LGPL-3 with OCaml linking exception
+AlphaFeatures: ocamlbuild_more_args, pure_interface
+Plugins: DevFiles (0.4), META (0.4)
+BuildTools: ocamlbuild
+XOCamlbuildPluginTags: package(eliom.ocamlbuild)
+OCamlVersion: >= 4.01
+
+Library "panograph"
+  Path: lib
+  Modules: Panograph_sigs
+  BuildDepends: lwt
+
+Library "panograph-server"
+  Path: lib/server
+  FindlibParent: panograph
+  FindlibName: server
+  BuildDepends: eliom.server, panograph, prime
+
+Library "panograph-client"
+  Path: lib/client
+  FindlibParent: panograph
+  FindlibName: client
+  Modules: Panograph_simple
+  BuildDepends: eliom.client, lwt.syntax, js_of_ocaml.syntax, panograph, prime
+
+Library "test"
+  Path: web
+  Modules: server/Test
+  BuildDepends: eliom.server, panograph.server, prime
+  ByteOpt: -thread
+  NativeOpt: -thread
+  DataFiles:
+    static/css/*.css ($datadir/panograph/static/css),
+    ../_build/web/client/*.js ($datadir/panograph/static)
+  CompiledObject: native
+
+Executable "test"
+  Path: web/client
+  BuildDepends: eliom.client, panograph.client, prime
+  MainIs: test.ml
+  ByteOpt: -thread
+  Install: false

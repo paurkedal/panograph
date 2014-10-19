@@ -1,0 +1,1 @@
+<client/*.{ml,mli}>: syntax(camlp4o), package(js_of_ocaml.syntax)
