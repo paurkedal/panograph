@@ -22,7 +22,7 @@ module Simple_shape : sig
   val make : ?a: Html5_types.input_attrib Html5.attrib list -> unit -> t
 end
 
-module type SIMPLE_EDITOR = sig
+module type SIMPLE_PATCH_EDITOR = sig
 
   type value
 
@@ -34,9 +34,21 @@ module type SIMPLE_EDITOR = sig
       and type ui = Html5_types.flow5 Html5.elt
 end
 
-module Simple_editor (Value : STRINGABLE) :
-  SIMPLE_EDITOR with type value = Value.t
+module type SIMPLE_SNAPSHOT_EDITOR =
+  SNAPSHOT_EDITOR
+    with type shape = Simple_shape.t
+     and type ui = Html5_types.flow5 Html5.elt
 
-module String_editor : SIMPLE_EDITOR with type value = string
-module Int_editor : SIMPLE_EDITOR with type value = int
-module Float_editor : SIMPLE_EDITOR with type value = float
+module Simple_patch_editor (Value : STRINGABLE) :
+  SIMPLE_PATCH_EDITOR with type value = Value.t
+
+module Simple_snapshot_editor (Value : STRINGABLE) :
+  SIMPLE_SNAPSHOT_EDITOR with type value = Value.t
+
+module String_PE : SIMPLE_PATCH_EDITOR with type value = string
+module Int_PE : SIMPLE_PATCH_EDITOR with type value = int
+module Float_PE : SIMPLE_PATCH_EDITOR with type value = float
+
+module String_SE : SIMPLE_SNAPSHOT_EDITOR with type value = string
+module Int_SE : SIMPLE_SNAPSHOT_EDITOR with type value = int
+module Float_SE : SIMPLE_SNAPSHOT_EDITOR with type value = float

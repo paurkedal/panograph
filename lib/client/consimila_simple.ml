@@ -26,7 +26,7 @@ module Simple_shape = struct
   let make ?(a = []) () = {input_a = a}
 end
 
-module type SIMPLE_EDITOR = sig
+module type SIMPLE_PATCH_EDITOR = sig
   type value
   include PATCH_EDITOR
      with type value := value
@@ -36,7 +36,12 @@ module type SIMPLE_EDITOR = sig
       and type ui = Html5_types.flow5 Html5.elt
 end
 
-module Simple_editor (Value : STRINGABLE) = struct
+module type SIMPLE_SNAPSHOT_EDITOR =
+  SNAPSHOT_EDITOR
+    with type shape = Simple_shape.t
+     and type ui = Html5_types.flow5 Html5.elt
+
+module Simple_patch_editor (Value : STRINGABLE) = struct
   type shape = Simple_shape.t
   let default_shape = Simple_shape.make ()
 
@@ -99,17 +104,68 @@ module Simple_editor (Value : STRINGABLE) = struct
     w
 end
 
-module String_editor = Simple_editor
-  (struct type t = string
-	  let of_string = ident
-	  let to_string = ident end)
+module Simple_snapshot_editor (Value : STRINGABLE) = struct
+  type shape = Simple_shape.t
+  let default_shape = Simple_shape.make ()
 
-module Int_editor = Simple_editor
-  (struct type t = int
-	  let of_string = int_of_string
-	  let to_string = string_of_int end)
+  type value = Value.t
+  type ui = Html5_types.flow5 Html5.elt
+  type t = {
+    w_ui : [`Input] Html5.elt;
+    w_dom : Dom_html.inputElement Js.t;
+    w_saved_title : string;
+    mutable w_value : value;
+  }
+  let ui w = (w.w_ui :> ui)
 
-module Float_editor = Simple_editor
-  (struct type t = float
-	  let of_string = float_of_string
-	  let to_string = string_of_float end)
+  let snapshot w = Value.of_string (Js.to_string w.w_dom##value)
+
+  let set_error w msg =
+    w.w_dom##classList##add(Js.string "error");
+    w.w_dom##title <- Js.string (msg ^ "\n" ^ w.w_saved_title)
+  let clear_error w =
+    w.w_dom##classList##remove(Js.string "error");
+    w.w_dom##title <- Js.string w.w_saved_title
+
+  let create ~init shape =
+    let inp =
+      Html5.D.input ~input_type:`Text ~a:shape.Simple_shape.input_a () in
+    let w_dom = Html5.To_dom.of_input inp in
+    let w = {w_ui = inp; w_dom; w_saved_title = Js.to_string w_dom##title;
+	     w_value = init} in
+    w_dom##value <- Js.string (Value.to_string init);
+    let on_change _ _ =
+      Lwt.wrap begin fun () ->
+	try clear_error w;
+	    w.w_value <- Value.of_string (Js.to_string w_dom##value)
+	with Failure _ | Invalid_argument _ -> set_error w "Invalid input."
+      end in
+    Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change);
+    w
+end
+
+module String_str = struct
+  type t = string
+  let of_string = ident
+  let to_string = ident
+end
+
+module Int_str = struct
+  type t = int
+  let of_string = int_of_string
+  let to_string = string_of_int
+end
+
+module Float_str = struct
+  type t = float
+  let of_string = float_of_string
+  let to_string = string_of_float
+end
+
+module String_PE = Simple_patch_editor (String_str)
+module Int_PE = Simple_patch_editor (Int_str)
+module Float_PE = Simple_patch_editor (Float_str)
+
+module String_SE = Simple_snapshot_editor (String_str)
+module Int_SE = Simple_snapshot_editor (Int_str)
+module Float_SE = Simple_snapshot_editor (Float_str)
