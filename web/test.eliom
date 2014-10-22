@@ -16,33 +16,35 @@
 
 {shared{
   open Eliom_content
-  open Panograph_sigs
 }}
 
 {client{
-  open Panograph_simple
+  open Consimila_intf
+  open Consimila_simple
 
   let test_int_editor () =
     let ev, send_ev = React.E.create () in
     let open Html5.D in
-    let ui, vi =
-      Int_editor.create 
-	~up:(fun (`Set i) -> Lwt_js.sleep 1.0 >> (send_ev i; Lwt.return Ack_ok))
-	Simple_shape.(make ~a:[a_title "test"] ()) in
+    let on_patch (`Set i) =
+      Lwt_js.sleep 1.0 >> (send_ev i; Lwt.return Ack_ok) in
+    let w =
+      Int_editor.create ~init:19 ~on_patch
+			Simple_shape.(make ~a:[a_title "test"] ()) in
     Lwt_react.E.keep
-      (Lwt_react.E.map (fun i -> Int_editor.patch vi (`Set i)) ev);
-    div [ui]
+      (Lwt_react.E.map (fun i -> Int_editor.patch w (`Set i)) ev);
+    div [Int_editor.ui w]
 
   let test_float_editor () =
     let ev, send_ev = React.E.create () in
     let open Html5.D in
-    let ui, vi =
-      Float_editor.create 
-	~up:(fun (`Set i) -> Lwt_js.sleep 1.0 >> (send_ev i; Lwt.return Ack_ok))
-	Float_editor.default_shape in
+    let on_patch (`Set i) =
+      Lwt_js.sleep 1.0 >> (send_ev i; Lwt.return Ack_ok) in
+    let w =
+      Float_editor.create ~init:0.01 ~on_patch
+			  Simple_shape.(make ()) in
     Lwt_react.E.keep
-      (Lwt_react.E.map (fun i -> Float_editor.patch vi (`Set i)) ev);
-    div [ui]
+      (Lwt_react.E.map (fun i -> Float_editor.patch w (`Set i)) ev);
+    div [Float_editor.ui w]
 }}
 
 let main_handler () () =

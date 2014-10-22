@@ -18,6 +18,12 @@ type ack =
   | Ack_ok
   | Ack_error of string
 
+module type STRINGABLE = sig
+  type t
+  val of_string : string -> t
+  val to_string : t -> string
+end
+
 module type WIDGET_BASE = sig
   type shape
   type t

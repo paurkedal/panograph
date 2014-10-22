@@ -25,7 +25,7 @@ Library "panograph-client"
   Path: lib/client
   FindlibParent: panograph
   FindlibName: client
-  Modules: Consimila_collection, Consimila_intf
+  Modules: Consimila_collection, Consimila_intf, Consimila_simple
   BuildDepends: eliom.client, lwt.syntax, js_of_ocaml.syntax, panograph, prime
 
 Library "test"

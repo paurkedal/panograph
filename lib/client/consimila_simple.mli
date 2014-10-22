@@ -15,7 +15,7 @@
  *)
 
 open Eliom_content
-open Panograph_sigs
+open Consimila_intf
 
 module Simple_shape : sig
   type t
@@ -25,12 +25,11 @@ end
 module type SIMPLE_EDITOR = sig
 
   type value
-  type patch_up = [`Set of value]
 
-  include FULL_EDITOR
+  include PATCH_EDITOR
      with type value := value
-      and type patch_up := patch_up
-      and type patch_down = patch_up
+      and type patch_out = [`Set of value]
+      and type patch_in = [`Set of value]
       and type shape = Simple_shape.t
       and type ui = Html5_types.flow5 Html5.elt
 end
