@@ -12,7 +12,6 @@ OCamlVersion: >= 4.01
 
 Library "panograph"
   Path: lib
-  Modules: Panograph_sigs
   BuildDepends: lwt
 
 Library "panograph-server"
