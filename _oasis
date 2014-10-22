@@ -25,12 +25,14 @@ Library "panograph-client"
   FindlibParent: panograph
   FindlibName: client
   Modules: Consimila_collection, Consimila_intf, Consimila_simple
-  BuildDepends: eliom.client, lwt.syntax, js_of_ocaml.syntax, panograph, prime
+  BuildDepends:
+    eliom.client, lwt.syntax, js_of_ocaml.syntax,
+    panograph, prime, prime.unstable
 
 Library "test"
   Path: web
   Modules: server/Test
-  BuildDepends: eliom.server, panograph.server, prime
+  BuildDepends: eliom.server, panograph.server, prime, prime.unstable
   ByteOpt: -thread
   NativeOpt: -thread
   DataFiles:
@@ -40,7 +42,7 @@ Library "test"
 
 Executable "test"
   Path: web/client
-  BuildDepends: eliom.client, panograph.client, prime
+  BuildDepends: eliom.client, panograph.client
   MainIs: test.ml
   ByteOpt: -thread
   Install: false

@@ -26,8 +26,9 @@ module type SIMPLE_PATCH_EDITOR = sig
 
   type value
 
-  include PATCH_EDITOR
+  include RETRACTABLE_PATCH_EDITOR
      with type value := value
+      and type key = value
       and type patch_out = [`Set of value]
       and type patch_in = [`Set of value]
       and type shape = Simple_shape.t

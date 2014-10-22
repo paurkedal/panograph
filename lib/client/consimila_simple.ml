@@ -28,8 +28,9 @@ end
 
 module type SIMPLE_PATCH_EDITOR = sig
   type value
-  include PATCH_EDITOR
+  include RETRACTABLE_PATCH_EDITOR
      with type value := value
+      and type key = value
       and type patch_out = [`Set of value]
       and type patch_in = [`Set of value]
       and type shape = Simple_shape.t
@@ -54,6 +55,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
     w_ui : [`Input] Html5.elt;
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;
+    mutable w_value : value; (* as received *)
   }
 
   let ui w = (w.w_ui :> ui)
@@ -79,17 +81,18 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
 
   let patch w (`Set x) =
     clear_error w;
+    w.w_value <- x;
     w.w_dom##value <- Js.string (Value.to_string x);
     clear_dirty w
 
-  let set {w_dom} x = w_dom##value <- Js.string (Value.to_string x)
   let get {w_dom} = Value.of_string (Js.to_string w_dom##value)
 
   let create ~init ?on_patch {Simple_shape.input_a} =
     let inp = Html5.D.input ~input_type:`Text ~a:input_a () in
     let w_dom = Html5.To_dom.of_input inp in
-    let w = {w_ui = inp; w_dom; w_saved_title = Js.to_string w_dom##title} in
-    set w init;
+    let w = {w_ui = inp; w_dom; w_saved_title = Js.to_string w_dom##title;
+	     w_value = init} in
+    w_dom##value <- Js.string (Value.to_string init);
     Option.iter (fun on_patch ->
       let on_change _ _ =
 	try
@@ -102,6 +105,12 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
 	  clear_dirty w; set_error w "Invalid input."; Lwt.return_unit in
       Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change)) on_patch;
     w
+
+  type key = value
+  let affects_key _ = true
+  let key_of_value x = x
+  let compare_key k w = Pervasives.compare k w.w_value
+  let compare wA wB = Pervasives.compare wA.w_value wB.w_value
 end
 
 module Simple_snapshot_editor (Value : STRINGABLE) = struct
