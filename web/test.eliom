@@ -21,6 +21,21 @@
 {client{
   open Consimila_intf
   open Consimila_simple
+  open Consimila_collection
+
+  module Ul_container = struct
+    type shape = unit
+    type ui = Html5_types.flow5 Html5.elt
+    type item_ui = Html5_types.ul_content Html5.elt
+    type elt_ui = Html5_types.flow5 Html5.elt
+    let create () = Html5.D.ul []
+    let create_item _ elt_ui = Html5.D.li [elt_ui]
+    let prepend ul li = Html5.Manip.appendChildFirst ul li
+    let insert ul li_succ li = Html5.Manip.appendChild ul ~before:li_succ li
+    let remove ul li = Html5.Manip.removeChild ul li
+  end
+
+  module Int_ul_PE = Collection_editor (Ul_container) (Int_PE) (Int_SE)
 
   let test_int_editor () =
     let ev, send_ev = React.E.create () in
@@ -44,6 +59,18 @@
     Lwt_react.E.keep
       (Lwt_react.E.map (fun i -> Float_PE.patch w (`Set i)) ev);
     div [Float_PE.ui w]
+
+  let test_int_ul () =
+    let ev, send_ev = React.E.create () in
+    let elt_shape = Simple_shape.(make ()) in
+    let shape = Int_ul_PE.({container_shape = ();
+			    elt_shape = elt_shape; new_shape = elt_shape}) in
+    let on_patch p =
+      Lwt.(async (fun () -> Lwt_js.sleep 0.33 >|= fun () -> send_ev p));
+      Lwt.return Ack_ok  in
+    let pe = Int_ul_PE.create ~init:[10; 20; 30] ~on_patch shape in
+    Lwt_react.E.keep (Lwt_react.E.map (Int_ul_PE.patch pe) ev);
+    Int_ul_PE.ui pe
 }}
 
 let main_handler () () =
@@ -54,8 +81,9 @@ let main_handler () () =
       ~css:[["css"; "panograph.css"]]
       (body [
 	h1 [pcdata "Panograph Test"];
-	Html5.C.node {{(test_int_editor ())}};
-	Html5.C.node {{(test_float_editor ())}};
+	Html5.C.node {{test_int_editor ()}};
+	Html5.C.node {{test_float_editor ()}};
+	Html5.C.node {{test_int_ul ()}};
       ])
 
 module Main_app =

@@ -68,9 +68,11 @@ end
 module type CONTAINER = sig
   type shape
   type ui
+  type item_ui
   type elt_ui
   val create : shape -> ui
-  val prepend : ui -> elt_ui -> unit
-  val insert : ui -> elt_ui -> elt_ui -> unit
-  val remove : ui -> elt_ui -> unit
+  val create_item : shape -> elt_ui -> item_ui
+  val prepend : ui -> item_ui -> unit
+  val insert : ui -> item_ui -> item_ui -> unit
+  val remove : ui -> item_ui -> unit
 end
