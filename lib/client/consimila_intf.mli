@@ -62,7 +62,8 @@ module type RETRACTABLE_PATCH_EDITOR = sig
   include PATCH_EDITOR
   include Prime_retraction.RETRACTABLE with type t := t
   val key_of_value : value -> key
-  val affects_key : patch_in -> bool
+  val key_of_patch_in : patch_in -> key * key option
+  val key_of_patch_out : patch_out -> key * key option
 end
 
 module type CONTAINER = sig
@@ -72,7 +73,7 @@ module type CONTAINER = sig
   type elt_ui
   val create : shape -> ui
   val create_item : shape -> elt_ui -> item_ui
-  val prepend : ui -> item_ui -> unit
+  val append : ui -> item_ui -> unit
   val insert : ui -> item_ui -> item_ui -> unit
   val remove : ui -> item_ui -> unit
 end

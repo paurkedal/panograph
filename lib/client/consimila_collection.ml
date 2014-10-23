@@ -15,6 +15,7 @@
  *)
 
 open Consimila_intf
+open Eliom_lib
 open Unprime_option
 let (>>=) = Lwt.(>>=)
 
@@ -32,9 +33,9 @@ struct
   type ui = Container.ui
   type value = Elt.value list
   type patch_out = [ `Add of Elt.value | `Remove of Elt.key
-		   | `Patch of Elt.key * Elt.patch_out ]
+		   | `Patch of Elt.patch_out ]
   type patch_in = [ `Add of Elt.value | `Remove of Elt.key
-		  | `Patch of Elt.key * Elt.patch_in ]
+		  | `Patch of Elt.patch_in ]
 
   module Items = Prime_retraction.Make (struct
     type key = Elt.key
@@ -55,16 +56,25 @@ struct
   let add_item w ((_, item_ui) as item) =
     w.w_items <- Items.add item w.w_items;
     match Items.get_o (Items.locate_elt_e item w.w_items + 1) w.w_items with
-    | None -> Container.prepend w.w_ui item_ui
+    | None -> Container.append w.w_ui item_ui
     | Some (_, succ_ui) -> Container.insert w.w_ui succ_ui item_ui
 
   let add_value w v =
-    let key = Elt.key_of_value v in
-    if not (Items.contains key w.w_items) then begin
-      let on_elt_patch =
-	Option.map (fun on_patch p -> on_patch (`Patch (key, p)))
-		   w.w_on_patch in
-      let elt = Elt.create ~init:v ?on_patch:on_elt_patch w.w_shape.elt_shape in
+    if Items.contains (Elt.key_of_value v) w.w_items then
+      error "Collection_editor: Conflicting add."
+    else begin
+      let on_elt_patch on_patch p =
+	match Elt.key_of_patch_out p with
+	| k, None -> on_patch (`Patch p)
+	| k, Some k' ->
+	  if Items.contains k' w.w_items then
+	    Lwt.return
+	      (Ack_error "The changed item conflicts with another item.")
+	  else
+	    on_patch (`Patch p) in
+      let elt =
+	Elt.create ~init:v ?on_patch:(Option.map on_elt_patch w.w_on_patch)
+		   w.w_shape.elt_shape in
       let item_ui =
 	Container.create_item w.w_shape.container_shape (Elt.ui elt) in
       add_item w (elt, item_ui)
@@ -77,22 +87,27 @@ struct
       Container.remove w.w_ui item_ui
     with Not_found -> ()
 
-  let patch_elt w k p =
+  let patch_elt w p =
     try
-      let (elt, item_ui) = Items.find_e k w.w_items in
-      if Elt.affects_key p then begin
-	Container.remove w.w_ui item_ui;
-	w.w_items <- Items.remove k w.w_items;
-	Elt.patch elt p;
-	add_item w (elt, item_ui)
-      end else
-	Elt.patch elt p
-    with Not_found -> ()
+      match Elt.key_of_patch_in p with
+      | k, None -> Elt.patch (fst (Items.find_e k w.w_items)) p
+      | k, Some k' ->
+	let (elt, item_ui) = Items.find_e k w.w_items in
+	if Items.contains k' w.w_items then
+	  error "Collection_editor: Conflict for incoming patch."
+	else begin
+	  Container.remove w.w_ui item_ui;
+	  w.w_items <- Items.remove k w.w_items;
+	  Elt.patch elt p;
+	  add_item w (elt, item_ui)
+	end
+    with Not_found ->
+      error "Collection_editor: Element to patch not found."
 
   let patch w = function
     | `Add elt -> add_value w elt
-    | `Remove key -> remove_key w key
-    | `Patch (key, elt_patch) -> patch_elt w key elt_patch
+    | `Remove k -> remove_key w k
+    | `Patch elt_patch -> patch_elt w elt_patch
 
   let create ~init ?on_patch shape =
     let ui = Container.create shape.container_shape in

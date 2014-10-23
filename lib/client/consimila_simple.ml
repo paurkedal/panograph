@@ -31,8 +31,8 @@ module type SIMPLE_PATCH_EDITOR = sig
   include RETRACTABLE_PATCH_EDITOR
      with type value := value
       and type key = value
-      and type patch_out = [`Set of value]
-      and type patch_in = [`Set of value]
+      and type patch_out = [`Change of value * value]
+      and type patch_in = [`Change of value * value]
       and type shape = Simple_shape.t
       and type ui = Html5_types.flow5 Html5.elt
 end
@@ -47,7 +47,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
   let default_shape = Simple_shape.make ()
 
   type value = Value.t
-  type patch_out = [`Set of value]
+  type patch_out = [`Change of value * value]
   type patch_in = patch_out
 
   type ui = Html5_types.flow5 Html5.elt
@@ -79,7 +79,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
     w.w_dom##classList##remove(Js.string "error");
     w.w_dom##title <- Js.string w.w_saved_title
 
-  let patch w (`Set x) =
+  let patch w (`Change (_, x)) =
     clear_error w;
     w.w_value <- x;
     w.w_dom##value <- Js.string (Value.to_string x);
@@ -97,7 +97,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
       let on_change _ _ =
 	try
 	  set_dirty w;
-	  match_lwt on_patch (`Set (get w)) with
+	  match_lwt on_patch (`Change (w.w_value, get w)) with
 	  | Ack_ok -> Lwt.return_unit
 	  | Ack_error msg -> set_error w msg; Lwt.return_unit
 	with
@@ -107,8 +107,10 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
     w
 
   type key = value
-  let affects_key _ = true
+  let key = get
   let key_of_value x = x
+  let key_of_patch_in (`Change (x, x')) = if x = x' then x, None else x, Some x'
+  let key_of_patch_out = key_of_patch_in
   let compare_key k w = Pervasives.compare k w.w_value
   let compare wA wB = Pervasives.compare wA.w_value wB.w_value
 end

@@ -30,7 +30,7 @@
     type elt_ui = Html5_types.flow5 Html5.elt
     let create () = Html5.D.ul []
     let create_item _ elt_ui = Html5.D.li [elt_ui]
-    let prepend ul li = Html5.Manip.appendChildFirst ul li
+    let append ul li = Html5.Manip.appendChild ul li
     let insert ul li_succ li = Html5.Manip.appendChild ul ~before:li_succ li
     let remove ul li = Html5.Manip.removeChild ul li
   end
@@ -39,26 +39,21 @@
 
   let test_int_editor () =
     let ev, send_ev = React.E.create () in
-    let open Html5.D in
-    let on_patch (`Set i) =
-      Lwt_js.sleep 1.0 >> (send_ev i; Lwt.return Ack_ok) in
+    let open Html5 in
+    let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
     let w =
       Int_PE.create ~init:19 ~on_patch
-		    Simple_shape.(make ~a:[a_title "test"] ()) in
-    Lwt_react.E.keep
-      (Lwt_react.E.map (fun i -> Int_PE.patch w (`Set i)) ev);
-    div [Int_PE.ui w]
+		    Simple_shape.(make ~a:[F.a_title "test"] ()) in
+    Lwt_react.E.keep (Lwt_react.E.map (Int_PE.patch w) ev);
+    Int_PE.ui w
 
   let test_float_editor () =
     let ev, send_ev = React.E.create () in
-    let open Html5.D in
-    let on_patch (`Set i) =
-      Lwt_js.sleep 1.0 >> (send_ev i; Lwt.return Ack_ok) in
-    let w =
-      Float_PE.create ~init:0.01 ~on_patch Simple_shape.(make ()) in
-    Lwt_react.E.keep
-      (Lwt_react.E.map (fun i -> Float_PE.patch w (`Set i)) ev);
-    div [Float_PE.ui w]
+    let open Html5 in
+    let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
+    let w = Float_PE.create ~init:0.01 ~on_patch Simple_shape.(make ()) in
+    Lwt_react.E.keep (Lwt_react.E.map (Float_PE.patch w) ev);
+    Float_PE.ui w
 
   let test_int_ul () =
     let ev, send_ev = React.E.create () in
@@ -68,7 +63,7 @@
     let on_patch p =
       Lwt.(async (fun () -> Lwt_js.sleep 0.33 >|= fun () -> send_ev p));
       Lwt.return Ack_ok  in
-    let pe = Int_ul_PE.create ~init:[10; 20; 30] ~on_patch shape in
+    let pe = Int_ul_PE.create ~init:[5; 7; 3; 11; 17; 13] ~on_patch shape in
     Lwt_react.E.keep (Lwt_react.E.map (Int_ul_PE.patch pe) ev);
     Int_ul_PE.ui pe
 }}

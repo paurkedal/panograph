@@ -32,7 +32,7 @@ sig
      and type ui = Container.ui
      and type value = Elt.value list
      and type patch_out = [ `Add of Elt.value | `Remove of Elt.key
-			  | `Patch of Elt.key * Elt.patch_out ]
+			  | `Patch of Elt.patch_out ]
      and type patch_in = [ `Add of Elt.value | `Remove of Elt.key
-			 | `Patch of Elt.key * Elt.patch_in ]
+			 | `Patch of Elt.patch_in ]
 end
