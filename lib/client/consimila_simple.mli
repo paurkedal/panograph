@@ -49,7 +49,13 @@ module Simple_snapshot_editor (Value : STRINGABLE) :
 module String_PE : SIMPLE_PATCH_EDITOR with type value = string
 module Int_PE : SIMPLE_PATCH_EDITOR with type value = int
 module Float_PE : SIMPLE_PATCH_EDITOR with type value = float
+module String_option_PE : SIMPLE_PATCH_EDITOR with type value = string option
+module Int_option_PE : SIMPLE_PATCH_EDITOR with type value = int option
+module Float_option_PE : SIMPLE_PATCH_EDITOR with type value = float option
 
 module String_SE : SIMPLE_SNAPSHOT_EDITOR with type value = string
 module Int_SE : SIMPLE_SNAPSHOT_EDITOR with type value = int
 module Float_SE : SIMPLE_SNAPSHOT_EDITOR with type value = float
+module String_option_SE : SIMPLE_SNAPSHOT_EDITOR with type value = string option
+module Int_option_SE : SIMPLE_SNAPSHOT_EDITOR with type value = int option
+module Float_option_SE : SIMPLE_SNAPSHOT_EDITOR with type value = float option

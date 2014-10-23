@@ -173,10 +173,26 @@ module Float_str = struct
   let to_string = string_of_float
 end
 
+module Option_str (X : STRINGABLE) = struct
+  type t = X.t option
+  let of_string = function "" -> None | s -> Some (X.of_string s)
+  let to_string = function None -> "" | Some x -> X.to_string x
+end
+
+module String_option_str = Option_str (String_str)
+module Int_option_str = Option_str (Int_str)
+module Float_option_str = Option_str (Float_str)
+
 module String_PE = Simple_patch_editor (String_str)
 module Int_PE = Simple_patch_editor (Int_str)
 module Float_PE = Simple_patch_editor (Float_str)
+module String_option_PE = Simple_patch_editor (String_option_str)
+module Int_option_PE = Simple_patch_editor (Int_option_str)
+module Float_option_PE = Simple_patch_editor (Float_option_str)
 
 module String_SE = Simple_snapshot_editor (String_str)
 module Int_SE = Simple_snapshot_editor (Int_str)
 module Float_SE = Simple_snapshot_editor (Float_str)
+module String_option_SE = Simple_snapshot_editor (String_option_str)
+module Int_option_SE = Simple_snapshot_editor (Int_option_str)
+module Float_option_SE = Simple_snapshot_editor (Float_option_str)
