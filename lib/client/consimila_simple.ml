@@ -107,7 +107,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
     w
 
   type key = value
-  let key = get
+  let key_of_t w = w.w_value
   let key_of_value x = x
   let key_of_patch_in (`Change (x, x')) = if x = x' then x, None else x, Some x'
   let key_of_patch_out = key_of_patch_in

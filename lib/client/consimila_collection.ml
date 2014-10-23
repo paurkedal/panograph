@@ -21,27 +21,27 @@ let (>>=) = Lwt.(>>=)
 
 module Collection_editor
 	(Container : CONTAINER)
-	(Elt : RETRACTABLE_PATCH_EDITOR with type ui = Container.elt_ui)
-	(New : SNAPSHOT_EDITOR with type ui = Container.elt_ui
-				and type value = Elt.value) =
+	(Elt_PE : RETRACTABLE_PATCH_EDITOR with type ui = Container.elt_pe_ui)
+	(Elt_SE : SNAPSHOT_EDITOR with type ui = Container.elt_se_ui
+				   and type value = Elt_PE.value) =
 struct
   type shape = {
     container_shape : Container.shape;
-    elt_shape : Elt.shape;
-    new_shape : New.shape;
+    elt_pe_shape : Elt_PE.shape;
+    elt_se_shape : Elt_SE.shape;
   }
   type ui = Container.ui
-  type value = Elt.value list
-  type patch_out = [ `Add of Elt.value | `Remove of Elt.key
-		   | `Patch of Elt.patch_out ]
-  type patch_in = [ `Add of Elt.value | `Remove of Elt.key
-		  | `Patch of Elt.patch_in ]
+  type value = Elt_PE.value list
+  type patch_out = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
+		   | `Patch of Elt_PE.patch_out ]
+  type patch_in = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
+		  | `Patch of Elt_PE.patch_in ]
 
   module Items = Prime_retraction.Make (struct
-    type key = Elt.key
-    type t = Elt.t * Container.item_ui
-    let compare_key k (y, _) = Elt.compare_key k y
-    let compare (x, _) (y, _) = Elt.compare x y
+    type key = Elt_PE.key
+    type t = Elt_PE.t * Container.item_ui
+    let compare_key k (y, _) = Elt_PE.compare_key k y
+    let compare (x, _) (y, _) = Elt_PE.compare x y
   end)
 
   type t = {
@@ -55,16 +55,17 @@ struct
 
   let add_item w ((_, item_ui) as item) =
     w.w_items <- Items.add item w.w_items;
-    match Items.get_o (Items.locate_elt_e item w.w_items + 1) w.w_items with
-    | None -> Container.append w.w_ui item_ui
-    | Some (_, succ_ui) -> Container.insert w.w_ui succ_ui item_ui
+    let before =
+      Option.map snd (Items.get_o (Items.locate_elt_e item w.w_items + 1)
+		 w.w_items) in
+    Container.append ?before w.w_ui item_ui
 
   let add_value w v =
-    if Items.contains (Elt.key_of_value v) w.w_items then
+    if Items.contains (Elt_PE.key_of_value v) w.w_items then
       error "Collection_editor: Conflicting add."
     else begin
       let on_elt_patch on_patch p =
-	match Elt.key_of_patch_out p with
+	match Elt_PE.key_of_patch_out p with
 	| k, None -> on_patch (`Patch p)
 	| k, Some k' ->
 	  if Items.contains k' w.w_items then
@@ -73,10 +74,13 @@ struct
 	  else
 	    on_patch (`Patch p) in
       let elt =
-	Elt.create ~init:v ?on_patch:(Option.map on_elt_patch w.w_on_patch)
-		   w.w_shape.elt_shape in
+	Elt_PE.create ~init:v ?on_patch:(Option.map on_elt_patch w.w_on_patch)
+		      w.w_shape.elt_pe_shape in
+      let on_remove on_patch () = on_patch (`Remove (Elt_PE.key_of_t elt)) in
       let item_ui =
-	Container.create_item w.w_shape.container_shape (Elt.ui elt) in
+	Container.create_item ~edit_ui:(Elt_PE.ui elt)
+			      ?on_remove:(Option.map on_remove w.w_on_patch)
+			      w.w_shape.container_shape in
       add_item w (elt, item_ui)
     end
 
@@ -89,8 +93,8 @@ struct
 
   let patch_elt w p =
     try
-      match Elt.key_of_patch_in p with
-      | k, None -> Elt.patch (fst (Items.find_e k w.w_items)) p
+      match Elt_PE.key_of_patch_in p with
+      | k, None -> Elt_PE.patch (fst (Items.find_e k w.w_items)) p
       | k, Some k' ->
 	let (elt, item_ui) = Items.find_e k w.w_items in
 	if Items.contains k' w.w_items then
@@ -98,7 +102,7 @@ struct
 	else begin
 	  Container.remove w.w_ui item_ui;
 	  w.w_items <- Items.remove k w.w_items;
-	  Elt.patch elt p;
+	  Elt_PE.patch elt p;
 	  add_item w (elt, item_ui)
 	end
     with Not_found ->
@@ -110,7 +114,12 @@ struct
     | `Patch elt_patch -> patch_elt w elt_patch
 
   let create ~init ?on_patch shape =
-    let ui = Container.create shape.container_shape in
+    let add_se = Elt_SE.create shape.elt_se_shape in
+    let on_add =
+      Option.map (fun on_patch () -> on_patch (`Add (Elt_SE.snapshot add_se)))
+		 on_patch in
+    let ui = Container.create ~add_ui:(Elt_SE.ui add_se) ?on_add
+			      shape.container_shape in
     let w =
       { w_shape = shape;
 	w_ui = ui;

@@ -18,21 +18,21 @@ open Consimila_intf
 
 module Collection_editor
 	(Container : CONTAINER)
-	(Elt : RETRACTABLE_PATCH_EDITOR with type ui = Container.elt_ui)
-	(New : SNAPSHOT_EDITOR with type ui = Container.elt_ui
-				and type value = Elt.value) :
+	(Elt_PE : RETRACTABLE_PATCH_EDITOR with type ui = Container.elt_pe_ui)
+	(Elt_SE : SNAPSHOT_EDITOR with type ui = Container.elt_se_ui
+				   and type value = Elt_PE.value) :
 sig
   type shape = {
     container_shape : Container.shape;
-    elt_shape : Elt.shape;
-    new_shape : New.shape;
+    elt_pe_shape : Elt_PE.shape;
+    elt_se_shape : Elt_SE.shape;
   }
   include PATCH_EDITOR
     with type shape := shape
      and type ui = Container.ui
-     and type value = Elt.value list
-     and type patch_out = [ `Add of Elt.value | `Remove of Elt.key
-			  | `Patch of Elt.patch_out ]
-     and type patch_in = [ `Add of Elt.value | `Remove of Elt.key
-			 | `Patch of Elt.patch_in ]
+     and type value = Elt_PE.value list
+     and type patch_out = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
+			  | `Patch of Elt_PE.patch_out ]
+     and type patch_in = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
+			 | `Patch of Elt_PE.patch_in ]
 end
