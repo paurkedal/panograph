@@ -54,7 +54,7 @@ end
 module type SNAPSHOT_EDITOR = sig
   include WIDGET_BASE
 
-  val create : init: value -> shape -> t
+  val create : ?init: value -> shape -> t
   val snapshot : t -> value
 end
 

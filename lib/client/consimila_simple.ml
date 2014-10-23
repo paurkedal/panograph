@@ -125,7 +125,6 @@ module Simple_snapshot_editor (Value : STRINGABLE) = struct
     w_ui : [`Input] Html5.elt;
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;
-    mutable w_value : value;
   }
   let ui w = (w.w_ui :> ui)
 
@@ -138,17 +137,16 @@ module Simple_snapshot_editor (Value : STRINGABLE) = struct
     w.w_dom##classList##remove(Js.string "error");
     w.w_dom##title <- Js.string w.w_saved_title
 
-  let create ~init shape =
+  let create ?init shape =
     let inp =
       Html5.D.input ~input_type:`Text ~a:shape.Simple_shape.input_a () in
     let w_dom = Html5.To_dom.of_input inp in
-    let w = {w_ui = inp; w_dom; w_saved_title = Js.to_string w_dom##title;
-	     w_value = init} in
-    w_dom##value <- Js.string (Value.to_string init);
+    let w = {w_ui = inp; w_dom; w_saved_title = Js.to_string w_dom##title} in
+    Option.iter (fun x -> w_dom##value <- Js.string (Value.to_string x)) init;
     let on_change _ _ =
       Lwt.wrap begin fun () ->
 	try clear_error w;
-	    w.w_value <- Value.of_string (Js.to_string w_dom##value)
+	    ignore (Value.of_string (Js.to_string w_dom##value))
 	with Failure _ | Invalid_argument _ -> set_error w "Invalid input."
       end in
     Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change);
