@@ -35,10 +35,8 @@ Library "test"
   BuildDepends: eliom.server, panograph.server, prime, prime.unstable
   ByteOpt: -thread
   NativeOpt: -thread
-  DataFiles:
-    static/css/*.css ($datadir/panograph/static/css),
-    ../_build/web/client/*.js ($datadir/panograph/static)
   CompiledObject: native
+  Install: false
 
 Executable "test"
   Path: web/client
