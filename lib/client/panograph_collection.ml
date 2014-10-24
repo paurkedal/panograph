@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Consimila_intf
+open Panograph_intf
 open Eliom_lib
 open Unprime_option
 let (>>=) = Lwt.(>>=)

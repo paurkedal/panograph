@@ -15,7 +15,7 @@
  *)
 
 open Eliom_content
-open Consimila_intf
+open Panograph_intf
 open Unprime
 open Unprime_option
 

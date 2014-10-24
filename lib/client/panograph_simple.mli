@@ -15,7 +15,7 @@
  *)
 
 open Eliom_content
-open Consimila_intf
+open Panograph_intf
 
 module Simple_shape : sig
   type t

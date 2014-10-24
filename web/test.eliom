@@ -19,9 +19,9 @@
 }}
 
 {client{
-  open Consimila_intf
-  open Consimila_simple
-  open Consimila_collection
+  open Panograph_intf
+  open Panograph_simple
+  open Panograph_collection
 
   let (>|=) = Lwt.(>|=)
 
