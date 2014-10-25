@@ -59,8 +59,7 @@ struct
 
   let add_item w ((_, item) as elt) =
     w.w_set <- Set.add elt w.w_set;
-    let before =
-      Option.map snd (Set.get_o (Set.locate_elt_e elt w.w_set + 1) w.w_set) in
+    let before = Option.found (fun () -> snd (Set.elt_succ_e w.w_set elt)) in
     Container.append ?before w.w_container item
 
   let add_value w v =
