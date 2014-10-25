@@ -14,9 +14,13 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open Eliom_content
+
 type ack =
   | Ack_ok
   | Ack_error of string
+
+type controls_ui = [`Button | `Img | `Img_interactive | `Span] Html5.elt list
 
 module type STRINGABLE = sig
   type t
@@ -28,13 +32,13 @@ module type WIDGET_BASE = sig
   type shape
   type t
   type ui
-  type value
   val ui : t -> ui
 end
 
 module type PATCH_VIEWER = sig
   include WIDGET_BASE
 
+  type value
   type patch_in
 
   val create : init: value -> shape -> t
@@ -44,6 +48,7 @@ end
 module type PATCH_EDITOR = sig
   include WIDGET_BASE
 
+  type value
   type patch_out
   type patch_in
 
@@ -53,6 +58,8 @@ end
 
 module type SNAPSHOT_EDITOR = sig
   include WIDGET_BASE
+
+  type value
 
   val create : ?init: value -> shape -> t
   val snapshot : t -> value
@@ -68,15 +75,13 @@ module type RETRACTABLE_PATCH_EDITOR = sig
 end
 
 module type CONTAINER = sig
-  type shape
-  type ui
+  include WIDGET_BASE
+  type item
   type item_ui
-  type elt_pe_ui
-  type elt_se_ui
-  val create : ?add_ui: elt_se_ui -> ?on_add: (unit -> ack Lwt.t)  ->
-	       shape -> ui
-  val create_item : edit_ui: elt_pe_ui -> ?on_remove: (unit -> ack Lwt.t) ->
-		    shape -> item_ui
-  val append : ?before: item_ui -> ui -> item_ui -> unit
-  val remove : ui -> item_ui -> unit
+  type aux_ui
+
+  val create : ?aux: aux_ui -> shape -> t
+  val create_item : item_ui -> shape -> item
+  val append : ?before: item -> t -> item -> unit
+  val remove : t -> item -> unit
 end

@@ -16,6 +16,8 @@
 
 {shared{
   open Eliom_content
+  open Unprime_list
+  open Unprime_option
 }}
 
 {client{
@@ -25,58 +27,30 @@
 
   let (>|=) = Lwt.(>|=)
 
-  let set_error dom msg =
-    dom##classList##add(Js.string "error");
-    dom##title <- Js.string msg
-  let clear_error dom =
-    dom##classList##remove(Js.string "error");
-    dom##title <- Js.string ""
-  let flash_error dom msg =
-    set_error dom msg;
-    Lwt_js.sleep 4.0 >|= fun () ->
-    clear_error dom
-
-  let make_button f content =
-    let open Html5 in
-    let button = D.button ~button_type:`Button content in
-    let button_dom = To_dom.of_button button in
-    let on_click _ _ =
-      match_lwt f () with
-      | Ack_ok -> Lwt.return_unit
-      | Ack_error msg -> flash_error button_dom msg in
-    Lwt.async (fun () -> Lwt_js_events.clicks button_dom on_click);
-    button
-
   module Ul_container = struct
     type shape = unit
     type ui = Html5_types.flow5 Html5.elt
-    type item_ui = Html5_types.ul_content Html5.elt
-    type elt_pe_ui = Html5_types.flow5 Html5.elt
-    type elt_se_ui = Html5_types.flow5 Html5.elt
-    let create ?add_ui ?on_add () =
+    type t = ui
+    type item_ui = Html5_types.flow5 Html5.elt * controls_ui
+    type item = Html5_types.ul_content Html5.elt
+    type aux_ui = Html5_types.flow5 Html5.elt * controls_ui
+    let ui w = w
+    let create ?(aux : aux_ui option) () =
       let open Html5 in
-      let lis =
-	match add_ui with
+      D.ul
+	begin match aux with
 	| None -> []
-	| Some add_ui ->
-	  let contr =
-	    match on_add with
-	    | None -> []
-	    | Some on_add -> [make_button on_add [F.pcdata "+"]] in
-	  [D.li (add_ui :: contr)] in
-      D.ul lis
-    let create_item ~edit_ui ?on_remove _ =
+	| Some (aux_ui, controls_ui) ->
+	  [D.li [aux_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]]
+	end
+    let create_item ((elt_ui, controls_ui) : item_ui) () =
       let open Html5 in
-      let contr =
-	match on_remove with
-	| None -> []
-	| Some on_remove -> [make_button on_remove [F.pcdata "-"]] in
-      D.li (edit_ui :: contr)
+      D.li [elt_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]
     let append ?before ul li = Html5.Manip.appendChild ?before ul li
     let remove ul li = Html5.Manip.removeChild ul li
   end
 
-  module Int_ul_PE = Collection_editor (Ul_container) (Int_PE) (Int_SE)
+  module Int_ul_PE = Collection_editor (Int_PE) (Int_SE) (Ul_container)
 
   let test_int_editor () =
     let ev, send_ev = React.E.create () in

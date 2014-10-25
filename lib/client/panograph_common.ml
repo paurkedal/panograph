@@ -14,25 +14,32 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open Eliom_content
 open Panograph_intf
 
-module Collection_editor
-	(Elt_PE : RETRACTABLE_PATCH_EDITOR)
-	(Elt_SE : SNAPSHOT_EDITOR with type value = Elt_PE.value)
-	(Container : CONTAINER with type item_ui = Elt_PE.ui * controls_ui
-				and type aux_ui = Elt_SE.ui * controls_ui) :
-sig
-  type shape = {
-    elt_pe_shape : Elt_PE.shape;
-    elt_se_shape : Elt_SE.shape;
-    container_shape : Container.shape;
-  }
-  include PATCH_EDITOR
-    with type shape := shape
-     and type ui = Container.ui
-     and type value = Elt_PE.value list
-     and type patch_out = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
-			  | `Patch of Elt_PE.patch_out ]
-     and type patch_in = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
-			 | `Patch of Elt_PE.patch_in ]
-end
+let (>>=) = Lwt.(>>=)
+let (>|=) = Lwt.(>|=)
+
+let set_error dom msg =
+  dom##classList##add(Js.string "error");
+  dom##title <- Js.string msg
+
+let clear_error dom =
+  dom##classList##remove(Js.string "error");
+  dom##title <- Js.string ""
+
+let flash_error dom msg =
+  set_error dom msg;
+  Lwt_js.sleep 4.0 >|= fun () ->
+  clear_error dom
+
+let make_button f content =
+  let open Html5 in
+  let button = D.button ~button_type:`Button content in
+  let button_dom = To_dom.of_button button in
+  let on_click _ _ =
+    match_lwt f () with
+    | Ack_ok -> Lwt.return_unit
+    | Ack_error msg -> flash_error button_dom msg in
+  Lwt.async (fun () -> Lwt_js_events.clicks button_dom on_click);
+  button
