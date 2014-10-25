@@ -57,7 +57,7 @@ struct
 
   let ui w = Container.ui w.w_container
 
-  let add_item w ((_, item) as elt) =
+  let add_elt w ((_, item) as elt) =
     w.w_set <- Set.add elt w.w_set;
     let before = Option.found (fun () -> snd (Set.elt_succ_e w.w_set elt)) in
     Container.append ?before w.w_container item
@@ -86,14 +86,14 @@ struct
 	| None -> [] in
       let item = Container.create_item (Elt_PE.ui elt_pe, remove_button)
 				       w.w_shape.container_shape in
-      add_item w (elt_pe, item)
+      add_elt w (elt_pe, item)
     end
 
   let remove_key w k =
     try
-      let _, item_ui = Set.find_e k w.w_set in
+      let _, item = Set.find_e k w.w_set in
       w.w_set <- Set.remove k w.w_set;
-      Container.remove w.w_container item_ui
+      Container.remove w.w_container item
     with Not_found -> ()
 
   let patch_elt w p =
@@ -101,14 +101,14 @@ struct
       match Elt_PE.key_of_patch_in p with
       | k, None -> Elt_PE.patch (fst (Set.find_e k w.w_set)) p
       | k, Some k' ->
-	let (elt, item_ui) = Set.find_e k w.w_set in
+	let (elt, item) = Set.find_e k w.w_set in
 	if Set.contains k' w.w_set then
 	  error "Collection_editor: Conflict for incoming patch."
 	else begin
-	  Container.remove w.w_container item_ui;
+	  Container.remove w.w_container item;
 	  w.w_set <- Set.remove k w.w_set;
 	  Elt_PE.patch elt p;
-	  add_item w (elt, item_ui)
+	  add_elt w (elt, item)
 	end
     with Not_found ->
       error "Collection_editor: Element to patch not found."
