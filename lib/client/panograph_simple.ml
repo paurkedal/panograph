@@ -19,6 +19,28 @@ open Panograph_intf
 open Unprime
 open Unprime_option
 
+module type SIMPLE_SNAPSHOT_VIEWER =
+  SNAPSHOT_VIEWER
+    with type shape = Html5_types.common Html5.attrib list
+     and type ui = Html5_types.flow5 Html5.elt
+
+module Simple_SV (Value : STRINGABLE) = struct
+  type value = Value.t
+  type shape = Html5_types.common Html5.attrib list
+  type ui = Html5_types.flow5 Html5.elt
+  type t = ui * ui
+
+  let ui (p, c) = p
+
+  let create ~init:v shape =
+    let c = Html5.D.pcdata (Value.to_string v) in
+    let p = Html5.D.span ~a:shape [c] in
+    (p, c)
+
+  let set (p, c) v =
+    Html5.Manip.replaceChildren p [Html5.D.pcdata (Value.to_string v)]
+end
+
 module Simple_shape = struct
   type t = {
     input_a : Html5_types.input_attrib Html5.attrib list;
@@ -180,6 +202,10 @@ end
 module String_option_str = Option_str (String_str)
 module Int_option_str = Option_str (Int_str)
 module Float_option_str = Option_str (Float_str)
+
+module String_SV = Simple_SV (String_str)
+module Int_SV = Simple_SV (Int_str)
+module Float_SV = Simple_SV (Float_str)
 
 module String_PE = Simple_patch_editor (String_str)
 module Int_PE = Simple_patch_editor (Int_str)

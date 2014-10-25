@@ -23,11 +23,17 @@
 {client{
   open Panograph_intf
   open Panograph_simple
+  open Panograph_mapped
   open Panograph_collection
 
   let (>|=) = Lwt.(>|=)
 
-  module Ul_container = struct
+  module Int_order = struct
+    type t = int
+    let compare = compare
+  end
+
+  module Collection_ul_container = struct
     type shape = unit
     type ui = Html5_types.flow5 Html5.elt
     type t = ui
@@ -50,7 +56,24 @@
     let remove ul li = Html5.Manip.removeChild ul li
   end
 
-  module Int_ul_PE = Collection_editor (Int_PE) (Int_SE) (Ul_container)
+  module Mapped_ul_container = struct
+    type shape = unit
+    type ui = Html5_types.flow5 Html5.elt
+    type t = ui
+    type item_ui = Html5_types.flow5 Html5.elt * Html5_types.flow5 Html5.elt
+    type item = Html5_types.ul_content Html5.elt
+    type aux_ui = Prime.counit
+    let ui w = w
+    let create ?aux () = assert (aux = None); Html5.D.ul []
+    let create_item (key_ui, elt_ui) () = Html5.D.li [key_ui; elt_ui]
+    let append ?before ul li = Html5.Manip.appendChild ?before ul li
+    let remove ul li = Html5.Manip.removeChild ul li
+  end
+
+  module Int_ul_PE =
+    Collection_editor (Int_PE) (Int_SE) (Collection_ul_container)
+  module Int_ul_MPE =
+    Mapped_PE (Int_order) (Int_SV) (Int_PE) (Mapped_ul_container)
 
   let test_int_editor () =
     let ev, send_ev = React.E.create () in
@@ -77,10 +100,31 @@
 			    elt_pe_shape; elt_se_shape = elt_pe_shape}) in
     let on_patch p =
       Lwt.(async (fun () -> Lwt_js.sleep 0.33 >|= fun () -> send_ev p));
-      Lwt.return Ack_ok  in
-    let pe = Int_ul_PE.create ~init:[5; 7; 3; 11; 17; 13] ~on_patch shape in
-    Lwt_react.E.keep (Lwt_react.E.map (Int_ul_PE.patch pe) ev);
-    Int_ul_PE.ui pe
+      Lwt.return Ack_ok in
+    let init = [5; 7; 3; 11; 17; 13] in
+    let pe = Int_ul_PE.create ~init ~on_patch shape in
+    let on_mapped_patch (`Patch (k, (`Change (v, v')))) =
+      send_ev (`Patch (`Change (k, - v')));
+      Lwt.return Ack_ok in
+    let mapped_shape =
+      Int_ul_MPE.({key_sv_shape = []; elt_pe_shape; container_shape = ()}) in
+    let mapped_pe = Int_ul_MPE.create ~init:(List.map (fun k -> k, -k) init)
+				      ~on_patch:on_mapped_patch mapped_shape in
+    let update p =
+      Int_ul_PE.patch pe p;
+      let p' =
+	match p with
+	| `Add v -> `Add (v, -v)
+	| `Remove v -> `Remove v
+	| `Patch (`Change (v, v')) ->
+	  if v = v' then `Patch (v, None, `Change (-v, -v'))
+		    else `Patch (v, Some v', `Change (-v, -v')) in
+      Int_ul_MPE.patch mapped_pe p' in
+    Lwt_react.E.keep (Lwt_react.E.map update ev);
+    Html5.D.div [
+      Int_ul_PE.ui pe;
+      Int_ul_MPE.ui mapped_pe;
+    ]
 }}
 
 let main_handler () () =

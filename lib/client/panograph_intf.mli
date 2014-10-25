@@ -45,6 +45,15 @@ module type PATCH_VIEWER = sig
   val patch : t -> patch_in -> unit
 end
 
+module type SNAPSHOT_VIEWER = sig
+  include WIDGET_BASE
+
+  type value
+
+  val create : init: value -> shape -> t
+  val set : t -> value -> unit
+end
+
 module type PATCH_EDITOR = sig
   include WIDGET_BASE
 

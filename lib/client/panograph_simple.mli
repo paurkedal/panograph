@@ -17,6 +17,14 @@
 open Eliom_content
 open Panograph_intf
 
+module type SIMPLE_SNAPSHOT_VIEWER =
+  SNAPSHOT_VIEWER
+    with type shape = Html5_types.common Html5.attrib list
+     and type ui = Html5_types.flow5 Html5.elt
+
+module Simple_SV (Value : STRINGABLE) :
+  SIMPLE_SNAPSHOT_VIEWER with type value = Value.t
+
 module Simple_shape : sig
   type t
   val make : ?a: Html5_types.input_attrib Html5.attrib list -> unit -> t
@@ -45,6 +53,10 @@ module Simple_patch_editor (Value : STRINGABLE) :
 
 module Simple_snapshot_editor (Value : STRINGABLE) :
   SIMPLE_SNAPSHOT_EDITOR with type value = Value.t
+
+module String_SV : SIMPLE_SNAPSHOT_VIEWER with type value = string
+module Int_SV : SIMPLE_SNAPSHOT_VIEWER with type value = int
+module Float_SV : SIMPLE_SNAPSHOT_VIEWER with type value = float
 
 module String_PE : SIMPLE_PATCH_EDITOR with type value = string
 module Int_PE : SIMPLE_PATCH_EDITOR with type value = int

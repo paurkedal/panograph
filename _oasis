@@ -24,7 +24,11 @@ Library "panograph-client"
   Path: lib/client
   FindlibParent: panograph
   FindlibName: client
-  Modules: Panograph_collection, Panograph_intf, Panograph_simple
+  Modules:
+    Panograph_collection,
+    Panograph_intf,
+    Panograph_mapped,
+    Panograph_simple
   BuildDepends:
     eliom.client, lwt.syntax, js_of_ocaml.syntax,
     panograph, prime, prime.unstable
