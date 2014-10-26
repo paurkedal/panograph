@@ -13,6 +13,7 @@ OCamlVersion: >= 4.01
 Library "panograph"
   Path: lib
   BuildDepends: lwt
+  Modules: Panograph_dltree, Panograph_dltree_intf
 
 Library "panograph-server"
   Path: lib/server
@@ -48,3 +49,9 @@ Executable "test"
   MainIs: test.ml
   ByteOpt: -thread
   Install: false
+
+Executable "test_dltree"
+  Path: tests
+  MainIs: test_dltree.ml
+  Install: false
+  BuildDepends: panograph, prime
