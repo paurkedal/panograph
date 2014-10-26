@@ -39,15 +39,15 @@
     type t = ui
     type item_ui = Html5_types.flow5 Html5.elt * controls_ui
     type item = Html5_types.ul_content Html5.elt
-    type aux_ui = Html5_types.flow5 Html5.elt * controls_ui
+    type init_ui = Html5_types.flow5 Html5.elt * controls_ui
     let ui w = w
-    let create ?(aux : aux_ui option) () =
+    let create ?(init : init_ui option) () =
       let open Html5 in
       D.ul
-	begin match aux with
+	begin match init with
 	| None -> []
-	| Some (aux_ui, controls_ui) ->
-	  [D.li [aux_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]]
+	| Some (init_ui, controls_ui) ->
+	  [D.li [init_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]]
 	end
     let create_item ((elt_ui, controls_ui) : item_ui) () =
       let open Html5 in
@@ -62,9 +62,9 @@
     type t = ui
     type item_ui = Html5_types.flow5 Html5.elt * Html5_types.flow5 Html5.elt
     type item = Html5_types.ul_content Html5.elt
-    type aux_ui = Prime.counit
+    type init_ui = Prime.counit
     let ui w = w
-    let create ?aux () = assert (aux = None); Html5.D.ul []
+    let create ?init () = assert (init = None); Html5.D.ul []
     let create_item (key_ui, elt_ui) () = Html5.D.li [key_ui; elt_ui]
     let append ?before ul li = Html5.Manip.appendChild ?before ul li
     let remove ul li = Html5.Manip.removeChild ul li

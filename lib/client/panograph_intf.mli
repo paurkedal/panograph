@@ -87,9 +87,9 @@ module type CONTAINER = sig
   include WIDGET_BASE
   type item
   type item_ui
-  type aux_ui
+  type init_ui
 
-  val create : ?aux: aux_ui -> shape -> t
+  val create : ?init: init_ui -> shape -> t
   val create_item : item_ui -> shape -> item
   val append : ?before: item -> t -> item -> unit
   val remove : t -> item -> unit
