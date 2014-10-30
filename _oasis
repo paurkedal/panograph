@@ -15,11 +15,11 @@ Library "panograph"
   BuildDepends: lwt
   Modules: Panograph_dltree, Panograph_dltree_intf
 
-Library "panograph-server"
-  Path: lib/server
-  FindlibParent: panograph
-  FindlibName: server
-  BuildDepends: eliom.server, panograph, prime
+#Library "panograph-server"
+#  Path: lib/server
+#  FindlibParent: panograph
+#  FindlibName: server
+#  BuildDepends: eliom.server, panograph, prime
 
 Library "panograph-client"
   Path: lib/client
@@ -37,7 +37,7 @@ Library "panograph-client"
 Library "test"
   Path: web
   Modules: server/Test
-  BuildDepends: eliom.server, panograph.server, prime, prime.unstable
+  BuildDepends: eliom.server, prime, prime.unstable
   ByteOpt: -thread
   NativeOpt: -thread
   CompiledObject: native
