@@ -14,6 +14,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open Unprime
+
 module Dltree = struct
 
   type 'a t = {
@@ -27,6 +29,9 @@ module Dltree = struct
   let is_root c = c.up == c
   let is_head c = c.up == c || c.up.down == c
   let is_leaf c = c.down == c
+  let is_first c = c.up.down == c
+  let is_last c = is_first c.next
+  let is_only c = c.next == c
 
   let make x =
     let rec r = {up = r; down = r; prev = r; next = r; value = x} in
@@ -39,6 +44,39 @@ module Dltree = struct
   let last c = if c.down == c then None else Some c.down.prev
   let next c = let n = c.next in if is_head n then None else Some n
   let prev c = if is_head c then None else Some c.prev
+
+  let rec first_leaf c = if is_leaf c then c else first_leaf c.down
+  let rec last_leaf c = if is_leaf c then c else last_leaf c.down.prev
+
+  let fold f u =
+    let rec loop = function
+      | None -> ident
+      | Some c -> fun acc -> loop (next c) (f c acc) in
+    loop (first u)
+
+  let iter f u =
+    let rec loop = function
+      | None -> ()
+      | Some c -> f c; loop (next c) in
+    loop (first u)
+
+  let exists f u =
+    let rec loop = function
+      | None -> false
+      | Some c -> f c || loop (next c) in
+    loop (first u)
+
+  let fold_ancestors f c =
+    let rec loop = function
+      | None -> ident
+      | Some c -> fun acc -> loop (up c) (f c acc) in
+    loop (up c)
+
+  let iter_ancestors f c =
+    let rec loop = function
+      | None -> ()
+      | Some c -> f c; loop (up c) in
+    loop (up c)
 
   let add_last x u =
     if u.down == u then begin

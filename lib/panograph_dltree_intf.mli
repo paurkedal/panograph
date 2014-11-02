@@ -16,16 +16,33 @@
 
 module type S = sig
   type 'a t
+
   val make : 'a -> 'a t
+
   val is_root : 'a t -> bool
   val is_leaf : 'a t -> bool
+  val is_first : 'a t -> bool
+  val is_last : 'a t -> bool
+  val is_only : 'a t -> bool
+
   val get : 'a t -> 'a
   val set : 'a -> 'a t -> unit
+
   val up : 'a t -> 'a t option
   val first : 'a t -> 'a t option
   val last : 'a t -> 'a t option
   val next : 'a t -> 'a t option
   val prev : 'a t -> 'a t option
+
+  val first_leaf : 'a t -> 'a t
+  val last_leaf : 'a t -> 'a t
+
+  val fold : ('a t -> 'b -> 'b) -> 'a t -> 'b -> 'b
+  val iter : ('a t -> unit) -> 'a t -> unit
+  val exists : ('a t -> bool) -> 'a t -> bool
+  val fold_ancestors : ('a t -> 'b -> 'b) -> 'a t -> 'b -> 'b
+  val iter_ancestors : ('a t -> unit) -> 'a t -> unit
+
   val add_first : 'a -> 'a t -> 'a t
   val add_last : 'a -> 'a t -> 'a t
   val add_before : 'a -> 'a t -> 'a t
