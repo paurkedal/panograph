@@ -34,6 +34,9 @@ module type S = sig
   val next : 'a t -> 'a t option
   val prev : 'a t -> 'a t option
 
+  val level : 'a t -> int
+  val left_compare : 'a t -> 'a t -> int
+
   val first_leaf : 'a t -> 'a t
   val last_leaf : 'a t -> 'a t
 

@@ -16,6 +16,8 @@
 
 open Unprime
 
+let ord_step = 1 lsl (if max_int lsr 60 <> 0 then 24 else 12)
+
 module Dltree = struct
 
   type 'a t = {
@@ -24,6 +26,8 @@ module Dltree = struct
     mutable prev : 'a t;
     mutable next : 'a t;
     mutable value : 'a;
+    level : int;
+    mutable ord : int;
   }
 
   let is_root c = c.up == c
@@ -34,7 +38,8 @@ module Dltree = struct
   let is_only c = c.next == c
 
   let make x =
-    let rec r = {up = r; down = r; prev = r; next = r; value = x} in
+    let rec r = {up = r; down = r; prev = r; next = r; value = x;
+		 level = 0; ord = 0} in
     r
 
   let get c = c.value
@@ -44,6 +49,17 @@ module Dltree = struct
   let last c = if c.down == c then None else Some c.down.prev
   let next c = let n = c.next in if is_head n then None else Some n
   let prev c = if is_head c then None else Some c.prev
+
+  let level c = c.level
+
+  let rec left_compare cA cB =
+    if cA.level < cB.level then
+      let o = left_compare cA cB.up in
+      if o = 0 then -1 else o else
+    if cA.level > cB.level then
+      let o = left_compare cA.up cB in
+      if o = 0 then 1 else o else
+    compare cA.ord cB.ord
 
   let rec first_leaf c = if is_leaf c then c else first_leaf c.down
   let rec last_leaf c = if is_leaf c then c else last_leaf c.down.prev
@@ -78,14 +94,19 @@ module Dltree = struct
       | Some c -> f c; loop (up c) in
     loop (up c)
 
-  let add_last x u =
+  (* TODO: Also check ord against min_int and max_int. *)
+
+  let add_last value u =
     if u.down == u then begin
-      let rec c = {up = u; down = c; prev = c; next = c; value = x} in
+      let rec c = {up = u; down = c; prev = c; next = c; value;
+		   level = u.level + 1; ord = 0} in
       u.down <- c;
       c
     end else begin
       let n = u.down in
-      let rec c = {up = u; down = c; prev = n.prev; next = n; value = x} in
+      let p = n.prev in
+      let rec c = {up = u; down = c; prev = p; next = n; value;
+		   level = n.level; ord = n.prev.ord + ord_step} in
       n.prev.next <- c;
       n.prev <- c;
       c
@@ -94,26 +115,35 @@ module Dltree = struct
   let add_first x u =
     let c = add_last x u in
     u.down <- c;
+    c.ord <- c.next.ord - ord_step;
     c
 
-  let add_after x p =
+  let add_between value p n =
+    let u = p.up in
+    if p.ord + 1 = n.ord then begin
+      let h = u.down in
+      let rec reorder ord c =
+	c.ord <- ord;
+	if c.next != h then reorder (ord + ord_step) c.next in
+      reorder 0 h
+    end;
+    let ord = (p.ord + n.ord) asr 1 in
+    assert (p.ord < ord && ord < n.ord);
+    let rec c = {up = u; down = c; prev = p; next = n; value;
+		 level = p.level; ord} in
+    p.next <- c;
+    n.prev <- c;
+    c
+
+  let add_after value p =
     let u = p.up in
     if u == p then invalid_arg "Dltree.add_after: Root node.";
-    let n = p.next in
-    let rec c = {up = u; down = c; prev = p; next = n; value = x} in
-    p.next <- c;
-    n.prev <- c;
-    c
+    if is_last p then add_last value u else add_between value p p.next
 
-  let add_before x n =
+  let add_before value n =
     let u = n.up in
     if u == n then invalid_arg "Dltree.add_before: Root node.";
-    let p = n.prev in
-    let rec c = {up = u; down = c; prev = p; next = n; value = x} in
-    p.next <- c;
-    n.prev <- c;
-    if u.down == n then u.down <- c;
-    c
+    if is_first n then add_first value u else add_between value n.prev n
 
   let delete_subtree c =
     let u = c.up in
