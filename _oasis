@@ -12,7 +12,7 @@ OCamlVersion: >= 4.01
 
 Library "panograph"
   Path: lib
-  BuildDepends: lwt
+  BuildDepends: lwt, prime
   Modules: Panograph_dltree, Panograph_dltree_intf
 
 #Library "panograph-server"
@@ -29,7 +29,8 @@ Library "panograph-client"
     Panograph_collection,
     Panograph_intf,
     Panograph_mapped,
-    Panograph_simple
+    Panograph_simple,
+    Panograph_tabular
   BuildDepends:
     eliom.client, lwt.syntax, js_of_ocaml.syntax,
     panograph, prime, prime.unstable
