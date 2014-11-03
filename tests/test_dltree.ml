@@ -37,6 +37,8 @@ let test_add_first x u =
   assert (Dltree.first u =? c);
   assert (Dltree.up c =? u);
   assert (Dltree.first u =? c);
+  assert (Dltree.left_compare u c < 0);
+  assert (Dltree.left_compare c u > 0);
   c
 
 let test_add_last x u =
@@ -48,6 +50,8 @@ let test_add_last x u =
   assert (Dltree.last u =? c);
   assert (Dltree.up c =? u);
   assert (Dltree.last u =? c);
+  assert (Dltree.left_compare u c < 0);
+  assert (Dltree.left_compare c u > 0);
   c
 
 let test_add_before x n =
@@ -55,9 +59,12 @@ let test_add_before x n =
   assert (Dltree.get c = x);
   assert (not (Dltree.is_root c));
   assert (Dltree.is_leaf c);
+  assert (not (Dltree.is_only c));
   assert (Dltree.prev n =? c);
   assert (Dltree.next c =? n);
   assert (Dltree.up c =?? Dltree.up n);
+  assert (Dltree.left_compare c n < 0);
+  assert (Dltree.left_compare n c > 0);
   c
 
 let test_add_after x p =
@@ -65,9 +72,12 @@ let test_add_after x p =
   assert (Dltree.get c = x);
   assert (not (Dltree.is_root c));
   assert (Dltree.is_leaf c);
+  assert (not (Dltree.is_only c));
   assert (Dltree.next p =? c);
   assert (Dltree.prev c =? p);
   assert (Dltree.up c =?? Dltree.up p);
+  assert (Dltree.left_compare c p > 0);
+  assert (Dltree.left_compare p c < 0);
   c
 
 let test_delete c =
@@ -95,6 +105,7 @@ let check_onelevel p xs =
 
 let test_sub p =
   let n20 = test_add_first 20 p in
+  assert (Dltree.is_only n20);
   assert (not (Dltree.is_leaf p));
   let n30 = test_add_last 30 p in
   let n10 = test_add_first 10 p in
