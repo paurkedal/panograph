@@ -121,9 +121,10 @@ module Tabular = struct
     assert found_old;
     assert (not found_new);
     let tc = Cs_map.find cs tn_old.tn_tcs in
-    tn_old.tn_tcs <- Cs_map.remove cs tn_old.tn_tcs;
-    tn_new.tn_tcs <- Cs_map.add cs tc tn_new.tn_tcs;
     let tc'_opt = Cs_map.get_o pos_new tn_new.tn_tcs in
+    tn_old.tn_tcs <- Cs_map.remove cs tn_old.tn_tcs;
+    Dom.removeChild tn_old.tn_tr tc;
+    tn_new.tn_tcs <- Cs_map.add cs tc tn_new.tn_tcs;
     Dom.insertBefore tn_new.tn_tr tc (Js.Opt.option tc'_opt)
 
   let insert_cell tab rs cs =
@@ -269,7 +270,7 @@ module Tabular = struct
 	  Eliom_lib.debug "refined at (%d, %d) by (%d, %d)"
 			  (Dltree.level blk.blk_rs) (Dltree.level blk.blk_cs)
 			  lr lc;
-	  Dltree.iter (loop_cs lc) cs
+	  loop_cs lc cs
 	end in
     Eliom_lib.debug "alloc_row, %b" (Dltree.is_only new_rs);
     loop_cs 0 tab.tab_root_cs
@@ -303,7 +304,7 @@ module Tabular = struct
 	  Eliom_lib.debug "refined at (%d, %d) by (%d, %d)"
 			  (Dltree.level blk.blk_rs) (Dltree.level blk.blk_cs)
 			  lr lc;
-	  Dltree.iter (loop_rs lr) rs
+	  loop_rs lr rs
 	end in
     Eliom_lib.debug "alloc_col, %b" (Dltree.is_only new_cs);
     loop_rs 0 tab.tab_root_rs
@@ -411,37 +412,40 @@ module Tabular = struct
     with Not_found ->
       invalid_arg "Tabular.get_tc: Not refined at this cell."
 
-  let get_tr tab rs =
-    let rs_leaf = Dltree.first_leaf rs in
-    assert (Rs_map.contains rs_leaf tab.tab_tns);
-    let tn = Rs_map.find rs_leaf tab.tab_tns in
-    tn.tn_tr
+  let set_tc tab rs cs tc' =
+    let rsn, csn = Dltree.(get rs, get cs) in
+    try
+      let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
+      match blk.blk_state with
+      | Single tc ->
+	assert (tc##rowSpan = rsn.rsn_span);
+	assert (tc##colSpan = csn.csn_span);
+	tc'##rowSpan <- rsn.rsn_span;
+	tc'##colSpan <- csn.csn_span;
+	let rs_leaf = Dltree.first_leaf rs in
+	assert (Rs_map.contains rs_leaf tab.tab_tns);
+	let tn = Rs_map.find rs_leaf tab.tab_tns in
+	assert (Cs_map.contains cs tn.tn_tcs);
+	assert (Cs_map.find cs tn.tn_tcs == tc);
+	blk.blk_state <- Single tc';
+	tn.tn_tcs <- Cs_map.add cs tc' tn.tn_tcs;
+	Dom.replaceChild tn.tn_tr tc' tc
+      | Refined _ ->
+	invalid_arg "Tabular.set_tc: This cell is refined."
+    with Not_found ->
+      invalid_arg "Tabular.set_tc: Not refined at this cell."
 
   (* Cf https://github.com/ocsigen/js_of_ocaml/pull/240 *)
   let coerce_to_tc : #Dom_html.element Js.t -> #Dom_html.tableCellElement Js.t =
     Js.Unsafe.coerce
 
   let draw_td tab rs cs content =
-    let rsn, csn = Dltree.get rs, Dltree.get cs in
     let td = Html5.D.td content in
-    let tc = get_tc tab rs cs in
-    assert (tc##rowSpan = rsn.rsn_span);
-    assert (tc##colSpan = csn.csn_span);
-    let tc' = coerce_to_tc (Html5.To_dom.of_td td) in
-    tc'##rowSpan <- rsn.rsn_span;
-    tc'##colSpan <- csn.csn_span;
-    Dom.replaceChild (get_tr tab rs) tc' tc
+    set_tc tab rs cs (coerce_to_tc (Html5.To_dom.of_td td))
 
   let draw_th tab rs cs content =
-    let rsn, csn = Dltree.get rs, Dltree.get cs in
     let th = Html5.D.th content in
-    let tc = get_tc tab rs cs in
-    assert (tc##rowSpan = rsn.rsn_span);
-    assert (tc##colSpan = csn.csn_span);
-    let tc' = coerce_to_tc (Html5.To_dom.of_th th) in
-    tc'##rowSpan <- rsn.rsn_span;
-    tc'##colSpan <- csn.csn_span;
-    Dom.replaceChild (get_tr tab rs) tc' tc
+    set_tc tab rs cs (coerce_to_tc (Html5.To_dom.of_th th))
 
   let create () =
     let root_rsn = {rsn_span = 1; rsn_blocks = Hashtbl.create 11} in
