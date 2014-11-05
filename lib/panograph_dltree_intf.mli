@@ -40,9 +40,9 @@ module type S = sig
   val first_leaf : 'a t -> 'a t
   val last_leaf : 'a t -> 'a t
 
-  val fold : ('a t -> 'b -> 'b) -> 'a t -> 'b -> 'b
-  val iter : ('a t -> unit) -> 'a t -> unit
-  val exists : ('a t -> bool) -> 'a t -> bool
+  val fold : ?depth: int -> ('a t -> 'b -> 'b) -> 'a t -> 'b -> 'b
+  val iter : ?depth: int ->('a t -> unit) -> 'a t -> unit
+  val exists : ?depth: int -> ('a t -> bool) -> 'a t -> bool
   val fold_ancestors : ('a t -> 'b -> 'b) -> 'a t -> 'b -> 'b
   val iter_ancestors : ('a t -> unit) -> 'a t -> unit
 

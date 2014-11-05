@@ -64,22 +64,25 @@ module Dltree = struct
   let rec first_leaf c = if is_leaf c then c else first_leaf c.down
   let rec last_leaf c = if is_leaf c then c else last_leaf c.down.prev
 
-  let fold f u =
+  let rec fold ?(depth = 1) f u =
+    if depth = 0 then f u else
     let rec loop = function
       | None -> ident
-      | Some c -> fun acc -> loop (next c) (f c acc) in
+      | Some c -> fun acc -> loop (next c) (fold ~depth:(depth - 1) f c acc) in
     loop (first u)
 
-  let iter f u =
+  let rec iter ?(depth = 1) f u =
+    if depth = 0 then f u else
     let rec loop = function
       | None -> ()
-      | Some c -> f c; loop (next c) in
+      | Some c -> iter ~depth:(depth - 1) f c; loop (next c) in
     loop (first u)
 
-  let exists f u =
+  let rec exists ?(depth = 1) f u =
+    if depth = 0 then f u else
     let rec loop = function
       | None -> false
-      | Some c -> f c || loop (next c) in
+      | Some c -> exists ~depth:(depth - 1) f c || loop (next c) in
     loop (first u)
 
   let fold_ancestors f c =
