@@ -82,6 +82,12 @@ module Tabular = struct
     mutable tab_next_col_id : int;
   }
 
+  let validate_tn tab rs tn =
+    let i = ref 0 in
+    Cs_map.iter (fun cs tc -> assert (tc##cellIndex = !i); incr i) tn.tn_tcs;
+    assert (!i = tn.tn_tr##cells##length)
+  let validate tab = Rs_map.iter (validate_tn tab) tab.tab_tns
+
   let insert_row tab rs =
     assert (Dltree.is_leaf rs);
     let found, pos = Rs_map.locate rs tab.tab_tns in
@@ -266,11 +272,11 @@ module Tabular = struct
 	  Eliom_lib.debug "tc##rowSpan <- %d" rsn.rsn_span;
 	  tc##rowSpan <- rsn.rsn_span
 	| Refined (lr, lc) ->
-	  assert (lc > 0);
 	  Eliom_lib.debug "refined at (%d, %d) by (%d, %d)"
 			  (Dltree.level blk.blk_rs) (Dltree.level blk.blk_cs)
 			  lr lc;
-	  loop_cs lc cs
+	  if lc > 0 then loop_cs lc cs
+		    else fill_cell tab new_rs cs
 	end in
     Eliom_lib.debug "alloc_row, %b" (Dltree.is_only new_rs);
     loop_cs 0 tab.tab_root_cs
@@ -300,11 +306,11 @@ module Tabular = struct
 	  Eliom_lib.debug "tc##colSpan <- %d" csn.csn_span;
 	  tc##colSpan <- csn.csn_span
 	| Refined (lr, lc) ->
-	  assert (lr > 0);
 	  Eliom_lib.debug "refined at (%d, %d) by (%d, %d)"
 			  (Dltree.level blk.blk_rs) (Dltree.level blk.blk_cs)
 			  lr lc;
-	  loop_rs lr rs
+	  if lr > 0 then loop_rs lr rs
+		    else fill_cell tab rs new_cs
 	end in
     Eliom_lib.debug "alloc_col, %b" (Dltree.is_only new_cs);
     loop_rs 0 tab.tab_root_rs
@@ -329,6 +335,7 @@ module Tabular = struct
 	let rsn = make_rsn () in
 	let rs = Dltree.add_first rsn rs_u in
 	tab.tab_tns <- Rs_map.add rs tn (Rs_map.remove rs_u tab.tab_tns);
+	alloc_row tab rs;
 	rs
       | Some rs1 ->
 	assert (Rs_map.contains rs1 tab.tab_tns);

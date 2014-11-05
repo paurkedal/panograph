@@ -40,6 +40,7 @@ module Tabular : sig
   module Colspan : SPAN_TREE with type tabular := t
 
   val create : unit -> t
+  val validate : t -> unit
   val ui : t -> [> `Table] Html5.elt
   val root_rowspan : t -> Rowspan.t
   val root_colspan : t -> Colspan.t
