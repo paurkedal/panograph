@@ -40,6 +40,7 @@ module Tabular = struct
 
   type blockstate =
     | Single of Dom_html.tableCellElement Js.t
+    | Refining of int * int * Dom_html.tableCellElement Js.t
     | Refined of int * int
 
   type block = {
@@ -154,6 +155,7 @@ module Tabular = struct
     let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
     match blk.blk_state with
     | Single tc -> invalid_arg "Tabular.for_subblocks"
+    | Refining _ -> ()
     | Refined (lr, lc) ->
       let rec loop_cs lc cs =
 	let rec loop_rs lr rs =
@@ -170,19 +172,27 @@ module Tabular = struct
     let cov_blk = Hashtbl.find cov_rsn.rsn_blocks cov_csn.csn_id in
     match cov_blk.blk_state with
     | Refined _ -> invalid_arg "Tabular.refine: Already refined."
+    | Refining _ -> invalid_arg "Tabular.refine: Already refined (but empty)."
     | Single tc ->
-      remove_cell tab cov_rs cov_cs;
-      cov_blk.blk_state <- Refined (lr, lc);
-      for_subblocks cov_rs cov_cs
-	(fun sub_rs sub_cs ->
-	  let sub_rsn, sub_csn = Dltree.(get sub_rs, get sub_cs) in
-	  let sub_tc = insert_cell tab sub_rs sub_cs in
-	  let sub_blk = {
-	    blk_state = Single sub_tc;
-	    blk_rs = sub_rs;
-	    blk_cs = sub_cs;
-	  } in
-	  Hashtbl.add sub_rsn.rsn_blocks sub_csn.csn_id sub_blk)
+      if lr > 0 && Dltree.is_leaf cov_rs || lc > 0 && Dltree.is_leaf cov_cs then
+      begin
+	Eliom_lib.debug "refine: Refining (%d, %d, _)" lr lc;
+	cov_blk.blk_state <- Refining (lr, lc, tc)
+      end else begin
+	Eliom_lib.debug "refine: Refined (%d, %d)" lr lc;
+	remove_cell tab cov_rs cov_cs;
+	cov_blk.blk_state <- Refined (lr, lc);
+	for_subblocks cov_rs cov_cs
+	  (fun sub_rs sub_cs ->
+	    let sub_rsn, sub_csn = Dltree.(get sub_rs, get sub_cs) in
+	    let sub_tc = insert_cell tab sub_rs sub_cs in
+	    let sub_blk = {
+	      blk_state = Single sub_tc;
+	      blk_rs = sub_rs;
+	      blk_cs = sub_cs;
+	    } in
+	    Hashtbl.add sub_rsn.rsn_blocks sub_csn.csn_id sub_blk)
+      end
 
   (* Find the inner cover of (rs, cs) spanning exactly rs. *)
   let rec blk_covering_rs rs cs =
@@ -260,6 +270,12 @@ module Tabular = struct
 	    migrate;
 	  Eliom_lib.debug "tc##rowSpan <- %d" rsn.rsn_span;
 	  tc##rowSpan <- rsn.rsn_span
+	| Refining (lr, lc, tc) ->
+	  if Dltree.level new_rs = Dltree.level blk.blk_rs + lr then begin
+	    assert (migrate = None);
+	    blk.blk_state <- Single tc;
+	    refine tab lr lc blk.blk_rs cs
+	  end
 	| Refined (lr, lc) ->
 	  Eliom_lib.debug "refined at (%d, %d) by (%d, %d)"
 			  (Dltree.level blk.blk_rs) (Dltree.level blk.blk_cs)
@@ -294,6 +310,11 @@ module Tabular = struct
 	| Single tc ->
 	  Eliom_lib.debug "tc##colSpan <- %d" csn.csn_span;
 	  tc##colSpan <- csn.csn_span
+	| Refining (lr, lc, tc) ->
+	  if Dltree.level new_cs = Dltree.level blk.blk_cs + lc then begin
+	    blk.blk_state <- Single tc;
+	    refine tab lr lc rs blk.blk_cs
+	  end
 	| Refined (lr, lc) ->
 	  Eliom_lib.debug "refined at (%d, %d) by (%d, %d)"
 			  (Dltree.level blk.blk_rs) (Dltree.level blk.blk_cs)
@@ -403,7 +424,7 @@ module Tabular = struct
       let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
       match blk.blk_state with
       | Single tc -> tc
-      | Refined _ ->
+      | Refining _ | Refined _ ->
 	invalid_arg "Tabular.get_tc: This cell is refined."
     with Not_found ->
       invalid_arg "Tabular.get_tc: Not refined at this cell."
@@ -426,7 +447,7 @@ module Tabular = struct
 	blk.blk_state <- Single tc';
 	tn.tn_tcs <- Cs_map.add cs tc' tn.tn_tcs;
 	Dom.replaceChild tn.tn_tr tc' tc
-      | Refined _ ->
+      | Refining _ | Refined _ ->
 	invalid_arg "Tabular.set_tc: This cell is refined."
     with Not_found ->
       invalid_arg "Tabular.set_tc: Not refined at this cell."
