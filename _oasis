@@ -13,7 +13,7 @@ OCamlVersion: >= 4.01
 Library "panograph"
   Path: lib
   BuildDepends: lwt, prime
-  Modules: Panograph_dltree, Panograph_dltree_intf
+  Modules: Panograph_dltree
 
 #Library "panograph-server"
 #  Path: lib/server
