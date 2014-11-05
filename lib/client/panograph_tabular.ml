@@ -184,17 +184,6 @@ module Tabular = struct
 	  } in
 	  Hashtbl.add sub_rsn.rsn_blocks sub_csn.csn_id sub_blk)
 
-  let rec adjust_rowspans dn rs =
-    let rsn = Dltree.get rs in
-    rsn.rsn_span <- rsn.rsn_span + dn;
-    Hashtbl.iter
-      (fun _ blk ->
-	match blk.blk_state with
-	| Single tc -> tc##rowSpan <- rsn.rsn_span
-	| Refined _ -> ())
-      rsn.rsn_blocks;
-    Option.iter (adjust_rowspans dn) (Dltree.up rs)
-
   (* Find the inner cover of (rs, cs) spanning exactly rs. *)
   let rec blk_covering_rs rs cs =
     let rsn, csn = Dltree.(get rs, get cs) in
