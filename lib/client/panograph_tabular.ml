@@ -109,6 +109,7 @@ module Tabular = struct
 
   let insert_cell' tn cs =
     let found, pos = Cs_map.locate cs tn.tn_tcs in
+    Eliom_lib.debug "insert_cell' (%d, %d)" tn.tn_tr##rowIndex pos;
     assert (not found);
     let tc = tn.tn_tr##insertCell(pos) in
     tn.tn_tcs <- Cs_map.add cs tc tn.tn_tcs;
@@ -116,6 +117,7 @@ module Tabular = struct
 
   let remove_cell' tn cs =
     let found, pos = Cs_map.locate cs tn.tn_tcs in
+    Eliom_lib.debug "remove_cell' (%d, %d)" tn.tn_tr##rowIndex pos;
     assert found;
     let tc = Cs_map.find cs tn.tn_tcs in
     assert (pos = tc##cellIndex);
@@ -125,6 +127,9 @@ module Tabular = struct
   let move_cell' tn_old tn_new cs =
     let found_old, pos_old = Cs_map.locate cs tn_old.tn_tcs in
     let found_new, pos_new = Cs_map.locate cs tn_new.tn_tcs in
+    Eliom_lib.debug "move_cell' (%d, %d) -> (%d, %d)"
+		    tn_old.tn_tr##rowIndex pos_old
+		    tn_new.tn_tr##rowIndex pos_new;
     assert found_old;
     assert (not found_new);
     let tc = Cs_map.find cs tn_old.tn_tcs in
@@ -176,10 +181,10 @@ module Tabular = struct
     | Single tc ->
       if lr > 0 && Dltree.is_leaf cov_rs || lc > 0 && Dltree.is_leaf cov_cs then
       begin
-	Eliom_lib.debug "refine: Refining (%d, %d, _)" lr lc;
+	Eliom_lib.debug "refine: Single -> Refining (%d, %d, _)" lr lc;
 	cov_blk.blk_state <- Refining (lr, lc, tc)
       end else begin
-	Eliom_lib.debug "refine: Refined (%d, %d)" lr lc;
+	Eliom_lib.debug "refine: Single -> Refined (%d, %d)" lr lc;
 	remove_cell tab cov_rs cov_cs;
 	cov_blk.blk_state <- Refined (lr, lc);
 	for_subblocks cov_rs cov_cs
@@ -194,33 +199,46 @@ module Tabular = struct
 	    Hashtbl.add sub_rsn.rsn_blocks sub_csn.csn_id sub_blk)
       end
 
+  let unrefine ?ignore_rs ?ignore_cs tab cov_rs cov_cs =
+    let cov_rsn, cov_csn = Dltree.(get cov_rs, get cov_cs) in
+    if not (Hashtbl.mem cov_rsn.rsn_blocks cov_csn.csn_id) then
+      invalid_arg "Tabular.unrefine: Blockspan between or below a refinement.";
+    let cov_blk = Hashtbl.find cov_rsn.rsn_blocks cov_csn.csn_id in
+    match cov_blk.blk_state with
+    | Refined (lr, lc) ->
+      Eliom_lib.debug "unrefine: Refined (%d, %d) -> Single" lr lc;
+      for_subblocks cov_rs cov_cs
+	(fun sub_rs sub_cs ->
+	  if not (Option.exists ((==) sub_cs) ignore_cs) &&
+	     not (Option.exists ((==) sub_rs) ignore_rs) then
+	  begin
+	    let sub_rsn, sub_csn = Dltree.(get sub_rs, get sub_cs) in
+	    assert (Hashtbl.mem sub_rsn.rsn_blocks sub_csn.csn_id);
+	    Hashtbl.remove sub_rsn.rsn_blocks sub_csn.csn_id;
+	    remove_cell tab sub_rs sub_cs
+	  end);
+      let cov_tc = insert_cell tab cov_rs cov_cs in
+      cov_blk.blk_state <- Single cov_tc
+    | Refining (lr, lc, tc) ->
+      Eliom_lib.debug "unrefine: Refining (%d, %d) -> Single" lr lc;
+      assert (lr > 0 && Dltree.is_leaf cov_rs ||
+	      lc > 0 && Dltree.is_leaf cov_cs);
+      cov_blk.blk_state <- Single tc
+    | Single _ -> invalid_arg "Tabular.unrefine: Not refined."
+
   (* Find the inner cover of (rs, cs) spanning exactly rs. *)
-  let rec blk_covering_rs rs cs =
+  let rec cover_at_rs rs cs =
     let rsn, csn = Dltree.(get rs, get cs) in
     try Some (Hashtbl.find rsn.rsn_blocks csn.csn_id)
     with Not_found ->
-      Option.search (blk_covering_rs rs) (Dltree.up cs)
+      Option.search (cover_at_rs rs) (Dltree.up cs)
 
   (* Find the inner cover of (rs, cs) spanning exactly cs. *)
-  let rec blk_covering_cs rs cs =
+  let rec cover_at_cs rs cs =
     let rsn, csn = Dltree.(get rs, get cs) in
     try Some (Hashtbl.find rsn.rsn_blocks csn.csn_id)
     with Not_found ->
-      Option.search (fun rs -> blk_covering_cs rs cs) (Dltree.up rs)
-
-  (* Finds the block covering (rs_inner, cs_inner) if any. *)
-  let rec find_cover rs_inner cs_inner =
-    let rec loop_cs cs =
-      let csn = Dltree.get cs in
-      let rec loop_rs rs =
-	let rsn = Dltree.get rs in
-	if Hashtbl.mem rsn.rsn_blocks csn.csn_id
-	then Some (ident (rs, cs))
-	else Option.search loop_rs (Dltree.up rs) in
-      match loop_rs rs_inner with
-      | Some _ as bs_opt -> bs_opt
-      | None -> Option.search loop_cs (Dltree.up cs) in
-    loop_cs cs_inner
+      Option.search (fun rs -> cover_at_cs rs cs) (Dltree.up rs)
 
   let fill_cell tab rs cs =
     let rsn, csn = Dltree.get rs, Dltree.get cs in
@@ -235,9 +253,20 @@ module Tabular = struct
     } in
     Hashtbl.add rsn.rsn_blocks csn.csn_id blk
 
+  let unfill_cell tab rs cs =
+    let rsn, csn = Dltree.(get rs, get cs) in
+    Hashtbl.remove rsn.rsn_blocks csn.csn_id;
+    remove_cell tab rs cs
+
   let tr_of_node node =
     Js.coerce_opt (Dom_html.CoerceTo.element node) Dom_html.CoerceTo.tr
 		  (fun _ -> assert false)
+
+  let maybe_move_cell tc cs (tn_old, tn_new) =
+    let tc_tr =
+      tr_of_node (Js.Opt.get (tc##parentNode) (fun _ -> assert false)) in
+    if tc_tr == tn_old.tn_tr then
+      move_cell' tn_old tn_new cs
 
   (* We just added new_rs, extend rowspans or allocate new cells. *)
   let alloc_row ?migrate tab new_rs =
@@ -254,21 +283,14 @@ module Tabular = struct
     (* Then allocate or extend the cells. *)
     let rec loop_cs lc cs =
       if lc > 0 then Dltree.iter (loop_cs (lc - 1)) cs else
-      match blk_covering_cs new_rs cs with
+      match cover_at_cs new_rs cs with
       | None ->
 	fill_cell tab new_rs cs
       | Some blk ->
 	let rsn = Dltree.get blk.blk_rs in
 	begin match blk.blk_state with
 	| Single tc ->
-	  Option.iter
-	    (fun (tn_old, tn_new) ->
-	      let tc_tr = tr_of_node (Js.Opt.get (tc##parentNode)
-						 (fun _ -> assert false)) in
-	      if tc_tr == tn_old.tn_tr then
-		move_cell' tn_old tn_new cs)
-	    migrate;
-	  Eliom_lib.debug "tc##rowSpan <- %d" rsn.rsn_span;
+	  Option.iter (maybe_move_cell tc cs) migrate;
 	  tc##rowSpan <- rsn.rsn_span
 	| Refining (lr, lc, tc) ->
 	  if Dltree.level new_rs = Dltree.level blk.blk_rs + lr then begin
@@ -286,6 +308,42 @@ module Tabular = struct
     Eliom_lib.debug "alloc_row, %b" (Dltree.is_only new_rs);
     loop_cs 0 tab.tab_root_cs
 
+  let dealloc_row ?migrate tab old_rs =
+
+    if not (Dltree.is_only old_rs) then
+      Dltree.iter_ancestors
+	(fun rs -> let rsn = Dltree.get rs in rsn.rsn_span <- rsn.rsn_span - 1)
+	old_rs;
+
+    let rec loop_cs lc cs =
+      if lc > 0 then Dltree.iter (loop_cs (lc - 1)) cs else
+      let rs = match Dltree.up old_rs with
+	       | None -> assert false
+	       | Some rs -> rs in
+      match cover_at_cs rs cs with
+      | None ->
+	Eliom_lib.debug "dealloc_row: unfill_cell";
+	unfill_cell tab old_rs cs
+      | Some blk ->
+	let rsn = Dltree.get blk.blk_rs in
+	begin match blk.blk_state with
+	| Single tc ->
+	  Eliom_lib.debug "dealloc_row: Single";
+	  tc##rowSpan <- rsn.rsn_span;
+	  Option.iter (maybe_move_cell tc cs) migrate
+	| Refining (lr, lc, _) -> ()
+	| Refined (lr, lc) ->
+	  Eliom_lib.debug "dealloc_row: Refined (%d, %d)" lr lc;
+	  if lc > 0 then loop_cs lc cs else unfill_cell tab old_rs cs;
+	  if not (Dltree.exists ~depth:lr ((!=) old_rs) blk.blk_rs) then begin
+	    unrefine ~ignore_rs:old_rs tab blk.blk_rs cs;
+	    match blk.blk_state with
+	    | Single tc -> blk.blk_state <- Refining (lr, lc, tc)
+	    | _ -> assert false
+	  end
+	end in
+    loop_cs 0 tab.tab_root_cs
+
   (* We just added new_cs, extend colspans or allocate new cells. *)
   let alloc_column tab new_cs =
 
@@ -298,10 +356,10 @@ module Tabular = struct
 	  csn.csn_span <- csn.csn_span + 1)
 	new_cs;
 
-    (* Then allocate the cells. *)
+    (* Then allocate or extend the cells. *)
     let rec loop_rs lr rs =
       if lr > 0 then Dltree.iter (loop_rs (lr - 1)) rs else
-      match blk_covering_rs rs new_cs with
+      match cover_at_rs rs new_cs with
       | None ->
 	fill_cell tab rs new_cs
       | Some blk ->
@@ -323,6 +381,36 @@ module Tabular = struct
 		    else fill_cell tab rs new_cs
 	end in
     Eliom_lib.debug "alloc_col, %b" (Dltree.is_only new_cs);
+    loop_rs 0 tab.tab_root_rs
+
+  let dealloc_column tab old_cs =
+    if not (Dltree.is_only old_cs) then
+      Dltree.iter_ancestors
+	(fun cs -> let csn = Dltree.get cs in csn.csn_span <- csn.csn_span - 1)
+	old_cs;
+
+    let rec loop_rs lr rs =
+      if lr > 0 then Dltree.iter (loop_rs (lr - 1)) rs else
+      let cs = match Dltree.up old_cs with
+	       | None -> assert false
+	       | Some cs -> cs in
+      match cover_at_rs rs cs with
+      | None -> unfill_cell tab rs old_cs
+      | Some blk ->
+	let csn = Dltree.get blk.blk_cs in
+	begin match blk.blk_state with
+	| Single tc -> tc##colSpan <- csn.csn_span
+	| Refining (lr, lc, _) -> ()
+	| Refined (lr, lc) ->
+	  if lr > 0 then loop_rs lr rs else unfill_cell tab rs old_cs;
+	  if not (Dltree.exists ~depth:lc ((!=) old_cs) blk.blk_cs) then begin
+	    unrefine ~ignore_cs:old_cs tab rs blk.blk_cs;
+	    match blk.blk_state with
+	    | Single tc -> blk.blk_state <- Refining (lr, lc, tc)
+	    | _ -> assert false
+	  end
+	end in
+    Eliom_lib.debug "dealloc_col, %b" (Dltree.is_only old_cs);
     loop_rs 0 tab.tab_root_rs
 
   module Rowspan = struct
@@ -347,7 +435,8 @@ module Tabular = struct
 	tab.tab_tns <- Rs_map.add rs tn (Rs_map.remove rs_u tab.tab_tns);
 	alloc_row tab rs;
 	rs
-      | Some rs1 ->
+      | Some rs1' ->
+	let rs1 = Dltree.first_leaf rs1' in
 	assert (Rs_map.contains rs1 tab.tab_tns);
 	let tn1 = Rs_map.find rs1 tab.tab_tns in
 	let rsn0 = make_rsn () in
@@ -379,8 +468,33 @@ module Tabular = struct
       | None -> add_first tab rs
       | Some last_rs -> add_after tab last_rs
 
-    let delete tab rs =
-      assert false (* FIXME *)
+    let rec delete tab rs =
+      let rs_u =
+	match Dltree.up rs with
+	| None -> invalid_arg "Tabular.Rowspan.delete: Cannot delete root."
+	| Some rs_u -> rs_u in
+      while not (Dltree.is_leaf rs) do
+	Option.iter (delete tab) (Dltree.last rs)
+      done;
+      Eliom_lib.debug "%b %b %b" (Dltree.is_first rs) (Dltree.is_last rs) (Dltree.is_only rs);
+      if Dltree.is_only rs then begin
+	assert (Rs_map.contains rs tab.tab_tns);
+	let tn = Rs_map.find rs tab.tab_tns in
+	dealloc_row tab rs;
+	tab.tab_tns <- Rs_map.add rs_u tn (Rs_map.remove rs tab.tab_tns)
+      end else if Dltree.is_first rs then begin
+	assert (Rs_map.contains rs tab.tab_tns);
+	let tn0 = Rs_map.find rs tab.tab_tns in
+	let rs1 = Dltree.first_leaf (Option.get (Dltree.next rs)) in
+	assert (Rs_map.contains rs1 tab.tab_tns);
+	let tn1 = Rs_map.find rs1 tab.tab_tns in
+	dealloc_row ~migrate:(tn0, tn1) tab rs;
+	remove_row tab rs
+      end else begin
+	dealloc_row tab rs;
+	remove_row tab rs
+      end;
+      Dltree.delete_subtree rs
   end
 
   module Colspan = struct
@@ -414,8 +528,12 @@ module Tabular = struct
       let cs = Dltree.add_after (make_csn tab) cs_p in
       alloc_column tab cs; cs
 
-    let delete tab cs =
-      assert false (* FIXME *)
+    let rec delete tab cs =
+      while not (Dltree.is_leaf cs) do
+	Option.iter (delete tab) (Dltree.last cs)
+      done;
+      dealloc_column tab cs;
+      Dltree.delete_subtree cs
   end
 
   let get_tc tab rs cs =
