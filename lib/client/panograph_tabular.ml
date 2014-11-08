@@ -269,7 +269,7 @@ module Tabular = struct
       move_cell' tn_old tn_new cs
 
   (* We just added new_rs, extend rowspans or allocate new cells. *)
-  let alloc_row ?migrate tab new_rs =
+  let alloc_row ?transfer tab new_rs =
 
     (* First fix the ancestor rowspans if this is not the first subspan. *)
     if not (Dltree.is_only new_rs) then
@@ -290,11 +290,11 @@ module Tabular = struct
 	let rsn = Dltree.get blk.blk_rs in
 	begin match blk.blk_state with
 	| Single tc ->
-	  Option.iter (maybe_move_cell tc cs) migrate;
+	  Option.iter (maybe_move_cell tc cs) transfer;
 	  tc##rowSpan <- rsn.rsn_span
 	| Refining (lr, lc, tc) ->
 	  if Dltree.level new_rs = Dltree.level blk.blk_rs + lr then begin
-	    assert (migrate = None);
+	    assert (transfer = None);
 	    blk.blk_state <- Single tc;
 	    refine tab lr lc blk.blk_rs cs
 	  end
@@ -308,7 +308,7 @@ module Tabular = struct
     Eliom_lib.debug "alloc_row, %b" (Dltree.is_only new_rs);
     loop_cs 0 tab.tab_root_cs
 
-  let dealloc_row ?migrate tab old_rs =
+  let dealloc_row ?transfer tab old_rs =
 
     if not (Dltree.is_only old_rs) then
       Dltree.iter_ancestors
@@ -330,7 +330,7 @@ module Tabular = struct
 	| Single tc ->
 	  Eliom_lib.debug "dealloc_row: Single";
 	  tc##rowSpan <- rsn.rsn_span;
-	  Option.iter (maybe_move_cell tc cs) migrate
+	  Option.iter (maybe_move_cell tc cs) transfer
 	| Refining (lr, lc, _) -> ()
 	| Refined (lr, lc) ->
 	  Eliom_lib.debug "dealloc_row: Refined (%d, %d)" lr lc;
@@ -442,7 +442,7 @@ module Tabular = struct
 	let rsn0 = make_rsn () in
 	let rs0 = Dltree.add_first rsn0 rs_u in
 	let tn0 = insert_row tab rs0 in
-	alloc_row ~migrate:(tn1, tn0) tab rs0;
+	alloc_row ~transfer:(tn1, tn0) tab rs0;
 	rs0
 
     let add_before tab rs_n =
@@ -488,7 +488,7 @@ module Tabular = struct
 	let rs1 = Dltree.first_leaf (Option.get (Dltree.next rs)) in
 	assert (Rs_map.contains rs1 tab.tab_tns);
 	let tn1 = Rs_map.find rs1 tab.tab_tns in
-	dealloc_row ~migrate:(tn0, tn1) tab rs;
+	dealloc_row ~transfer:(tn0, tn1) tab rs;
 	remove_row tab rs
       end else begin
 	dealloc_row tab rs;
