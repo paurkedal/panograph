@@ -22,13 +22,29 @@ open Unprime_option
 module type SPAN_TREE = sig
   type t
   type tabular
+
+  val level : t -> int
   val is_root : t -> bool
   val is_leaf : t -> bool
+  val is_first : t -> bool
+  val is_last : t -> bool
+  val is_only : t -> bool
+
   val up : t -> t option
   val first : t -> t option
   val last : t -> t option
   val next : t -> t option
   val prev : t -> t option
+
+  val first_leaf : t -> t
+  val last_leaf : t -> t
+
+  val fold : ?depth: int -> (t -> 'a -> 'a) -> t -> 'a -> 'a
+  val iter : ?depth: int -> (t -> unit) -> t -> unit
+  val iteri : ?depth: int -> (int -> t -> unit) -> t -> unit
+  val iterp : depth: int -> (int list -> t -> unit) -> t -> unit
+  val exists : ?depth: int -> (t -> bool) -> t -> bool
+
   val add_first : tabular -> t -> t
   val add_last : tabular -> t -> t
   val add_before : tabular -> t -> t
@@ -415,13 +431,24 @@ module Tabular = struct
 
   module Rowspan = struct
     type t = rowspan_node Dltree.t
+    let level = Dltree.level
     let is_root = Dltree.is_root
     let is_leaf = Dltree.is_leaf
+    let is_first = Dltree.is_first
+    let is_last = Dltree.is_last
+    let is_only = Dltree.is_only
     let up = Dltree.up
     let first = Dltree.first
     let last = Dltree.last
     let next = Dltree.next
     let prev = Dltree.prev
+    let first_leaf = Dltree.first_leaf
+    let last_leaf = Dltree.last_leaf
+    let fold = Dltree.fold
+    let iter = Dltree.iter
+    let iteri = Dltree.iteri
+    let iterp = Dltree.iterp
+    let exists = Dltree.exists
 
     let make_rsn () = { rsn_span = 1; rsn_blocks = Hashtbl.create 11; }
 
@@ -499,13 +526,24 @@ module Tabular = struct
 
   module Colspan = struct
     type t = colspan_node Dltree.t
+    let level = Dltree.level
     let is_root = Dltree.is_root
     let is_leaf = Dltree.is_leaf
+    let is_first = Dltree.is_first
+    let is_last = Dltree.is_last
+    let is_only = Dltree.is_only
     let up = Dltree.up
     let first = Dltree.first
     let last = Dltree.last
     let next = Dltree.next
     let prev = Dltree.prev
+    let first_leaf = Dltree.first_leaf
+    let last_leaf = Dltree.last_leaf
+    let fold = Dltree.fold
+    let iter = Dltree.iter
+    let iteri = Dltree.iteri
+    let iterp = Dltree.iterp
+    let exists = Dltree.exists
 
     let make_csn tab =
       let csn_id = tab.tab_next_col_id in

@@ -78,6 +78,19 @@ module Dltree = struct
       | Some c -> iter ~depth:(depth - 1) f c; loop (next c) in
     loop (first u)
 
+  let iteri ?depth f u =
+    ignore (fold ?depth (fun c i -> f i c; i + 1) u 0 : int)
+
+  let rec iterp' ~depth ~path f u =
+    if depth = 0 then f (List.rev path) u else
+    let rec loop i = function
+      | None -> ()
+      | Some c ->
+	iterp' ~depth:(depth - 1) ~path:(i :: path) f c;
+	loop (i + 1) (next c) in
+    loop 0 (first u)
+  let iterp ~depth f u = iterp' ~depth ~path:[] f u
+
   let rec exists ?(depth = 1) f u =
     if depth = 0 then f u else
     let rec loop = function
