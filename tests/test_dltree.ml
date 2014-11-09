@@ -92,6 +92,8 @@ let test_delete c =
   | Some u, Some p, None -> assert (Dltree.last u =? p)
   | Some u, Some p, Some n -> ()
 
+let rec nth i c = if i = 0 then c else nth (i - 1) (Option.get (Dltree.next c))
+
 let check_onelevel p xs =
   let rec check_from next c_opt = function
     | [] -> assert (c_opt = None)
@@ -127,6 +129,48 @@ let test_sub p =
   check_onelevel p [10; 20; 30];
   ()
 
+let rec pick_random c =
+  if Dltree.is_leaf c then c else
+  if Random.int 2 = 0 then c else
+  let n = Dltree.fold (fun _ -> succ) c 0 in
+  pick_random (nth (Random.int n) (Option.get (Dltree.first c)))
+
+let add_random a =
+  let c = pick_random a in
+  match Random.int (if Dltree.is_root c then 2 else 4) with
+  | 0 -> test_add_first 0 c
+  | 1 -> test_add_last 0 c
+  | 2 -> test_add_before 0 c
+  | 3 -> test_add_after 0 c
+  | _ -> assert false
+
+let remove_random a =
+  let c = pick_random a in
+  if not (Dltree.is_root c) then Dltree.delete_subtree c
+
+let mutate c =
+  if Random.int 8 = 0
+  then remove_random c
+  else ignore (add_random c : int Dltree.t)
+
+let rec enumerate i c =
+  Dltree.set !i c; incr i;
+  Dltree.iter (enumerate i) c
+
+let test_random () =
+  for i = 0 to 99 do
+    let c = Dltree.make 0 in
+    for j = 0 to 99 do
+      mutate c
+    done;
+    enumerate (ref 0) c;
+    for j = 0 to 99 do
+      let a = pick_random c in
+      let b = pick_random c in
+      assert (Dltree.left_compare a b = compare (Dltree.get a) (Dltree.get b))
+    done
+  done
+
 let () =
   let root = Dltree.make 0 in
   assert (Dltree.is_root root);
@@ -142,4 +186,4 @@ let () =
 
   test_sub root;
   test_sub (Option.get (Dltree.first root));
-  ()
+  test_random ()
