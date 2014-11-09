@@ -59,6 +59,9 @@ module Dltree = struct
     if cA.level > cB.level then
       let o = left_compare cA.up cB in
       if o = 0 then 1 else o else
+    if cA.level > 0 then
+      let o = left_compare cA.up cB.up in
+      if o = 0 then compare cA.ord cB.ord else o else
     compare cA.ord cB.ord
 
   let rec first_leaf c = if is_leaf c then c else first_leaf c.down
