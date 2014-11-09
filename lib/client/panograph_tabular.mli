@@ -52,6 +52,11 @@ end
 module Tabular : sig
   type t
 
+  type state =
+    | Leaf
+    | Split of int * int
+    | Invalid
+
   module Rowspan : SPAN_TREE with type tabular := t
   module Colspan : SPAN_TREE with type tabular := t
 
@@ -61,6 +66,7 @@ module Tabular : sig
   val root_rowspan : t -> Rowspan.t
   val root_colspan : t -> Colspan.t
 
+  val state : t -> Rowspan.t -> Colspan.t -> state
   val refine : t -> int -> int -> Rowspan.t -> Colspan.t -> unit
   val draw_th : t -> Rowspan.t -> Colspan.t ->
 		Html5_types.th_content Html5.elt list -> unit

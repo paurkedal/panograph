@@ -655,6 +655,20 @@ module Tabular = struct
     Hashtbl.add root_rsn.rsn_blocks 0 blk;
     tab
 
+  type state =
+    | Leaf
+    | Split of int * int
+    | Invalid
+
+  let state tab rs cs =
+    let rsn, csn = Dltree.(get rs, get cs) in
+    try
+      let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
+      match blk.blk_state with
+      | Single _ -> Leaf
+      | Refined (lr, lc) | Refining (lr, lc, _) -> Split (lr, lc)
+    with Not_found -> Invalid
+
   let ui t = Html5.Of_dom.of_table t.tab_table
   let root_rowspan t = t.tab_root_rs
   let root_colspan t = t.tab_root_cs
