@@ -183,13 +183,9 @@ module Tabular = struct
     | Single tc -> invalid_arg "Tabular.for_subblocks"
     | Refining _ -> ()
     | Refined (lr, lc) ->
-      let rec loop_cs lc cs =
-	let rec loop_rs lr rs =
-	  if lr > 0 then Dltree.iter (loop_rs (lr - 1)) rs
-		    else f rs cs in
-	if lc > 0 then Dltree.iter (loop_cs (lc - 1)) cs
-		  else loop_rs lr rs in
-      loop_cs lc cs
+      Dltree.iter ~depth:lc
+	(fun cs -> Dltree.iter ~depth:lr (fun rs -> f rs cs) rs)
+	cs
 
   let refine tab lr lc cov_rs cov_cs =
     let cov_rsn, cov_csn = Dltree.(get cov_rs, get cov_cs) in
@@ -303,9 +299,10 @@ module Tabular = struct
     let rec loop_cs lc cs =
       if lc > 0 then Dltree.iter (loop_cs (lc - 1)) cs else
       match cover_at_cs new_rs cs with
-      | None ->
-	fill_cell tab new_rs cs
+      | None ->     (* At top rowspan within this colspan, so *)
+	fill_cell tab new_rs cs  (* add the missing subblock. *)
       | Some blk ->
+	assert (blk.blk_rs != new_rs);
 	let rsn = Dltree.get blk.blk_rs in
 	begin match blk.blk_state with
 	| Single tc ->
@@ -321,8 +318,12 @@ module Tabular = struct
 	  Eliom_lib.debug "refined at (%d, %d) by (%d, %d)"
 			  (Dltree.level blk.blk_rs) (Dltree.level blk.blk_cs)
 			  lr lc;
-	  if lc > 0 then loop_cs lc cs
-		    else fill_cell tab new_rs cs
+	  if lc > 0 then
+	    loop_cs lc cs
+	  else begin
+	    assert (lr = Dltree.level blk.blk_rs - Dltree.level new_rs);
+	    fill_cell tab new_rs cs
+	  end
 	end in
     Eliom_lib.debug "alloc_row, %b" (Dltree.is_only new_rs);
     loop_cs 0 tab.tab_root_cs
@@ -379,9 +380,10 @@ module Tabular = struct
     let rec loop_rs lr rs =
       if lr > 0 then Dltree.iter (loop_rs (lr - 1)) rs else
       match cover_at_rs rs new_cs with
-      | None ->
-	fill_cell tab rs new_cs
+      | None ->     (* At top colspan within this rowspan, so *)
+	fill_cell tab rs new_cs  (* add the missing subblock. *)
       | Some blk ->
+	assert (blk.blk_cs != new_cs);
 	let csn = Dltree.get blk.blk_cs in
 	begin match blk.blk_state with
 	| Single tc ->
@@ -396,8 +398,12 @@ module Tabular = struct
 	  Eliom_lib.debug "refined at (%d, %d) by (%d, %d)"
 			  (Dltree.level blk.blk_rs) (Dltree.level blk.blk_cs)
 			  lr lc;
-	  if lr > 0 then loop_rs lr rs
-		    else fill_cell tab rs new_cs
+	  if lr > 0 then
+	    loop_rs lr rs
+	  else begin
+	    assert (lc = Dltree.level new_cs - Dltree.level blk.blk_cs);
+	    fill_cell tab rs new_cs
+	  end
 	end in
     Eliom_lib.debug "alloc_col, %b" (Dltree.is_only new_cs);
     loop_rs 0 tab.tab_root_rs
