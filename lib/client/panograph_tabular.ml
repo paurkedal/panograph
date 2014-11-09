@@ -170,9 +170,14 @@ module Tabular = struct
     let tn = Rs_map.find rs_leaf tab.tab_tns in
     remove_cell' tn cs
 
-  let has_subblock lr lc rs cs =
+  let has_subblock ?ignore_rs ?ignore_cs lr lc rs cs =
     Dltree.exists ~depth:lr
-      (fun _ -> Dltree.exists ~depth:lc (fun _ -> true) cs)
+      (fun rs ->
+	not (Option.exists ((==) rs) ignore_rs) &&
+	Dltree.exists ~depth:lc
+	  (fun cs ->
+	    not (Option.exists ((==) cs) ignore_cs))
+	  cs)
       rs
 
   let for_subblocks rs cs f =
@@ -237,7 +242,7 @@ module Tabular = struct
       cov_blk.blk_state <- Single cov_tc
     | Refining (lr, lc, tc) ->
       Eliom_lib.debug "unrefine: Refining (%d, %d) -> Single" lr lc;
-      assert (not (has_subblock lr lc cov_rs cov_cs));
+      assert (not (has_subblock ?ignore_rs ?ignore_cs lr lc cov_rs cov_cs));
       cov_blk.blk_state <- Single tc
     | Single _ -> invalid_arg "Tabular.unrefine: Not refined."
 
@@ -309,6 +314,7 @@ module Tabular = struct
 	  Option.iter (maybe_move_cell tc cs) transfer;
 	  tc##rowSpan <- rsn.rsn_span
 	| Refining (lr, lc, tc) ->
+	  tc##rowSpan <- rsn.rsn_span;
 	  if Dltree.level new_rs = Dltree.level blk.blk_rs + lr then begin
 	    assert (transfer = None);
 	    blk.blk_state <- Single tc;
@@ -335,32 +341,44 @@ module Tabular = struct
 	(fun rs -> let rsn = Dltree.get rs in rsn.rsn_span <- rsn.rsn_span - 1)
 	old_rs;
 
-    let rec loop_cs lc cs =
-      if lc > 0 then Dltree.iter (loop_cs (lc - 1)) cs else
-      let rs = match Dltree.up old_rs with
-	       | None -> assert false
-	       | Some rs -> rs in
-      match cover_at_cs rs cs with
-      | None ->
-	Eliom_lib.debug "dealloc_row: unfill_cell";
-	unfill_cell tab old_rs cs
+    let recheck_cover cs =
+      match cover_at_cs old_rs cs with
+      | None -> ()
       | Some blk ->
-	let rsn = Dltree.get blk.blk_rs in
 	begin match blk.blk_state with
-	| Single tc ->
-	  Eliom_lib.debug "dealloc_row: Single";
-	  tc##rowSpan <- rsn.rsn_span;
-	  Option.iter (maybe_move_cell tc cs) transfer
-	| Refining (lr, lc, _) -> ()
+	| Single _ | Refining _ -> assert false
 	| Refined (lr, lc) ->
-	  Eliom_lib.debug "dealloc_row: Refined (%d, %d)" lr lc;
-	  if lc > 0 then loop_cs lc cs else unfill_cell tab old_rs cs;
 	  if not (Dltree.exists ~depth:lr ((!=) old_rs) blk.blk_rs) then begin
 	    unrefine ~ignore_rs:old_rs tab blk.blk_rs cs;
 	    match blk.blk_state with
 	    | Single tc -> blk.blk_state <- Refining (lr, lc, tc)
 	    | _ -> assert false
 	  end
+	end in
+
+    let rec loop_cs lc cs =
+      if lc > 0 then Dltree.iter (loop_cs (lc - 1)) cs else
+      match cover_at_cs old_rs cs with
+      | None -> assert false
+      | Some blk ->
+	let rsn = Dltree.get blk.blk_rs in
+	begin match blk.blk_state with
+	| Single tc | Refining (_, _, tc) ->
+	  if blk.blk_rs == old_rs then begin
+	    unfill_cell tab old_rs cs;
+	    recheck_cover cs
+	  end else begin
+	    Eliom_lib.debug "dealloc_row: Single";
+	    tc##rowSpan <- rsn.rsn_span;
+	    Option.iter (maybe_move_cell tc cs) transfer
+	  end
+	| Refined (lr, lc) ->
+	  Eliom_lib.debug "dealloc_row: Refined (%d, %d)" lr lc;
+	  if lc > 0 then loop_cs lc cs else begin
+	    assert (lr = Dltree.level old_rs - Dltree.level blk.blk_rs);
+	    unfill_cell tab old_rs cs
+	  end;
+	  recheck_cover cs
 	end in
     loop_cs 0 tab.tab_root_cs
 
@@ -390,6 +408,7 @@ module Tabular = struct
 	  Eliom_lib.debug "tc##colSpan <- %d" csn.csn_span;
 	  tc##colSpan <- csn.csn_span
 	| Refining (lr, lc, tc) ->
+	  tc##colSpan <- csn.csn_span;
 	  if Dltree.level new_cs = Dltree.level blk.blk_cs + lc then begin
 	    blk.blk_state <- Single tc;
 	    refine tab lr lc rs blk.blk_cs
@@ -414,26 +433,42 @@ module Tabular = struct
 	(fun cs -> let csn = Dltree.get cs in csn.csn_span <- csn.csn_span - 1)
 	old_cs;
 
-    let rec loop_rs lr rs =
-      if lr > 0 then Dltree.iter (loop_rs (lr - 1)) rs else
-      let cs = match Dltree.up old_cs with
-	       | None -> assert false
-	       | Some cs -> cs in
-      match cover_at_rs rs cs with
-      | None -> unfill_cell tab rs old_cs
+    let rec recheck_cover rs =
+      match cover_at_rs rs old_cs with
+      | None -> ()
       | Some blk ->
-	let csn = Dltree.get blk.blk_cs in
 	begin match blk.blk_state with
-	| Single tc -> tc##colSpan <- csn.csn_span
-	| Refining (lr, lc, _) -> ()
+	| Single _ | Refining _ -> assert false
 	| Refined (lr, lc) ->
-	  if lr > 0 then loop_rs lr rs else unfill_cell tab rs old_cs;
 	  if not (Dltree.exists ~depth:lc ((!=) old_cs) blk.blk_cs) then begin
 	    unrefine ~ignore_cs:old_cs tab rs blk.blk_cs;
 	    match blk.blk_state with
 	    | Single tc -> blk.blk_state <- Refining (lr, lc, tc)
 	    | _ -> assert false
 	  end
+	end in
+
+    let rec loop_rs lr rs =
+      if lr > 0 then Dltree.iter (loop_rs (lr - 1)) rs else
+      match cover_at_rs rs old_cs with
+      | None -> assert false
+      | Some blk ->
+	let csn = Dltree.get blk.blk_cs in
+	begin match blk.blk_state with
+	| Single tc | Refining (_, _, tc) ->
+	  Eliom_lib.debug "dealloc_column: At Single";
+	  if blk.blk_cs == old_cs then begin
+	    unfill_cell tab rs old_cs;
+	    recheck_cover rs
+	  end else
+	    tc##colSpan <- csn.csn_span
+	| Refined (lr, lc) ->
+	  Eliom_lib.debug "dealloc_column: At Refined (%d, %d)" lr lc;
+	  if lr > 0 then loop_rs lr rs else begin
+	    assert (lc = Dltree.level old_cs - Dltree.level blk.blk_cs);
+	    unfill_cell tab rs old_cs
+	  end;
+	  recheck_cover rs
 	end in
     Eliom_lib.debug "dealloc_col, %b" (Dltree.is_only old_cs);
     loop_rs 0 tab.tab_root_rs
