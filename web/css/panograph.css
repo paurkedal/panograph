@@ -4,3 +4,5 @@ body {
 }
 .dirty { border-color: #0000ff; }
 .error { color: #990000; font-weight: bold; }
+
+td { border: solid thin #aaa; }
