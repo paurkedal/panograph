@@ -170,6 +170,11 @@ module Tabular = struct
     let tn = Rs_map.find rs_leaf tab.tab_tns in
     remove_cell' tn cs
 
+  let has_subblock lr lc rs cs =
+    Dltree.exists ~depth:lr
+      (fun _ -> Dltree.exists ~depth:lc (fun _ -> true) cs)
+      rs
+
   let for_subblocks rs cs f =
     let rsn, csn = Dltree.(get rs, get cs) in
     assert (Hashtbl.mem rsn.rsn_blocks csn.csn_id);
@@ -195,11 +200,7 @@ module Tabular = struct
     | Refined _ -> invalid_arg "Tabular.refine: Already refined."
     | Refining _ -> invalid_arg "Tabular.refine: Already refined (but empty)."
     | Single tc ->
-      if lr > 0 && Dltree.is_leaf cov_rs || lc > 0 && Dltree.is_leaf cov_cs then
-      begin
-	Eliom_lib.debug "refine: Single -> Refining (%d, %d, _)" lr lc;
-	cov_blk.blk_state <- Refining (lr, lc, tc)
-      end else begin
+      if has_subblock lr lc cov_rs cov_cs then begin
 	Eliom_lib.debug "refine: Single -> Refined (%d, %d)" lr lc;
 	remove_cell tab cov_rs cov_cs;
 	cov_blk.blk_state <- Refined (lr, lc);
@@ -213,6 +214,9 @@ module Tabular = struct
 	      blk_cs = sub_cs;
 	    } in
 	    Hashtbl.add sub_rsn.rsn_blocks sub_csn.csn_id sub_blk)
+      end else begin
+	Eliom_lib.debug "refine: Single -> Refining (%d, %d, _)" lr lc;
+	cov_blk.blk_state <- Refining (lr, lc, tc)
       end
 
   let unrefine ?ignore_rs ?ignore_cs tab cov_rs cov_cs =
@@ -237,8 +241,7 @@ module Tabular = struct
       cov_blk.blk_state <- Single cov_tc
     | Refining (lr, lc, tc) ->
       Eliom_lib.debug "unrefine: Refining (%d, %d) -> Single" lr lc;
-      assert (lr > 0 && Dltree.is_leaf cov_rs ||
-	      lc > 0 && Dltree.is_leaf cov_cs);
+      assert (not (has_subblock lr lc cov_rs cov_cs));
       cov_blk.blk_state <- Single tc
     | Single _ -> invalid_arg "Tabular.unrefine: Not refined."
 
