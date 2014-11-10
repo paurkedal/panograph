@@ -302,19 +302,19 @@ module Tabular = struct
 	  Option.iter (maybe_move_cell tc cs) transfer;
 	  tc##rowSpan <- rsn.rsn_span
 	| Refining (lr, lc, tc) ->
+	  Option.iter (maybe_move_cell tc cs) transfer;
 	  tc##rowSpan <- rsn.rsn_span;
 	  if Dltree.level new_rs = Dltree.level blk.blk_rs + lr then begin
-	    assert (transfer = None);
 	    blk.blk_state <- Single tc;
 	    refine tab lr lc blk.blk_rs cs
 	  end
 	| Refined (lr, lc) ->
 	  if lc > 0 then
 	    loop_cs lc cs
-	  else begin
-	    assert (lr = Dltree.level blk.blk_rs - Dltree.level new_rs);
+	  else if lr = Dltree.level blk.blk_rs - Dltree.level new_rs then
 	    fill_cell tab new_rs cs
-	  end
+	  else
+	    assert (lr > Dltree.level blk.blk_rs - Dltree.level new_rs)
 	end in
     loop_cs 0 tab.tab_root_cs
 
@@ -396,10 +396,10 @@ module Tabular = struct
 	| Refined (lr, lc) ->
 	  if lr > 0 then
 	    loop_rs lr rs
-	  else begin
-	    assert (lc = Dltree.level new_cs - Dltree.level blk.blk_cs);
+	  else if lc = Dltree.level new_cs - Dltree.level blk.blk_cs then
 	    fill_cell tab rs new_cs
-	  end
+	  else
+	    assert (lc > Dltree.level new_cs - Dltree.level blk.blk_cs)
 	end in
     loop_rs 0 tab.tab_root_rs
 
