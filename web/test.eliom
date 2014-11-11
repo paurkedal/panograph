@@ -38,6 +38,7 @@ let test_services = List.map make_test_service [
   "inputs", (fun () -> Html5.C.node {{Test_inputs.render ()}});
   "tabular1", (fun () -> Html5.C.node {{Test_tabular1.render ()}});
   "tabular2", (fun () -> Html5.C.node {{Test_tabular2.render ()}});
+  "tabular3", (fun () -> Html5.C.node {{Test_tabular3.render ()}});
 ]
 
 let main_handler () () =
