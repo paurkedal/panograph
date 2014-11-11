@@ -45,6 +45,7 @@ module Dltree : sig
   val iteri : ?depth: int -> (int -> 'a t -> unit) -> 'a t -> unit
   val iterp : depth: int -> (int list -> 'a t -> unit) -> 'a t -> unit
   val exists : ?depth: int -> ('a t -> bool) -> 'a t -> bool
+  val for_all : ?depth: int -> ('a t -> bool) -> 'a t -> bool
   val fold_ancestors : ('a t -> 'b -> 'b) -> 'a t -> 'b -> 'b
   val iter_ancestors : ('a t -> unit) -> 'a t -> unit
 

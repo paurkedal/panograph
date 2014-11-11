@@ -101,6 +101,13 @@ module Dltree = struct
       | Some c -> exists ~depth:(depth - 1) f c || loop (next c) in
     loop (first u)
 
+  let rec for_all ?(depth = 1) f u =
+    if depth = 0 then f u else
+    let rec loop = function
+      | None -> true
+      | Some c -> for_all ~depth:(depth - 1) f c && loop (next c) in
+    loop (first u)
+
   let fold_ancestors f c =
     let rec loop = function
       | None -> ident
