@@ -69,11 +69,9 @@ let render () =
 
   let cs_ctrl2 = Tabular.Colspan.add_last tab cs_root in
   Tabular.refine tab 1 0 rs_body cs_ctrl2;
-  mk_remove_rs rs_head cs_ctrl2;
   mk_remove_rs rs1 cs_ctrl2;
   mk_remove_rs rs2 cs_ctrl2;
   mk_remove_rs rs3 cs_ctrl2;
-  mk_remove_rs rs_foot cs_ctrl2;
 
   let cs_ctrl1 = Tabular.Colspan.add_last tab cs_root in
   mk_remove_rs rs_head cs_ctrl1;

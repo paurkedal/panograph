@@ -66,7 +66,7 @@ let colspan_path cs =
 
 let add_row tab =
   let rs = random_rowspan (Tabular.root_rowspan tab) in
-  let debug fn = Eliom_lib.debug "%s %s" fn (rowspan_path rs) in
+  let debug fn = Eliom_lib.debug "** %s %s" fn (rowspan_path rs) in
   match Random.int (if Tabular.Rowspan.is_root rs then 2 else 4) with
   | 0 -> debug "Rowspan.add_first";  Tabular.Rowspan.add_first tab rs
   | 1 -> debug "Rowspan.add_last";   Tabular.Rowspan.add_last tab rs
@@ -76,7 +76,7 @@ let add_row tab =
 
 let add_column tab =
   let cs = random_colspan (Tabular.root_colspan tab) in
-  let debug fn = Eliom_lib.debug "%s %s" fn (colspan_path cs) in
+  let debug fn = Eliom_lib.debug "** %s %s" fn (colspan_path cs) in
   match Random.int (if Tabular.Colspan.is_root cs then 2 else 4) with
   | 0 -> debug "Colspan.add_first";  Tabular.Colspan.add_first tab cs
   | 1 -> debug "Colspan.add_last";   Tabular.Colspan.add_last tab cs
@@ -87,14 +87,14 @@ let add_column tab =
 let remove_row tab =
   let rs = random_rowspan (Tabular.root_rowspan tab) in
   if not (Tabular.Rowspan.is_root rs) then begin
-    Eliom_lib.debug "remove row";
+    Eliom_lib.debug "** remove rowspan %s" (rowspan_path rs);
     Tabular.Rowspan.delete tab rs
   end
 
 let remove_column tab =
   let cs = random_colspan (Tabular.root_colspan tab) in
   if not (Tabular.Colspan.is_root cs) then begin
-    Eliom_lib.debug "remove column";
+    Eliom_lib.debug "** remove colspan %s" (colspan_path cs);
     Tabular.Colspan.delete tab cs
   end
 
@@ -103,25 +103,25 @@ let refine tab =
   let cs = random_colspan (Tabular.root_colspan tab) in
   match Tabular.state tab rs cs with
   | Tabular.Leaf ->
-    let lr, lc = Random.int 2, Random.int 2 in
+    let lr, lc = Random.int 3, Random.int 3 in
     if lr <> 0 || lc <> 0 then begin
-      Eliom_lib.debug "refine %d %d" lr lc;
+      Eliom_lib.debug "** refine %d %d" lr lc;
       Tabular.refine tab lr lc rs cs
     end
   | Tabular.Split _ | Tabular.Invalid -> ()
 
 let mutate tab =
-  let coin = Random.int 40 - 2 in
+  let coin = Random.int 20 - 2 in
   if coin = -2 then remove_row tab else
   if coin = -1 then remove_column tab else
-  if coin < 5 then ignore (add_row tab) else
-  if coin < 10 then ignore (add_column tab) else
+  if coin < 4 then ignore (add_row tab) else
+  if coin < 8 then ignore (add_column tab) else
   refine tab
 
 let render () =
   let tab = Tabular.create () in
   let rec mutate_loop () =
-    Lwt_js.sleep 0.1 >>= fun () ->
+    Lwt_js.sleep 0.01 >>= fun () ->
     mutate tab; Tabular.validate tab; mutate_loop () in
   Lwt.async mutate_loop;
   Tabular.ui tab
