@@ -55,6 +55,7 @@ end
 module Tabular = struct
 
   type blockstate =
+    | Empty of int * int * Dom_html.tableCellElement Js.t
     | Single of Dom_html.tableCellElement Js.t
     | Refining of int * int * Dom_html.tableCellElement Js.t
     | Refined of int * int
@@ -99,11 +100,97 @@ module Tabular = struct
     mutable tab_next_col_id : int;
   }
 
-  let validate_tn tab rs tn =
+  let has_subblock ?skip_rs ?skip_cs lr lc rs cs =
+    Dltree.exists ~depth:lr
+      (fun rs ->
+	not (Option.exists ((==) rs) skip_rs) &&
+	Dltree.exists ~depth:lc
+	  (fun cs ->
+	    not (Option.exists ((==) cs) skip_cs))
+	  cs)
+      rs
+
+  let is_leaf ?skip c =
+    match skip with
+    | None -> Dltree.is_leaf c
+    | Some c' -> Dltree.for_all ((==) c') c
+
+  let for_subblocks ?skip_rs ?skip_cs cov_lr cov_lc cov_rs cov_cs f =
+    let rec loop_cs sub_lc sub_cs =
+      let rec loop_rs sub_lr sub_rs =
+	if not (Option.exists ((==) sub_rs) skip_rs) then begin
+	  if sub_lr = 0 || is_leaf ?skip:skip_rs sub_rs
+	  then f sub_lr sub_lc sub_rs sub_cs
+	  else Dltree.iter (loop_rs (sub_lr - 1)) sub_rs
+	end in
+      if not (Option.exists ((==) sub_cs) skip_cs) then begin
+	if sub_lc = 0 || is_leaf ?skip:skip_cs sub_cs
+	then loop_rs cov_lr cov_rs
+	else Dltree.iter (loop_cs (sub_lc - 1)) sub_cs
+      end in
+    loop_cs cov_lc cov_cs
+
+  let validate tab =
+    let root_rsn = Dltree.get tab.tab_root_rs in
+    let root_csn = Dltree.get tab.tab_root_cs in
+    let widths = Array.make root_rsn.rsn_span 0 in
     let i = ref 0 in
-    Cs_map.iter (fun cs tc -> assert (tc##cellIndex = !i); incr i) tn.tn_tcs;
-    assert (!i = tn.tn_tr##cells##length)
-  let validate tab = Rs_map.iter (validate_tn tab) tab.tab_tns
+    let validate_tn rs tn =
+      let j = ref 0 in
+      Cs_map.iter
+	(fun cs tc ->
+	  assert (tc##cellIndex = !j);
+	  for k = 0 to tc##rowSpan - 1 do
+	    widths.(!i + k) <- widths.(!i + k) + tc##colSpan
+	  done;
+	  incr j)
+	tn.tn_tcs;
+      assert (!j = tn.tn_tr##cells##length);
+      incr i in
+    Rs_map.iter validate_tn tab.tab_tns;
+    if Prime_array.exists ((<>) root_csn.csn_span) widths then begin
+      Eliom_lib.debug "Wrong width, should be %d:" root_csn.csn_span;
+      for i = 0 to Array.length widths - 1 do
+	Eliom_lib.debug "widths.(%d) = %d" i widths.(i)
+      done;
+      assert false
+    end;
+    let rec assert_empty_at_rs rs cs =
+      let rsn, csn = Dltree.(get rs, get cs) in
+      assert (not (Hashtbl.mem rsn.rsn_blocks csn.csn_id));
+      Dltree.iter (assert_empty_at_rs rs) cs in
+    let rec assert_empty rs cs =
+      assert_empty_at_rs rs cs;
+      Dltree.iter (fun rs -> assert_empty rs cs) rs in
+    let rec assert_empty_below rs cs =
+      Dltree.iter (assert_empty rs) cs;
+      Dltree.iter (fun rs -> assert_empty_at_rs rs cs) rs in
+    let rec validate_block rem_lr rem_lc rs cs =
+      let rsn, csn = Dltree.(get rs, get cs) in
+      let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
+      match blk.blk_state with
+      | Single tc ->
+	assert (rem_lr = 0 && rem_lc = 0);
+	assert (tc##rowSpan = rsn.rsn_span);
+	assert (tc##colSpan = csn.csn_span);
+	assert_empty_below rs cs
+      | Empty (rem_lr', rem_lc', tc) ->
+	assert (rem_lr' = rem_lr);
+	assert (rem_lc' = rem_lc);
+	assert_empty_below rs cs
+      | Refining (lr, lc, tc) ->
+	assert (rem_lr = 0 && rem_lc = 0);
+	assert (lr > 0 || lc > 0);
+	assert (not (has_subblock lr lc rs cs));
+	assert (tc##rowSpan = rsn.rsn_span);
+	assert (tc##colSpan = csn.csn_span);
+	assert_empty_below rs cs
+      | Refined (lr, lc) ->
+	assert (rem_lr = 0 && rem_lc = 0);
+	assert (lr = 0 || not (Dltree.is_leaf rs));
+	assert (lc = 0 || not (Dltree.is_leaf cs));
+	for_subblocks lr lc rs cs validate_block in
+    validate_block 0 0 tab.tab_root_rs tab.tab_root_cs
 
   let insert_row tab rs =
     assert (Dltree.is_leaf rs);
@@ -165,29 +252,40 @@ module Tabular = struct
     let tn = Rs_map.find rs_leaf tab.tab_tns in
     remove_cell' tn cs
 
-  let has_subblock ?ignore_rs ?ignore_cs lr lc rs cs =
-    Dltree.exists ~depth:lr
-      (fun rs ->
-	not (Option.exists ((==) rs) ignore_rs) &&
-	Dltree.exists ~depth:lc
-	  (fun cs ->
-	    not (Option.exists ((==) cs) ignore_cs))
-	  cs)
-      rs
+  let tr_of_node node =
+    Js.coerce_opt (Dom_html.CoerceTo.element node) Dom_html.CoerceTo.tr
+		  (fun _ -> assert false)
 
-  let for_subblocks rs cs f =
-    let rsn, csn = Dltree.(get rs, get cs) in
-    assert (Hashtbl.mem rsn.rsn_blocks csn.csn_id);
-    let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
-    match blk.blk_state with
-    | Single tc -> invalid_arg "Tabular.for_subblocks"
-    | Refining _ -> ()
-    | Refined (lr, lc) ->
-      Dltree.iter ~depth:lc
-	(fun cs -> Dltree.iter ~depth:lr (fun rs -> f rs cs) rs)
-	cs
+  let maybe_move_cell tc cs (tn_old, tn_new) =
+    let tc_tr =
+      tr_of_node (Js.Opt.get (tc##parentNode) (fun _ -> assert false)) in
+    if tc_tr == tn_old.tn_tr then
+      move_cell' tn_old tn_new cs
 
-  let refine tab lr lc cov_rs cov_cs =
+  (* Refining -> Refined *)
+  let add_refinement tab cov_blk =
+    let cov_rs, cov_cs = cov_blk.blk_rs, cov_blk.blk_cs in
+    match cov_blk.blk_state with
+    | Refined _ | Single _ | Empty _ -> assert false
+    | Refining (cov_lr, cov_lc, tc) ->
+      assert (has_subblock cov_lr cov_lc cov_rs cov_cs);
+      remove_cell tab cov_rs cov_cs;
+      cov_blk.blk_state <- Refined (cov_lr, cov_lc);
+      for_subblocks cov_lr cov_lc cov_rs cov_cs
+	(fun rem_lr rem_lc sub_rs sub_cs ->
+	  let sub_rsn, sub_csn = Dltree.(get sub_rs, get sub_cs) in
+	  let sub_tc = insert_cell tab sub_rs sub_cs in
+	  let sub_blk = {
+	    blk_state = if rem_lr = 0 && rem_lc = 0
+			then Single sub_tc
+			else Empty (rem_lr, rem_lc, sub_tc);
+	    blk_rs = sub_rs;
+	    blk_cs = sub_cs;
+	  } in
+	  Hashtbl.add sub_rsn.rsn_blocks sub_csn.csn_id sub_blk)
+
+  (* Single -> Refined | Refining *)
+  let refine tab cov_lr cov_lc cov_rs cov_cs =
     let cov_rsn, cov_csn = Dltree.(get cov_rs, get cov_cs) in
     if not (Hashtbl.mem cov_rsn.rsn_blocks cov_csn.csn_id) then
       invalid_arg "Tabular.refine: Blockspan between or below a refinement.";
@@ -195,46 +293,43 @@ module Tabular = struct
     match cov_blk.blk_state with
     | Refined _ -> invalid_arg "Tabular.refine: Already refined."
     | Refining _ -> invalid_arg "Tabular.refine: Already refined (but empty)."
+    | Empty _ -> invalid_arg "Tabular.refine: Already refined (partial)."
     | Single tc ->
-      if has_subblock lr lc cov_rs cov_cs then begin
-	remove_cell tab cov_rs cov_cs;
-	cov_blk.blk_state <- Refined (lr, lc);
-	for_subblocks cov_rs cov_cs
-	  (fun sub_rs sub_cs ->
-	    let sub_rsn, sub_csn = Dltree.(get sub_rs, get sub_cs) in
-	    let sub_tc = insert_cell tab sub_rs sub_cs in
-	    let sub_blk = {
-	      blk_state = Single sub_tc;
-	      blk_rs = sub_rs;
-	      blk_cs = sub_cs;
-	    } in
-	    Hashtbl.add sub_rsn.rsn_blocks sub_csn.csn_id sub_blk)
-      end else
-	cov_blk.blk_state <- Refining (lr, lc, tc)
+      cov_blk.blk_state <- Refining (cov_lr, cov_lc, tc);
+      if has_subblock cov_lr cov_lc cov_rs cov_cs then
+	add_refinement tab cov_blk
 
-  let unrefine ?ignore_rs ?ignore_cs tab cov_rs cov_cs =
+  (* Refined -> Refining *)
+  let drop_refinement ?transfer ?skip_rs ?skip_cs tab cov_blk =
+    let cov_rs, cov_cs = cov_blk.blk_rs, cov_blk.blk_cs in
+    match cov_blk.blk_state with
+    | Refining _ | Single _ | Empty _ -> assert false
+    | Refined (cov_lr, cov_lc) ->
+      for_subblocks ?skip_rs ?skip_cs cov_lr cov_lc cov_rs cov_cs
+	(fun sub_lr sub_lc sub_rs sub_cs ->
+	  let sub_rsn, sub_csn = Dltree.(get sub_rs, get sub_cs) in
+	  assert (Hashtbl.mem sub_rsn.rsn_blocks sub_csn.csn_id);
+	  Hashtbl.remove sub_rsn.rsn_blocks sub_csn.csn_id;
+	  remove_cell tab sub_rs sub_cs);
+      let cov_tc = insert_cell tab cov_rs cov_cs in
+      cov_blk.blk_state <- Refining (cov_lr, cov_lc, cov_tc);
+      Option.iter (maybe_move_cell cov_tc cov_cs) transfer
+
+  (* Refined | Refining -> Single *)
+  let unrefine tab cov_rs cov_cs =
     let cov_rsn, cov_csn = Dltree.(get cov_rs, get cov_cs) in
     if not (Hashtbl.mem cov_rsn.rsn_blocks cov_csn.csn_id) then
       invalid_arg "Tabular.unrefine: Blockspan between or below a refinement.";
     let cov_blk = Hashtbl.find cov_rsn.rsn_blocks cov_csn.csn_id in
-    match cov_blk.blk_state with
-    | Refined (lr, lc) ->
-      for_subblocks cov_rs cov_cs
-	(fun sub_rs sub_cs ->
-	  if not (Option.exists ((==) sub_cs) ignore_cs) &&
-	     not (Option.exists ((==) sub_rs) ignore_rs) then
-	  begin
-	    let sub_rsn, sub_csn = Dltree.(get sub_rs, get sub_cs) in
-	    assert (Hashtbl.mem sub_rsn.rsn_blocks sub_csn.csn_id);
-	    Hashtbl.remove sub_rsn.rsn_blocks sub_csn.csn_id;
-	    remove_cell tab sub_rs sub_cs
-	  end);
-      let cov_tc = insert_cell tab cov_rs cov_cs in
-      cov_blk.blk_state <- Single cov_tc
-    | Refining (lr, lc, tc) ->
-      assert (not (has_subblock ?ignore_rs ?ignore_cs lr lc cov_rs cov_cs));
-      cov_blk.blk_state <- Single tc
+    begin match cov_blk.blk_state with
+    | Refined (cov_lr, cov_lc) -> drop_refinement tab cov_blk
+    | Refining (cov_lr, cov_lc, cov_tc) -> ()
+    | Empty _ -> invalid_arg "Tabular.unrefined: Between refinements."
     | Single _ -> invalid_arg "Tabular.unrefine: Not refined."
+    end;
+    match cov_blk.blk_state with
+    | Refining (cov_lr, cov_lc, cov_tc) -> cov_blk.blk_state <- Single cov_tc
+    | _ -> assert false
 
   (* Find the inner cover of (rs, cs) spanning exactly rs. *)
   let rec cover_at_rs rs cs =
@@ -250,13 +345,16 @@ module Tabular = struct
     with Not_found ->
       Option.search (fun rs -> cover_at_cs rs cs) (Dltree.up rs)
 
-  let fill_cell tab rs cs =
+  let fill_cell ?(rem_lr = 0) ?(rem_lc = 0) tab rs cs =
     let rsn, csn = Dltree.get rs, Dltree.get cs in
+    assert (rem_lr >= 0 && rem_lc >= 0);
     let tc = insert_cell tab rs cs in
     tc##rowSpan <- rsn.rsn_span;
     tc##colSpan <- csn.csn_span;
     let blk = {
-      blk_state = Single tc;
+      blk_state = if rem_lr = 0 && rem_lc = 0
+		  then Single tc
+		  else Empty (rem_lr, rem_lc, tc);
       blk_rs = rs;
       blk_cs = cs;
     } in
@@ -267,18 +365,17 @@ module Tabular = struct
     Hashtbl.remove rsn.rsn_blocks csn.csn_id;
     remove_cell tab rs cs
 
-  let tr_of_node node =
-    Js.coerce_opt (Dom_html.CoerceTo.element node) Dom_html.CoerceTo.tr
-		  (fun _ -> assert false)
-
-  let maybe_move_cell tc cs (tn_old, tn_new) =
-    let tc_tr =
-      tr_of_node (Js.Opt.get (tc##parentNode) (fun _ -> assert false)) in
-    if tc_tr == tn_old.tn_tr then
-      move_cell' tn_old tn_new cs
+  let rec unfill tab rs cs =
+    let rsn, csn = Dltree.(get rs, get cs) in
+    let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
+    begin match blk.blk_state with
+    | Refined (lr, lc) -> drop_refinement tab blk
+    | _ -> ()
+    end;
+    unfill_cell tab rs cs
 
   (* We just added new_rs, extend rowspans or allocate new cells. *)
-  let alloc_row ?transfer tab new_rs =
+  let alloc_rs ?transfer tab new_rs =
 
     (* First fix the ancestor rowspans if this is not the first subspan. *)
     if not (Dltree.is_only new_rs) then
@@ -289,83 +386,92 @@ module Tabular = struct
 	new_rs;
 
     (* Then allocate or extend the cells. *)
-    let rec loop_cs lc cs =
-      if lc > 0 then Dltree.iter (loop_cs (lc - 1)) cs else
-      match cover_at_cs new_rs cs with
-      | None ->     (* At top rowspan within this colspan, so *)
-	fill_cell tab new_rs cs  (* add the missing subblock. *)
-      | Some blk ->
-	assert (blk.blk_rs != new_rs);
-	let rsn = Dltree.get blk.blk_rs in
-	begin match blk.blk_state with
-	| Single tc ->
-	  Option.iter (maybe_move_cell tc cs) transfer;
-	  tc##rowSpan <- rsn.rsn_span
-	| Refining (lr, lc, tc) ->
-	  Option.iter (maybe_move_cell tc cs) transfer;
-	  tc##rowSpan <- rsn.rsn_span;
-	  if Dltree.level new_rs = Dltree.level blk.blk_rs + lr then begin
-	    blk.blk_state <- Single tc;
-	    refine tab lr lc blk.blk_rs cs
+    let rec loop_cs next_lr rem_lc div_cs =
+      if rem_lc > 0 && not (Dltree.is_leaf div_cs) then
+	Dltree.iter (loop_cs next_lr (rem_lc - 1)) div_cs else
+      match cover_at_cs new_rs div_cs with
+      | None -> (* At top rowspan within this colspan. *)
+	let rem_lr = next_lr - Dltree.level new_rs in
+	assert (rem_lr >= 0);
+	fill_cell ~rem_lr ~rem_lc tab new_rs div_cs
+      | Some cov_blk ->
+	let cov_rs = cov_blk.blk_rs in
+	let cov_rsn = Dltree.get cov_rs in
+	assert (cov_rs != new_rs);
+	assert (cov_blk.blk_cs == div_cs);
+	begin match cov_blk.blk_state with
+	| Empty (rem_lr', rem_lc', tc) ->
+	  Option.iter (maybe_move_cell tc div_cs) transfer;
+	  if rem_lr' = 0 then
+	    tc##rowSpan <- cov_rsn.rsn_span
+	  else begin
+	    assert (Dltree.level new_rs = Dltree.level cov_rs + 1);
+	    assert (rem_lc = rem_lc');
+	    unfill_cell tab cov_rs div_cs;
+	    let rem_lr = rem_lr'
+		       - (Dltree.level new_rs - Dltree.level cov_rs) in
+	    assert (rem_lr >= 0);
+	    fill_cell ~rem_lr ~rem_lc tab new_rs div_cs
 	  end
+	| Single tc ->
+	  assert (rem_lc = 0);
+	  Option.iter (maybe_move_cell tc div_cs) transfer;
+	  tc##rowSpan <- cov_rsn.rsn_span
+	| Refining (lr, lc, tc) ->
+	  assert (rem_lc = 0);
+	  Option.iter (maybe_move_cell tc div_cs) transfer;
+	  tc##rowSpan <- cov_rsn.rsn_span;
+	  if has_subblock lr lc cov_rs div_cs then add_refinement tab cov_blk
 	| Refined (lr, lc) ->
-	  if lc > 0 then
-	    loop_cs lc cs
-	  else if lr = Dltree.level blk.blk_rs - Dltree.level new_rs then
-	    fill_cell tab new_rs cs
-	  else
-	    assert (lr > Dltree.level blk.blk_rs - Dltree.level new_rs)
+	  assert (rem_lc = 0);
+	  if lc > 0 && not (Dltree.is_leaf div_cs) then
+	    loop_cs (Dltree.level cov_rs + lr) lc div_cs
+	  else begin
+	    let rem_lc = Dltree.level div_cs + lc - Dltree.level div_cs in
+	    let rem_lr = Dltree.level cov_rs + lr - Dltree.level new_rs in
+	    assert (rem_lr >= 0);
+	    fill_cell ~rem_lr ~rem_lc tab new_rs div_cs
+	  end
 	end in
-    loop_cs 0 tab.tab_root_cs
+    loop_cs 0 0 tab.tab_root_cs
 
-  let dealloc_row ?transfer tab old_rs =
+  let dealloc_rs ?transfer tab old_rs =
 
     if not (Dltree.is_only old_rs) then
       Dltree.iter_ancestors
 	(fun rs -> let rsn = Dltree.get rs in rsn.rsn_span <- rsn.rsn_span - 1)
 	old_rs;
 
-    let recheck_cover cs =
-      match cover_at_cs old_rs cs with
-      | None -> ()
-      | Some blk ->
-	begin match blk.blk_state with
-	| Single _ | Refining _ -> assert false
-	| Refined (lr, lc) ->
-	  if not (Dltree.exists ~depth:lr ((!=) old_rs) blk.blk_rs) then begin
-	    unrefine ~ignore_rs:old_rs tab blk.blk_rs cs;
-	    match blk.blk_state with
-	    | Single tc -> blk.blk_state <- Refining (lr, lc, tc)
-	    | _ -> assert false
-	  end
-	end in
+    let rs = Option.get (Dltree.up old_rs) in
 
-    let rec loop_cs lc cs =
-      if lc > 0 then Dltree.iter (loop_cs (lc - 1)) cs else
-      match cover_at_cs old_rs cs with
-      | None -> assert false
-      | Some blk ->
-	let rsn = Dltree.get blk.blk_rs in
-	begin match blk.blk_state with
-	| Single tc | Refining (_, _, tc) ->
-	  if blk.blk_rs == old_rs then begin
-	    unfill_cell tab old_rs cs;
-	    recheck_cover cs
-	  end else begin
-	    tc##rowSpan <- rsn.rsn_span;
-	    Option.iter (maybe_move_cell tc cs) transfer
-	  end
+    let rec loop_cs next_lr rem_lc div_cs =
+      if rem_lc > 0 && not (Dltree.is_leaf div_cs) then
+	Dltree.iter (loop_cs next_lr (rem_lc - 1)) div_cs else
+      match cover_at_cs rs div_cs with
+      | None -> unfill tab old_rs div_cs
+      | Some cov_blk ->
+	let cov_rsn = Dltree.get cov_blk.blk_rs in
+	begin match cov_blk.blk_state with
+	| Single tc | Empty (_, _, tc) | Refining (_, _, tc) ->
+	  Option.iter (maybe_move_cell tc div_cs) transfer;
+	  tc##rowSpan <- cov_rsn.rsn_span
 	| Refined (lr, lc) ->
-	  if lc > 0 then loop_cs lc cs else begin
-	    assert (lr = Dltree.level old_rs - Dltree.level blk.blk_rs);
-	    unfill_cell tab old_rs cs
-	  end;
-	  recheck_cover cs
+	  assert (rem_lc = 0);
+	  let cov_rs = cov_blk.blk_rs in
+	  if not (has_subblock ~skip_rs:old_rs lr lc cov_rs div_cs) then begin
+	    drop_refinement ?transfer tab cov_blk
+	  end else if lc > 0 && not (Dltree.is_leaf div_cs) then
+	    loop_cs (Dltree.level cov_rs + lr) lc div_cs
+	  else begin
+	    assert (lr > 0);
+	    assert (not (Dltree.is_only old_rs));
+	    unfill tab old_rs div_cs;
+	  end
 	end in
-    loop_cs 0 tab.tab_root_cs
+    loop_cs 0 0 tab.tab_root_cs
 
   (* We just added new_cs, extend colspans or allocate new cells. *)
-  let alloc_column tab new_cs =
+  let alloc_cs tab new_cs =
 
     (* First fix the ancestor colspans if this is not the first subspan. *)
     if not (Dltree.is_only new_cs) then
@@ -376,75 +482,85 @@ module Tabular = struct
 	new_cs;
 
     (* Then allocate or extend the cells. *)
-    let rec loop_rs lr rs =
-      if lr > 0 then Dltree.iter (loop_rs (lr - 1)) rs else
-      match cover_at_rs rs new_cs with
-      | None ->     (* At top colspan within this rowspan, so *)
-	fill_cell tab rs new_cs  (* add the missing subblock. *)
-      | Some blk ->
-	assert (blk.blk_cs != new_cs);
-	let csn = Dltree.get blk.blk_cs in
-	begin match blk.blk_state with
-	| Single tc ->
-	  tc##colSpan <- csn.csn_span
-	| Refining (lr, lc, tc) ->
-	  tc##colSpan <- csn.csn_span;
-	  if Dltree.level new_cs = Dltree.level blk.blk_cs + lc then begin
-	    blk.blk_state <- Single tc;
-	    refine tab lr lc rs blk.blk_cs
+    let rec loop_rs rem_lr next_lc div_rs =
+      if rem_lr > 0 && not (Dltree.is_leaf div_rs) then
+	Dltree.iter (loop_rs (rem_lr - 1) next_lc) div_rs else
+      match cover_at_rs div_rs new_cs with
+      | None -> (* At top colspan within this rowspan. *)
+	let rem_lc = next_lc - Dltree.level new_cs in
+	assert (rem_lc >= 0);
+	fill_cell ~rem_lr ~rem_lc tab div_rs new_cs
+      | Some cov_blk ->
+	let cov_cs = cov_blk.blk_cs in
+	let cov_csn = Dltree.get cov_cs in
+	assert (cov_cs != new_cs);
+	assert (cov_blk.blk_rs == div_rs);
+	begin match cov_blk.blk_state with
+	| Empty (rem_lr', rem_lc', tc) ->
+	  if rem_lc' = 0 then
+	    tc##colSpan <- cov_csn.csn_span
+	  else begin
+	    assert (Dltree.level new_cs = Dltree.level cov_cs + 1);
+	    assert (rem_lr = rem_lr');
+	    unfill_cell tab div_rs cov_cs;
+	    let rem_lc = rem_lc'
+		       - (Dltree.level new_cs - Dltree.level cov_cs) in
+	    assert (rem_lc >= 0);
+	    fill_cell ~rem_lr ~rem_lc tab div_rs new_cs
 	  end
+	| Single tc ->
+	  assert (rem_lr = 0);
+	  tc##colSpan <- cov_csn.csn_span
+	| Refining (lr, lc, tc) ->
+	  assert (rem_lr = 0);
+	  tc##colSpan <- cov_csn.csn_span;
+	  if has_subblock lr lc div_rs cov_cs then add_refinement tab cov_blk
 	| Refined (lr, lc) ->
-	  if lr > 0 then
-	    loop_rs lr rs
-	  else if lc = Dltree.level new_cs - Dltree.level blk.blk_cs then
-	    fill_cell tab rs new_cs
-	  else
-	    assert (lc > Dltree.level new_cs - Dltree.level blk.blk_cs)
+	  assert (rem_lr = 0);
+	  if lr > 0 && not (Dltree.is_leaf div_rs) then
+	    loop_rs lr (Dltree.level cov_cs + lc) div_rs
+	  else begin
+	    let rem_lr = Dltree.level div_rs + lr - Dltree.level div_rs in
+	    let rem_lc = Dltree.level cov_cs + lc - Dltree.level new_cs in
+	    assert (rem_lc >= 0);
+	    fill_cell ~rem_lr ~rem_lc tab div_rs new_cs
+	  end
 	end in
-    loop_rs 0 tab.tab_root_rs
+    loop_rs 0 0 tab.tab_root_rs
 
-  let dealloc_column tab old_cs =
+  let dealloc_cs tab old_cs =
+
     if not (Dltree.is_only old_cs) then
       Dltree.iter_ancestors
 	(fun cs -> let csn = Dltree.get cs in csn.csn_span <- csn.csn_span - 1)
 	old_cs;
 
-    let rec recheck_cover rs =
-      match cover_at_rs rs old_cs with
-      | None -> ()
-      | Some blk ->
-	begin match blk.blk_state with
-	| Single _ | Refining _ -> assert false
+    let cs = Option.get (Dltree.up old_cs) in
+
+    let rec loop_rs next_lc rem_lr div_rs =
+      if rem_lr > 0 && not (Dltree.is_leaf div_rs) then
+	Dltree.iter (loop_rs next_lc (rem_lr - 1)) div_rs else
+      match cover_at_rs div_rs cs with
+      | None -> unfill tab div_rs old_cs
+      | Some cov_blk ->
+	let cov_csn = Dltree.get cov_blk.blk_cs in
+	begin match cov_blk.blk_state with
+	| Single tc | Empty (_, _, tc) | Refining (_, _, tc) ->
+	  tc##colSpan <- cov_csn.csn_span
 	| Refined (lr, lc) ->
-	  if not (Dltree.exists ~depth:lc ((!=) old_cs) blk.blk_cs) then begin
-	    unrefine ~ignore_cs:old_cs tab rs blk.blk_cs;
-	    match blk.blk_state with
-	    | Single tc -> blk.blk_state <- Refining (lr, lc, tc)
-	    | _ -> assert false
+	  assert (rem_lr = 0);
+	  let cov_cs = cov_blk.blk_cs in
+	  if not (has_subblock ~skip_cs:old_cs lr lc div_rs cov_cs) then
+	    drop_refinement tab cov_blk
+	  else if lr > 0 && not (Dltree.is_leaf div_rs) then
+	    loop_rs (Dltree.level cov_cs + lc) lr div_rs
+	  else begin
+	    assert (lc > 0);
+	    assert (not (Dltree.is_only old_cs));
+	    unfill tab div_rs old_cs
 	  end
 	end in
-
-    let rec loop_rs lr rs =
-      if lr > 0 then Dltree.iter (loop_rs (lr - 1)) rs else
-      match cover_at_rs rs old_cs with
-      | None -> assert false
-      | Some blk ->
-	let csn = Dltree.get blk.blk_cs in
-	begin match blk.blk_state with
-	| Single tc | Refining (_, _, tc) ->
-	  if blk.blk_cs == old_cs then begin
-	    unfill_cell tab rs old_cs;
-	    recheck_cover rs
-	  end else
-	    tc##colSpan <- csn.csn_span
-	| Refined (lr, lc) ->
-	  if lr > 0 then loop_rs lr rs else begin
-	    assert (lc = Dltree.level old_cs - Dltree.level blk.blk_cs);
-	    unfill_cell tab rs old_cs
-	  end;
-	  recheck_cover rs
-	end in
-    loop_rs 0 tab.tab_root_rs
+    loop_rs 0 0 tab.tab_root_rs
 
   module Rowspan = struct
     type t = rowspan_node Dltree.t
@@ -477,7 +593,7 @@ module Tabular = struct
 	let rsn = make_rsn () in
 	let rs = Dltree.add_first rsn rs_u in
 	tab.tab_tns <- Rs_map.add rs tn (Rs_map.remove rs_u tab.tab_tns);
-	alloc_row tab rs;
+	alloc_rs tab rs;
 	rs
       | Some rs1' ->
 	let rs1 = Dltree.first_leaf rs1' in
@@ -486,7 +602,7 @@ module Tabular = struct
 	let rsn0 = make_rsn () in
 	let rs0 = Dltree.add_first rsn0 rs_u in
 	let tn0 = insert_row tab rs0 in
-	alloc_row ~transfer:(tn1, tn0) tab rs0;
+	alloc_rs ~transfer:(tn1, tn0) tab rs0;
 	rs0
 
     let add_before tab rs_n =
@@ -497,14 +613,14 @@ module Tabular = struct
 	begin
 	  let rs = Dltree.add_before (make_rsn ()) rs_n in
 	  let _ = insert_row tab rs in
-	  alloc_row tab rs;
+	  alloc_rs tab rs;
 	  rs
 	end
 
     let add_after tab rs_p =
       let rs = Dltree.add_after (make_rsn ()) rs_p in
       let _ = insert_row tab rs in
-      alloc_row tab rs;
+      alloc_rs tab rs;
       rs
 
     let add_last tab rs =
@@ -523,7 +639,7 @@ module Tabular = struct
       if Dltree.is_only rs then begin
 	assert (Rs_map.contains rs tab.tab_tns);
 	let tn = Rs_map.find rs tab.tab_tns in
-	dealloc_row tab rs;
+	dealloc_rs tab rs;
 	tab.tab_tns <- Rs_map.add rs_u tn (Rs_map.remove rs tab.tab_tns)
       end else if Dltree.is_first rs then begin
 	assert (Rs_map.contains rs tab.tab_tns);
@@ -531,13 +647,13 @@ module Tabular = struct
 	let rs1 = Dltree.first_leaf (Option.get (Dltree.next rs)) in
 	assert (Rs_map.contains rs1 tab.tab_tns);
 	let tn1 = Rs_map.find rs1 tab.tab_tns in
-	dealloc_row ~transfer:(tn0, tn1) tab rs;
+	dealloc_rs ~transfer:(tn0, tn1) tab rs;
 	remove_row tab rs
       end else begin
-	dealloc_row tab rs;
+	dealloc_rs tab rs;
 	remove_row tab rs
       end;
-      Dltree.delete_subtree rs
+      Dltree.delete_subtree rs;
   end
 
   module Colspan = struct
@@ -568,25 +684,25 @@ module Tabular = struct
 
     let add_first tab cs_up =
       let cs = Dltree.add_first (make_csn tab) cs_up in
-      alloc_column tab cs; cs
+      alloc_cs tab cs; cs
 
     let add_last tab cs_up =
       let cs = Dltree.add_last (make_csn tab) cs_up in
-      alloc_column tab cs; cs
+      alloc_cs tab cs; cs
 
     let add_before tab cs_n =
       let cs = Dltree.add_before (make_csn tab) cs_n in
-      alloc_column tab cs; cs
+      alloc_cs tab cs; cs
 
     let add_after tab cs_p =
       let cs = Dltree.add_after (make_csn tab) cs_p in
-      alloc_column tab cs; cs
+      alloc_cs tab cs; cs
 
     let rec delete tab cs =
       while not (Dltree.is_leaf cs) do
 	Option.iter (delete tab) (Dltree.last cs)
       done;
-      dealloc_column tab cs;
+      dealloc_cs tab cs;
       Dltree.delete_subtree cs
   end
 
@@ -596,7 +712,7 @@ module Tabular = struct
       let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
       match blk.blk_state with
       | Single tc -> tc
-      | Refining _ | Refined _ ->
+      | Empty _ | Refining _ | Refined _ ->
 	invalid_arg "Tabular.get_tc: This cell is refined."
     with Not_found ->
       invalid_arg "Tabular.get_tc: Not refined at this cell."
@@ -619,7 +735,7 @@ module Tabular = struct
 	blk.blk_state <- Single tc';
 	tn.tn_tcs <- Cs_map.add cs tc' tn.tn_tcs;
 	Dom.replaceChild tn.tn_tr tc' tc
-      | Refining _ | Refined _ ->
+      | Empty _ | Refining _ | Refined _ ->
 	invalid_arg "Tabular.set_tc: This cell is refined."
     with Not_found ->
       invalid_arg "Tabular.set_tc: Not refined at this cell."
@@ -665,6 +781,7 @@ module Tabular = struct
     try
       let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
       match blk.blk_state with
+      | Empty _ -> Invalid
       | Single _ -> Leaf
       | Refined (lr, lc) | Refining (lr, lc, _) -> Split (lr, lc)
     with Not_found -> Invalid
