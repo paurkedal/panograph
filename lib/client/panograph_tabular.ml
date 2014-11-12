@@ -744,12 +744,15 @@ module Tabular = struct
   let coerce_to_tc : #Dom_html.element Js.t -> #Dom_html.tableCellElement Js.t =
     Js.Unsafe.coerce
 
-  let draw_td tab rs cs content =
-    let td = Html5.D.td content in
+  let draw tab rs cs el =
+    set_tc tab rs cs (coerce_to_tc (Html5.To_dom.of_element el))
+
+  let draw_td tab rs cs ?a content =
+    let td = Html5.D.td ?a content in
     set_tc tab rs cs (coerce_to_tc (Html5.To_dom.of_td td))
 
-  let draw_th tab rs cs content =
-    let th = Html5.D.th content in
+  let draw_th tab rs cs ?a content =
+    let th = Html5.D.th ?a content in
     set_tc tab rs cs (coerce_to_tc (Html5.To_dom.of_th th))
 
   let create () =

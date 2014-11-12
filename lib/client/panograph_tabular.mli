@@ -68,8 +68,12 @@ module Tabular : sig
 
   val state : t -> Rowspan.t -> Colspan.t -> state
   val refine : t -> int -> int -> Rowspan.t -> Colspan.t -> unit
+  val draw : t -> Rowspan.t -> Colspan.t ->
+	     [< Html5_types.tr_content] Html5.elt -> unit
   val draw_th : t -> Rowspan.t -> Colspan.t ->
-		Html5_types.th_content Html5.elt list -> unit
+		?a: [< Html5_types.th_attrib] Html5.attrib list ->
+		[< Html5_types.th_content] Html5.elt list -> unit
   val draw_td : t -> Rowspan.t -> Colspan.t ->
-		Html5_types.td_content Html5.elt list -> unit
+		?a: [< Html5_types.td_attrib] Html5.attrib list ->
+		[< Html5_types.td_content] Html5.elt list -> unit
 end
