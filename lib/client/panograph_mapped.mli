@@ -14,6 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open Eliom_content
 open Panograph_intf
 
 module Mapped_PE
@@ -37,3 +38,8 @@ sig
 			 | `Patch of Key_SV.value * Key_SV.value option
 				   * Elt_PE.patch_in ]
 end
+
+module Ul_mapped_container : CONTAINER
+  with type shape = unit
+   and type item_ui = Html5_types.flow5 Html5.elt * Html5_types.flow5 Html5.elt
+   and type ui = Html5_types.flow5 Html5.elt

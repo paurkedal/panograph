@@ -50,24 +50,10 @@ module Collection_ul_container = struct
   let remove ul li = Html5.Manip.removeChild ul li
 end
 
-module Mapped_ul_container = struct
-  type shape = unit
-  type ui = Html5_types.flow5 Html5.elt
-  type t = ui
-  type item_ui = Html5_types.flow5 Html5.elt * Html5_types.flow5 Html5.elt
-  type item = Html5_types.ul_content Html5.elt
-  type init_ui = Prime.counit
-  let ui w = w
-  let create ?init () = assert (init = None); Html5.D.ul []
-  let create_item (key_ui, elt_ui) () = Html5.D.li [key_ui; elt_ui]
-  let append ?before ul li = Html5.Manip.appendChild ?before ul li
-  let remove ul li = Html5.Manip.removeChild ul li
-end
-
 module Int_ul_PE =
   Collection_editor (Int_PE) (Int_SE) (Collection_ul_container)
 module Int_ul_MPE =
-  Mapped_PE (Int_order) (Int_SV) (Int_PE) (Mapped_ul_container)
+  Mapped_PE (Int_order) (Int_SV) (Int_PE) (Ul_mapped_container)
 
 let test_int_editor () =
   let ev, send_ev = React.E.create () in
