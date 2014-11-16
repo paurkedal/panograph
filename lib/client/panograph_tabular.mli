@@ -42,10 +42,10 @@ module type SPAN_TREE = sig
   val iterp : depth: int -> (int list -> t -> unit) -> t -> unit
   val exists : ?depth: int -> (t -> bool) -> t -> bool
 
-  val add_first : tabular -> t -> t
-  val add_last : tabular -> t -> t
-  val add_before : tabular -> t -> t
-  val add_after : tabular -> t -> t
+  val add_first : tabular -> ?css_class: string -> t -> t
+  val add_last : tabular -> ?css_class: string -> t -> t
+  val add_before : tabular -> ?css_class: string -> t -> t
+  val add_after : tabular -> ?css_class: string -> t -> t
   val delete : tabular -> t -> unit
 end
 
@@ -60,7 +60,8 @@ module Tabular : sig
   module Rowspan : SPAN_TREE with type tabular := t
   module Colspan : SPAN_TREE with type tabular := t
 
-  val create : unit -> t
+  val create : ?a: [< Html5_types.table_attrib] Html5.attrib list ->
+	       ?root_css_class: string -> unit -> t
   val validate : t -> unit
   val ui : t -> [> `Table] Html5.elt
   val root_rowspan : t -> Rowspan.t

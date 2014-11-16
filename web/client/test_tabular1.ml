@@ -19,14 +19,15 @@ open Panograph_tabular
 
 let render () =
   let open Html5 in
-  let tab = Tabular.create () in
+  let tab = Tabular.create ~a:[F.a_class ["tabular1"]]
+			   ~root_css_class:"root" () in
   let rs_root = Tabular.root_rowspan tab in
-  let   rs_head = Tabular.Rowspan.add_first tab rs_root in
-  let   rs_body = Tabular.Rowspan.add_last tab rs_root in
-  let   rs_foot = Tabular.Rowspan.add_last tab rs_root in
+  let   rs_head = Tabular.Rowspan.add_first tab ~css_class:"rhead" rs_root in
+  let   rs_body = Tabular.Rowspan.add_last tab ~css_class:"rbody" rs_root in
+  let   rs_foot = Tabular.Rowspan.add_last tab ~css_class:"rfoot" rs_root in
   let cs_root = Tabular.root_colspan tab in
-  let   cs_head = Tabular.Colspan.add_first tab cs_root in
-  let   cs_body = Tabular.Colspan.add_last tab cs_root in
+  let   cs_head = Tabular.Colspan.add_first tab ~css_class:"chead" cs_root in
+  let   cs_body = Tabular.Colspan.add_last tab ~css_class:"cbody" cs_root in
 
   Tabular.refine tab 1 1 rs_root cs_root;
   Tabular.draw_th tab rs_body cs_head [D.pcdata "M = "];

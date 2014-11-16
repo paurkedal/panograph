@@ -6,3 +6,13 @@ body {
 .error { color: #990000; font-weight: bold; }
 
 td { border: solid thin #aaa; }
+
+td.rbody-fr.cbody-c { border-top: solid thin #333; }
+td.rbody-lr.cbody-c { border-bottom: solid thin #333; }
+td.rbody-r.cbody-fc { border-left: solid thin #333; }
+td.rbody-r.cbody-lc { border-right: solid thin #333; }
+.rhead.cbody-c { border-top: solid thin #07f; border-bottom: solid thin #07f; }
+.rhead.cbody-fc { border-left: solid thin #07f; }
+.rhead.cbody-lc { border-right: solid thin #07f; }
+.rbody.chead { border: solid thin #f70; }
+.rfoot.cbody { border: solid thin #3a3; }
