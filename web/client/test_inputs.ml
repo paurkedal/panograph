@@ -62,8 +62,8 @@ let test_int_editor () =
   let open Html5 in
   let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
   let w, ui =
-    Int_PE.create ~init:19 ~on_patch
-		  ~shape:Simple_shape.(make ~a:[F.a_title "test"] ()) () in
+    Int_PE.create ~shape:Simple_shape.(make ~a:[F.a_title "test"] ())
+		  ~on_patch 19 in
   Lwt_react.E.keep (Lwt_react.E.map (Int_PE.patch w) ev);
   ui
 
@@ -71,7 +71,7 @@ let test_float_editor () =
   let ev, send_ev = React.E.create () in
   let open Html5 in
   let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
-  let w, ui = Float_PE.create ~init:0.01 ~on_patch () in
+  let w, ui = Float_PE.create ~on_patch 0.01 in
   Lwt_react.E.keep (Lwt_react.E.map (Float_PE.patch w) ev);
   ui
 
@@ -81,13 +81,13 @@ let test_int_ul () =
     Lwt.(async (fun () -> Lwt_js.sleep 0.33 >|= fun () -> send_ev p));
     Lwt.return Ack_ok in
   let init = [5; 7; 3; 11; 17; 13] in
-  let coll_pe, coll_ui = Int_ul_CPE.create ~init ~on_patch () in
+  let coll_pe, coll_ui = Int_ul_CPE.create ~on_patch init in
   let on_mapped_patch (`Patch (k, (`Change (v, v')))) =
     send_ev (`Patch (`Change (k, - v')));
     Lwt.return Ack_ok in
   let mapped_pe, mapped_ui =
-    Int_ul_MPE.create ~init:(List.map (fun k -> k, -k) init)
-		      ~on_patch:on_mapped_patch () in
+    Int_ul_MPE.create ~on_patch:on_mapped_patch
+		      (List.map (fun k -> k, -k) init) in
   let update p =
     Int_ul_CPE.patch coll_pe p;
     let p' =

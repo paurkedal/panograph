@@ -41,7 +41,7 @@ module type PATCH_VIEWER = sig
   type value
   type patch_in
 
-  val create : ?shape: shape -> init: value -> unit -> t * ui
+  val create : ?shape: shape -> value -> t * ui
   val patch : t -> patch_in -> unit
 end
 
@@ -50,7 +50,7 @@ module type SNAPSHOT_VIEWER = sig
 
   type value
 
-  val create : ?shape: shape -> init: value -> unit -> t * ui
+  val create : ?shape: shape -> value -> t * ui
   val set : t -> value -> unit
 end
 
@@ -61,8 +61,8 @@ module type PATCH_EDITOR = sig
   type patch_out
   type patch_in
 
-  val create : ?shape: shape -> init: value ->
-	       ?on_patch: (patch_out -> ack Lwt.t) -> unit -> t * ui
+  val create : ?shape: shape -> ?on_patch: (patch_out -> ack Lwt.t) ->
+	       value -> t * ui
   val patch : t -> patch_in -> unit
 end
 

@@ -80,8 +80,8 @@ struct
 	  else
 	    on_patch (`Patch p) in
       let elt_pe, elt_ui =
-	Elt_PE.create ~shape:w.w_shape.elt_pe_shape ~init:v
-		      ?on_patch:(Option.map on_elt_patch w.w_on_patch) () in
+	Elt_PE.create ~shape:w.w_shape.elt_pe_shape
+		      ?on_patch:(Option.map on_elt_patch w.w_on_patch) v in
       let remove_button =
 	match w.w_on_patch with
 	| Some on_patch ->
@@ -122,7 +122,7 @@ struct
     | `Remove k -> remove_key w k
     | `Patch elt_patch -> patch_elt w elt_patch
 
-  let create ?(shape = default_shape) ~init ?on_patch () =
+  let create ?(shape = default_shape) ?on_patch init =
     let aux =
       match on_patch with
       | None -> None

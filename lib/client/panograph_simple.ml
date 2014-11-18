@@ -32,7 +32,7 @@ module Simple_SV (Value : STRINGABLE) = struct
 
   let default_shape = []
 
-  let create ?(shape = default_shape) ~init:v () =
+  let create ?(shape = default_shape) v =
     let c = Html5.D.pcdata (Value.to_string v) in
     let p = Html5.D.span ~a:shape [c] in
     (p, c), p
@@ -106,7 +106,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
 
   let get {w_dom} = Value.of_string (Js.to_string w_dom##value)
 
-  let create ?(shape = default_shape) ~init ?on_patch () =
+  let create ?(shape = default_shape) ?on_patch init =
     let inp = Html5.D.input ~input_type:`Text
 			    ~a:shape.Simple_shape.input_a () in
     let w_dom = Html5.To_dom.of_input inp in

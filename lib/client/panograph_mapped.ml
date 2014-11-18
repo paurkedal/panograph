@@ -75,10 +75,10 @@ struct
       let e_key = ref k in
       let on_elt_patch on_patch p = on_patch (`Patch (!e_key, p)) in
       let key_sv, key_ui =
-	Key_SV.create ~shape:w.w_shape.key_sv_shape ~init:k () in
+	Key_SV.create ~shape:w.w_shape.key_sv_shape k in
       let elt_pe, elt_ui =
-	Elt_PE.create ~shape:w.w_shape.elt_pe_shape ~init:v
-		      ?on_patch:(Option.map on_elt_patch w.w_on_patch) () in
+	Elt_PE.create ~shape:w.w_shape.elt_pe_shape
+		      ?on_patch:(Option.map on_elt_patch w.w_on_patch) v in
       let item = Container.create_item ~shape:w.w_shape.container_shape
 				       (key_ui, elt_ui) in
       add_elt w k {e_key; e_key_sv = key_sv; e_elt_pe = elt_pe; e_item = item}
@@ -116,7 +116,7 @@ struct
     | `Remove k -> remove_key w k
     | `Patch (k, k', p) -> patch_elt w k k' p
 
-  let create ?(shape = default_shape) ~init ?on_patch () =
+  let create ?(shape = default_shape) ?on_patch init =
     let container, container_ui =
       Container.create ~shape:shape.container_shape () in
     let w =
