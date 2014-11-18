@@ -47,3 +47,12 @@ module Ul_collection_container : sig
      and type static_ui = Html5_types.flow5 Html5.elt * controls_ui
      and type ui = Html5_types.flow5 Html5.elt
 end
+
+module Table_collection_container : sig
+  include BASIC_SHAPE_TYPE
+  include CONTAINER
+    with type shape := shape
+     and type item_ui = Html5_types.flow5 Html5.elt list * controls_ui
+     and type static_ui = Html5_types.flow5 Html5.elt list * controls_ui
+     and type ui = Html5_types.flow5 Html5.elt
+end
