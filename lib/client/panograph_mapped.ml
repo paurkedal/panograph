@@ -17,6 +17,8 @@
 open Eliom_content
 open Eliom_lib
 open Panograph_intf
+open Unprime
+open Unprime_list
 open Unprime_option
 
 module Mapped_PE
@@ -120,17 +122,63 @@ struct
     w
 end
 
+module Mapped_container_shape = struct
+  type t = {
+    a_id : string option;
+    a_class : string list;
+  }
+  let default = {
+    a_id = None;
+    a_class = ["mapped"];
+  }
+
+  let attribs s =
+    [] |> Option.fold (fun id -> List.push (Html5.F.a_id id)) s.a_id
+       |> begin match s.a_class with
+	  | [] -> ident
+	  | cls -> List.push (Html5.F.a_class cls)
+	  end
+end
+
 module Ul_mapped_container = struct
-  type shape = unit
+  type shape = Mapped_container_shape.t
   type ui = Html5_types.flow5 Html5.elt
   type t = ui
   type item_ui = Html5_types.flow5 Html5.elt * Html5_types.flow5 Html5.elt
   type item = Html5_types.ul_content Html5.elt
   type init_ui = Prime.counit
+
   let ui w = w
-  let create ?init () = assert (init = None); Html5.D.ul []
-  let create_item (key_ui, elt_ui) () =
+
+  let create ?init shape =
+    assert (init = None);
+    let a = Mapped_container_shape.attribs shape in
+    Html5.D.ul ~a []
+
+  let create_item (key_ui, elt_ui) _ =
     Html5.D.(li [key_ui; pcdata ": "; elt_ui])
+
   let append ?before ul li = Html5.Manip.appendChild ?before ul li
   let remove ul li = Html5.Manip.removeChild ul li
+end
+
+module Table_mapped_container = struct
+  type shape = Mapped_container_shape.t
+  type ui = Html5_types.flow5 Html5.elt
+  type t = ui
+  type item_ui = Html5_types.flow5 Html5.elt list
+	       * Html5_types.flow5 Html5.elt list
+  type item = Html5_types.table_content Html5.elt
+  type init_ui = Prime.counit
+
+  let ui w = w
+
+  let create ?init shape =
+    assert (init = None);
+    let a = Mapped_container_shape.attribs shape in
+    Html5.D.table ~a []
+
+  let create_item (key_ui, elt_ui) _ = Html5.D.(tr [td key_ui; td elt_ui])
+  let append ?before table tr = Html5.Manip.appendChild ?before table tr
+  let remove table tr = Html5.Manip.removeChild table tr
 end

@@ -87,7 +87,8 @@ let test_int_ul () =
     send_ev (`Patch (`Change (k, - v')));
     Lwt.return Ack_ok in
   let mapped_shape =
-    Int_ul_MPE.({key_sv_shape = []; elt_pe_shape; container_shape = ()}) in
+    Int_ul_MPE.({key_sv_shape = []; elt_pe_shape;
+		 container_shape = Mapped_container_shape.default}) in
   let mapped_pe = Int_ul_MPE.create ~init:(List.map (fun k -> k, -k) init)
 				    ~on_patch:on_mapped_patch mapped_shape in
   let update p =
