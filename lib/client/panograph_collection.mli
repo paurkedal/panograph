@@ -16,7 +16,7 @@
 
 open Panograph_intf
 
-module Collection_editor
+module Collection_PE
 	(Elt_PE : RETRACTABLE_PATCH_EDITOR)
 	(Elt_SE : SNAPSHOT_EDITOR with type value = Elt_PE.value)
 	(Container : CONTAINER with type item_ui = Elt_PE.ui * controls_ui

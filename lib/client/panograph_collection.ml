@@ -23,7 +23,7 @@ open Unprime_option
 let label_for_remove = [Html5.F.(b [pcdata "−"])]
 let label_for_add = [Html5.F.(b [pcdata "+"])]
 
-module Collection_editor
+module Collection_PE
 	(Elt_PE : RETRACTABLE_PATCH_EDITOR)
 	(Elt_SE : SNAPSHOT_EDITOR with type value = Elt_PE.value)
 	(Container : CONTAINER with type item_ui = Elt_PE.ui * controls_ui

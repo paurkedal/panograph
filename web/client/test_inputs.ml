@@ -53,7 +53,7 @@ module Collection_ul_container = struct
 end
 
 module Int_ul_CPE =
-  Collection_editor (Int_PE) (Int_SE) (Collection_ul_container)
+  Collection_PE (Int_PE) (Int_SE) (Collection_ul_container)
 module Int_ul_MPE =
   Mapped_PE (Int_order) (Int_SV) (Int_PE) (Ul_mapped_container)
 
