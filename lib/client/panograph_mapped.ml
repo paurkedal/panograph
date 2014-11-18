@@ -16,6 +16,7 @@
 
 open Eliom_content
 open Eliom_lib
+open Panograph_common
 open Panograph_intf
 open Unprime
 open Unprime_list
@@ -128,36 +129,16 @@ struct
     w, container_ui
 end
 
-module Mapped_container_shape = struct
-  type t = {
-    a_id : string option;
-    a_class : string list;
-  }
-  let default = {
-    a_id = None;
-    a_class = ["mapped"];
-  }
-
-  let attribs s =
-    [] |> Option.fold (fun id -> List.push (Html5.F.a_id id)) s.a_id
-       |> begin match s.a_class with
-	  | [] -> ident
-	  | cls -> List.push (Html5.F.a_class cls)
-	  end
-end
-
 module Ul_mapped_container = struct
-  type shape = Mapped_container_shape.t
+  include Basic_shape
   type ui = Html5_types.flow5 Html5.elt
   type t = ui
   type item_ui = Html5_types.flow5 Html5.elt * Html5_types.flow5 Html5.elt
   type item = Html5_types.ul_content Html5.elt
   type static_ui = Prime.counit
 
-  let default_shape = Mapped_container_shape.default
-
   let create ?(shape = default_shape) ?static () =
-    let a = Mapped_container_shape.attribs shape in
+    let a = attribs_of_shape shape in
     let ui = Html5.D.ul ~a [] in
     ui, ui
 
@@ -169,7 +150,7 @@ module Ul_mapped_container = struct
 end
 
 module Table_mapped_container = struct
-  type shape = Mapped_container_shape.t
+  include Basic_shape
   type ui = Html5_types.flow5 Html5.elt
   type t = ui
   type item_ui = Html5_types.flow5 Html5.elt list
@@ -177,10 +158,8 @@ module Table_mapped_container = struct
   type item = Html5_types.table_content Html5.elt
   type static_ui = Prime.counit
 
-  let default_shape = Mapped_container_shape.default
-
   let create ?(shape = default_shape) ?static () =
-    let a = Mapped_container_shape.attribs shape in
+    let a = attribs_of_shape shape in
     let ui = Html5.D.table ~a [] in
     ui, ui
 

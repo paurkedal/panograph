@@ -16,6 +16,9 @@
 
 open Eliom_content
 open Panograph_intf
+open Unprime
+open Unprime_list
+open Unprime_option
 
 let (>>=) = Lwt.(>>=)
 let (>|=) = Lwt.(>|=)
@@ -43,3 +46,27 @@ let make_button f content =
     | Ack_error msg -> flash_error button_dom msg in
   Lwt.async (fun () -> Lwt_js_events.clicks button_dom on_click);
   button
+
+module type BASIC_SHAPE_TYPE = sig
+  type shape = {
+    a_id : string option;
+    a_class : string list;
+  }
+end
+
+module Basic_shape = struct
+  type shape = {
+    a_id : string option;
+    a_class : string list;
+  }
+  let default_shape = {
+    a_id = None;
+    a_class = ["mapped"];
+  }
+  let attribs_of_shape s =
+    [] |> Option.fold (fun id -> List.push (Html5.F.a_id id)) s.a_id
+       |> begin match s.a_class with
+	  | [] -> ident
+	  | cls -> List.push (Html5.F.a_class cls)
+	  end
+end

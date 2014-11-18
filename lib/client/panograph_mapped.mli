@@ -15,6 +15,7 @@
  *)
 
 open Eliom_content
+open Panograph_common
 open Panograph_intf
 
 module Mapped_PE
@@ -39,21 +40,20 @@ sig
 				   * Elt_PE.patch_in ]
 end
 
-module Mapped_container_shape : sig
-  type t = {
-    a_id : string option;
-    a_class : string list;
-  }
-  val default : t
+module Ul_mapped_container : sig
+  include BASIC_SHAPE_TYPE
+  include CONTAINER
+    with type shape := shape
+     and type item_ui = Html5_types.flow5 Html5.elt
+		      * Html5_types.flow5 Html5.elt
+     and type ui = Html5_types.flow5 Html5.elt
 end
 
-module Ul_mapped_container : CONTAINER
-  with type shape = Mapped_container_shape.t
-   and type item_ui = Html5_types.flow5 Html5.elt * Html5_types.flow5 Html5.elt
-   and type ui = Html5_types.flow5 Html5.elt
-
-module Table_mapped_container : CONTAINER
-  with type shape = Mapped_container_shape.t
-   and type item_ui = Html5_types.flow5 Html5.elt list
-		    * Html5_types.flow5 Html5.elt list
-   and type ui = Html5_types.flow5 Html5.elt
+module Table_mapped_container : sig
+  include BASIC_SHAPE_TYPE
+  include CONTAINER
+    with type shape := shape
+     and type item_ui = Html5_types.flow5 Html5.elt list
+		      * Html5_types.flow5 Html5.elt list
+     and type ui = Html5_types.flow5 Html5.elt
+end

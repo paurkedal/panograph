@@ -142,3 +142,29 @@ struct
     w, container_ui
 
 end
+
+module Ul_collection_container = struct
+  include Basic_shape
+  type ui = Html5_types.flow5 Html5.elt
+  type t = ui
+  type item_ui = Html5_types.flow5 Html5.elt * controls_ui
+  type item = Html5_types.ul_content Html5.elt
+  type static_ui = Html5_types.flow5 Html5.elt * controls_ui
+
+  let create ?(shape = default_shape) ?(static : static_ui option) () =
+    let open Html5 in
+    let ui =
+      D.ul
+	begin match static with
+	| None -> []
+	| Some (init_ui, controls_ui) ->
+	  [D.li [init_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]]
+	end in
+    ui, ui
+
+  let create_item ?(shape = default_shape) ((elt_ui, controls_ui) : item_ui) =
+    let open Html5 in
+    D.li [elt_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]
+  let append ?before ul li = Html5.Manip.appendChild ?before ul li
+  let remove ul li = Html5.Manip.removeChild ul li
+end

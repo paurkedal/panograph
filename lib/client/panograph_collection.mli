@@ -14,6 +14,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open Eliom_content
+open Panograph_common
 open Panograph_intf
 
 module Collection_PE
@@ -35,4 +37,13 @@ sig
 			  | `Patch of Elt_PE.patch_out ]
      and type patch_in = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
 			 | `Patch of Elt_PE.patch_in ]
+end
+
+module Ul_collection_container : sig
+  include BASIC_SHAPE_TYPE
+  include CONTAINER
+    with type shape := shape
+     and type item_ui = Html5_types.flow5 Html5.elt * controls_ui
+     and type static_ui = Html5_types.flow5 Html5.elt * controls_ui
+     and type ui = Html5_types.flow5 Html5.elt
 end
