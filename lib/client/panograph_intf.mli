@@ -33,6 +33,7 @@ module type WIDGET_BASE = sig
   type t
   type ui
   val ui : t -> ui
+  val default_shape : shape
 end
 
 module type PATCH_VIEWER = sig
@@ -41,7 +42,7 @@ module type PATCH_VIEWER = sig
   type value
   type patch_in
 
-  val create : init: value -> shape -> t
+  val create : ?shape: shape -> init: value -> unit -> t
   val patch : t -> patch_in -> unit
 end
 
@@ -50,7 +51,7 @@ module type SNAPSHOT_VIEWER = sig
 
   type value
 
-  val create : init: value -> shape -> t
+  val create : ?shape: shape -> init: value -> unit -> t
   val set : t -> value -> unit
 end
 
@@ -61,7 +62,8 @@ module type PATCH_EDITOR = sig
   type patch_out
   type patch_in
 
-  val create : init: value -> ?on_patch: (patch_out -> ack Lwt.t) -> shape -> t
+  val create : ?shape: shape -> init: value ->
+	       ?on_patch: (patch_out -> ack Lwt.t) -> unit -> t
   val patch : t -> patch_in -> unit
 end
 
@@ -70,7 +72,7 @@ module type SNAPSHOT_EDITOR = sig
 
   type value
 
-  val create : ?init: value -> shape -> t
+  val create : ?shape: shape -> ?init: value -> unit -> t
   val snapshot : t -> value
 end
 
@@ -89,8 +91,8 @@ module type CONTAINER = sig
   type item_ui
   type init_ui
 
-  val create : ?init: init_ui -> shape -> t
-  val create_item : item_ui -> shape -> item
+  val create : ?shape: shape -> ?init: init_ui -> unit -> t
+  val create_item : ?shape: shape -> item_ui -> item
   val append : ?before: item -> t -> item -> unit
   val remove : t -> item -> unit
 end

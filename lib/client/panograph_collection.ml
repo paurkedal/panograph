@@ -41,6 +41,12 @@ struct
   type patch_in = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
 		  | `Patch of Elt_PE.patch_in ]
 
+  let default_shape = {
+    elt_pe_shape = Elt_PE.default_shape;
+    elt_se_shape = Elt_SE.default_shape;
+    container_shape = Container.default_shape;
+  }
+
   module Set = Prime_retraction.Make (struct
     type key = Elt_PE.key
     type t = Elt_PE.t * Container.item
@@ -76,16 +82,16 @@ struct
 	  else
 	    on_patch (`Patch p) in
       let elt_pe =
-	Elt_PE.create ~init:v ?on_patch:(Option.map on_elt_patch w.w_on_patch)
-		      w.w_shape.elt_pe_shape in
+	Elt_PE.create ~shape:w.w_shape.elt_pe_shape ~init:v
+		      ?on_patch:(Option.map on_elt_patch w.w_on_patch) () in
       let remove_button =
 	match w.w_on_patch with
 	| Some on_patch ->
 	  let on_remove () = on_patch (`Remove (Elt_PE.key_of_t elt_pe)) in
 	  [make_button on_remove label_for_remove]
 	| None -> [] in
-      let item = Container.create_item (Elt_PE.ui elt_pe, remove_button)
-				       w.w_shape.container_shape in
+      let item = Container.create_item ~shape:w.w_shape.container_shape
+				       (Elt_PE.ui elt_pe, remove_button) in
       add_elt w (elt_pe, item)
     end
 
@@ -118,16 +124,17 @@ struct
     | `Remove k -> remove_key w k
     | `Patch elt_patch -> patch_elt w elt_patch
 
-  let create ~init ?on_patch shape =
+  let create ?(shape = default_shape) ~init ?on_patch () =
     let aux =
       match on_patch with
       | None -> None
       | Some on_patch ->
-	let add_se = Elt_SE.create shape.elt_se_shape in
+	let add_se = Elt_SE.create ~shape:shape.elt_se_shape () in
 	let on_add () = on_patch (`Add (Elt_SE.snapshot add_se)) in
 	let add_button = make_button on_add label_for_add in
 	Some (Elt_SE.ui add_se, [add_button]) in
-    let container = Container.create ?init:aux shape.container_shape in
+    let container =
+      Container.create ~shape:shape.container_shape ?init:aux () in
     let w =
       { w_shape = shape;
 	w_container = container;

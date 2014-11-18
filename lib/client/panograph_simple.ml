@@ -30,9 +30,11 @@ module Simple_SV (Value : STRINGABLE) = struct
   type ui = Html5_types.flow5 Html5.elt
   type t = ui * ui
 
+  let default_shape = []
+
   let ui (p, c) = p
 
-  let create ~init:v shape =
+  let create ?(shape = default_shape) ~init:v () =
     let c = Html5.D.pcdata (Value.to_string v) in
     let p = Html5.D.span ~a:shape [c] in
     (p, c)
@@ -109,8 +111,9 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
 
   let get {w_dom} = Value.of_string (Js.to_string w_dom##value)
 
-  let create ~init ?on_patch {Simple_shape.input_a} =
-    let inp = Html5.D.input ~input_type:`Text ~a:input_a () in
+  let create ?(shape = default_shape) ~init ?on_patch () =
+    let inp = Html5.D.input ~input_type:`Text
+			    ~a:shape.Simple_shape.input_a () in
     let w_dom = Html5.To_dom.of_input inp in
     let w = {w_ui = inp; w_dom; w_saved_title = Js.to_string w_dom##title;
 	     w_value = init} in
@@ -159,7 +162,7 @@ module Simple_snapshot_editor (Value : STRINGABLE) = struct
     w.w_dom##classList##remove(Js.string "error");
     w.w_dom##title <- Js.string w.w_saved_title
 
-  let create ?init shape =
+  let create ?(shape = default_shape) ?init () =
     let inp =
       Html5.D.input ~input_type:`Text ~a:shape.Simple_shape.input_a () in
     let w_dom = Html5.To_dom.of_input inp in

@@ -34,8 +34,9 @@ module Collection_ul_container = struct
   type item_ui = Html5_types.flow5 Html5.elt * controls_ui
   type item = Html5_types.ul_content Html5.elt
   type init_ui = Html5_types.flow5 Html5.elt * controls_ui
+  let default_shape = ()
   let ui w = w
-  let create ?(init : init_ui option) () =
+  let create ?(shape = default_shape) ?(init : init_ui option) () =
     let open Html5 in
     D.ul
       begin match init with
@@ -43,7 +44,7 @@ module Collection_ul_container = struct
       | Some (init_ui, controls_ui) ->
 	[D.li [init_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]]
       end
-  let create_item ((elt_ui, controls_ui) : item_ui) () =
+  let create_item ?(shape = default_shape) ((elt_ui, controls_ui) : item_ui) =
     let open Html5 in
     D.li [elt_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]
   let append ?before ul li = Html5.Manip.appendChild ?before ul li
@@ -61,7 +62,7 @@ let test_int_editor () =
   let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
   let w =
     Int_PE.create ~init:19 ~on_patch
-		  Simple_shape.(make ~a:[F.a_title "test"] ()) in
+		  ~shape:Simple_shape.(make ~a:[F.a_title "test"] ()) () in
   Lwt_react.E.keep (Lwt_react.E.map (Int_PE.patch w) ev);
   Int_PE.ui w
 
@@ -69,28 +70,22 @@ let test_float_editor () =
   let ev, send_ev = React.E.create () in
   let open Html5 in
   let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
-  let w = Float_PE.create ~init:0.01 ~on_patch Simple_shape.(make ()) in
+  let w = Float_PE.create ~init:0.01 ~on_patch () in
   Lwt_react.E.keep (Lwt_react.E.map (Float_PE.patch w) ev);
   Float_PE.ui w
 
 let test_int_ul () =
   let ev, send_ev = React.E.create () in
-  let elt_pe_shape = Simple_shape.(make ()) in
-  let shape = Int_ul_PE.({container_shape = ();
-			  elt_pe_shape; elt_se_shape = elt_pe_shape}) in
   let on_patch p =
     Lwt.(async (fun () -> Lwt_js.sleep 0.33 >|= fun () -> send_ev p));
     Lwt.return Ack_ok in
   let init = [5; 7; 3; 11; 17; 13] in
-  let pe = Int_ul_PE.create ~init ~on_patch shape in
+  let pe = Int_ul_PE.create ~init ~on_patch () in
   let on_mapped_patch (`Patch (k, (`Change (v, v')))) =
     send_ev (`Patch (`Change (k, - v')));
     Lwt.return Ack_ok in
-  let mapped_shape =
-    Int_ul_MPE.({key_sv_shape = []; elt_pe_shape;
-		 container_shape = Mapped_container_shape.default}) in
   let mapped_pe = Int_ul_MPE.create ~init:(List.map (fun k -> k, -k) init)
-				    ~on_patch:on_mapped_patch mapped_shape in
+				    ~on_patch:on_mapped_patch () in
   let update p =
     Int_ul_PE.patch pe p;
     let p' =
