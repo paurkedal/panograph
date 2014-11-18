@@ -33,13 +33,13 @@ module Collection_ul_container = struct
   type t = ui
   type item_ui = Html5_types.flow5 Html5.elt * controls_ui
   type item = Html5_types.ul_content Html5.elt
-  type init_ui = Html5_types.flow5 Html5.elt * controls_ui
+  type static_ui = Html5_types.flow5 Html5.elt * controls_ui
   let default_shape = ()
-  let create ?(shape = default_shape) ?(init : init_ui option) () =
+  let create ?(shape = default_shape) ?(static : static_ui option) () =
     let open Html5 in
     let ui =
       D.ul
-	begin match init with
+	begin match static with
 	| None -> []
 	| Some (init_ui, controls_ui) ->
 	  [D.li [init_ui; D.span ~a:[F.a_class ["controls"]] controls_ui]]

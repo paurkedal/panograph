@@ -20,7 +20,7 @@ module Collection_editor
 	(Elt_PE : RETRACTABLE_PATCH_EDITOR)
 	(Elt_SE : SNAPSHOT_EDITOR with type value = Elt_PE.value)
 	(Container : CONTAINER with type item_ui = Elt_PE.ui * controls_ui
-				and type init_ui = Elt_SE.ui * controls_ui) :
+				and type static_ui = Elt_SE.ui * controls_ui) :
 sig
   type shape = {
     elt_pe_shape : Elt_PE.shape;

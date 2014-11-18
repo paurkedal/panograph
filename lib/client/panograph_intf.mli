@@ -88,9 +88,9 @@ module type CONTAINER = sig
   include WIDGET_BASE
   type item
   type item_ui
-  type init_ui
+  type static_ui
 
-  val create : ?shape: shape -> ?init: init_ui -> unit -> t * ui
+  val create : ?shape: shape -> ?static: static_ui -> unit -> t * ui
   val create_item : ?shape: shape -> item_ui -> item
   val append : ?before: item -> t -> item -> unit
   val remove : t -> item -> unit

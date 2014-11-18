@@ -27,7 +27,7 @@ module Collection_editor
 	(Elt_PE : RETRACTABLE_PATCH_EDITOR)
 	(Elt_SE : SNAPSHOT_EDITOR with type value = Elt_PE.value)
 	(Container : CONTAINER with type item_ui = Elt_PE.ui * controls_ui
-				and type init_ui = Elt_SE.ui * controls_ui) =
+				and type static_ui = Elt_SE.ui * controls_ui) =
 struct
   type shape = {
     elt_pe_shape : Elt_PE.shape;
@@ -123,7 +123,7 @@ struct
     | `Patch elt_patch -> patch_elt w elt_patch
 
   let create ?(shape = default_shape) ?on_patch init =
-    let aux =
+    let static =
       match on_patch with
       | None -> None
       | Some on_patch ->
@@ -132,7 +132,7 @@ struct
 	let add_button = make_button on_add label_for_add in
 	Some (add_ui, [add_button]) in
     let container, container_ui =
-      Container.create ~shape:shape.container_shape ?init:aux () in
+      Container.create ~shape:shape.container_shape ?static () in
     let w =
       { w_shape = shape;
 	w_container = container;
