@@ -62,8 +62,6 @@ struct
     container_shape = Container.default_shape;
   }
 
-  let ui w = Container.ui w.w_container
-
   let add_elt w k elt =
     w.w_map <- Map.add k elt w.w_map;
     let before =
@@ -76,12 +74,13 @@ struct
     else begin
       let e_key = ref k in
       let on_elt_patch on_patch p = on_patch (`Patch (!e_key, p)) in
-      let key_sv = Key_SV.create ~shape:w.w_shape.key_sv_shape ~init:k () in
-      let elt_pe =
+      let key_sv, key_ui =
+	Key_SV.create ~shape:w.w_shape.key_sv_shape ~init:k () in
+      let elt_pe, elt_ui =
 	Elt_PE.create ~shape:w.w_shape.elt_pe_shape ~init:v
 		      ?on_patch:(Option.map on_elt_patch w.w_on_patch) () in
       let item = Container.create_item ~shape:w.w_shape.container_shape
-				       (Key_SV.ui key_sv, Elt_PE.ui elt_pe) in
+				       (key_ui, elt_ui) in
       add_elt w k {e_key; e_key_sv = key_sv; e_elt_pe = elt_pe; e_item = item}
     end
 
@@ -118,14 +117,15 @@ struct
     | `Patch (k, k', p) -> patch_elt w k k' p
 
   let create ?(shape = default_shape) ~init ?on_patch () =
-    let container = Container.create ~shape:shape.container_shape () in
+    let container, container_ui =
+      Container.create ~shape:shape.container_shape () in
     let w =
       { w_shape = shape;
 	w_container = container;
 	w_map = Map.empty;
 	w_on_patch = on_patch; } in
     List.iter (add_binding w) init;
-    w
+    w, container_ui
 end
 
 module Mapped_container_shape = struct
@@ -156,12 +156,11 @@ module Ul_mapped_container = struct
 
   let default_shape = Mapped_container_shape.default
 
-  let ui w = w
-
   let create ?(shape = default_shape) ?init () =
     assert (init = None);
     let a = Mapped_container_shape.attribs shape in
-    Html5.D.ul ~a []
+    let ui = Html5.D.ul ~a [] in
+    ui, ui
 
   let create_item ?(shape = default_shape) (key_ui, elt_ui) =
     Html5.D.(li [key_ui; pcdata ": "; elt_ui])
@@ -181,12 +180,11 @@ module Table_mapped_container = struct
 
   let default_shape = Mapped_container_shape.default
 
-  let ui w = w
-
   let create ?(shape = default_shape) ?init () =
     assert (init = None);
     let a = Mapped_container_shape.attribs shape in
-    Html5.D.table ~a []
+    let ui = Html5.D.table ~a [] in
+    ui, ui
 
   let create_item ?shape (key_ui, elt_ui) = Html5.D.(tr [td key_ui; td elt_ui])
   let append ?before table tr = Html5.Manip.appendChild ?before table tr

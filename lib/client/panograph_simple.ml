@@ -32,12 +32,10 @@ module Simple_SV (Value : STRINGABLE) = struct
 
   let default_shape = []
 
-  let ui (p, c) = p
-
   let create ?(shape = default_shape) ~init:v () =
     let c = Html5.D.pcdata (Value.to_string v) in
     let p = Html5.D.span ~a:shape [c] in
-    (p, c)
+    (p, c), p
 
   let set (p, c) v =
     Html5.Manip.replaceChildren p [Html5.D.pcdata (Value.to_string v)]
@@ -76,13 +74,10 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
 
   type ui = Html5_types.flow5 Html5.elt
   type t = {
-    w_ui : [`Input] Html5.elt;
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;
     mutable w_value : value; (* as received *)
   }
-
-  let ui w = (w.w_ui :> ui)
 
   let has_class w cls =
     Js.to_bool (w.w_dom##classList##contains(Js.string cls))
@@ -115,7 +110,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
     let inp = Html5.D.input ~input_type:`Text
 			    ~a:shape.Simple_shape.input_a () in
     let w_dom = Html5.To_dom.of_input inp in
-    let w = {w_ui = inp; w_dom; w_saved_title = Js.to_string w_dom##title;
+    let w = {w_dom; w_saved_title = Js.to_string w_dom##title;
 	     w_value = init} in
     w_dom##value <- Js.string (Value.to_string init);
     Option.iter (fun on_patch ->
@@ -129,7 +124,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
 	| Failure _ | Invalid_argument _ ->
 	  clear_dirty w; set_error w "Invalid input."; Lwt.return_unit in
       Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change)) on_patch;
-    w
+    w, (inp :> ui)
 
   type key = value
   let key_of_t w = w.w_value
@@ -147,11 +142,9 @@ module Simple_snapshot_editor (Value : STRINGABLE) = struct
   type value = Value.t
   type ui = Html5_types.flow5 Html5.elt
   type t = {
-    w_ui : [`Input] Html5.elt;
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;
   }
-  let ui w = (w.w_ui :> ui)
 
   let snapshot w = Value.of_string (Js.to_string w.w_dom##value)
 
@@ -166,7 +159,7 @@ module Simple_snapshot_editor (Value : STRINGABLE) = struct
     let inp =
       Html5.D.input ~input_type:`Text ~a:shape.Simple_shape.input_a () in
     let w_dom = Html5.To_dom.of_input inp in
-    let w = {w_ui = inp; w_dom; w_saved_title = Js.to_string w_dom##title} in
+    let w = {w_dom; w_saved_title = Js.to_string w_dom##title} in
     Option.iter (fun x -> w_dom##value <- Js.string (Value.to_string x)) init;
     let on_change _ _ =
       Lwt.wrap begin fun () ->
@@ -175,7 +168,7 @@ module Simple_snapshot_editor (Value : STRINGABLE) = struct
 	with Failure _ | Invalid_argument _ -> set_error w "Invalid input."
       end in
     Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change);
-    w
+    w, (inp :> ui)
 end
 
 module String_str = struct

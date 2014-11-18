@@ -61,8 +61,6 @@ struct
     w_on_patch : (patch_out -> ack Lwt.t) option;
   }
 
-  let ui w = Container.ui w.w_container
-
   let add_elt w ((_, item) as elt) =
     w.w_set <- Set.add elt w.w_set;
     let before = Option.found (fun () -> snd (Set.elt_succ_e w.w_set elt)) in
@@ -81,7 +79,7 @@ struct
 	      (Ack_error "The changed item conflicts with another item.")
 	  else
 	    on_patch (`Patch p) in
-      let elt_pe =
+      let elt_pe, elt_ui =
 	Elt_PE.create ~shape:w.w_shape.elt_pe_shape ~init:v
 		      ?on_patch:(Option.map on_elt_patch w.w_on_patch) () in
       let remove_button =
@@ -91,7 +89,7 @@ struct
 	  [make_button on_remove label_for_remove]
 	| None -> [] in
       let item = Container.create_item ~shape:w.w_shape.container_shape
-				       (Elt_PE.ui elt_pe, remove_button) in
+				       (elt_ui, remove_button) in
       add_elt w (elt_pe, item)
     end
 
@@ -129,11 +127,11 @@ struct
       match on_patch with
       | None -> None
       | Some on_patch ->
-	let add_se = Elt_SE.create ~shape:shape.elt_se_shape () in
+	let add_se, add_ui = Elt_SE.create ~shape:shape.elt_se_shape () in
 	let on_add () = on_patch (`Add (Elt_SE.snapshot add_se)) in
 	let add_button = make_button on_add label_for_add in
-	Some (Elt_SE.ui add_se, [add_button]) in
-    let container =
+	Some (add_ui, [add_button]) in
+    let container, container_ui =
       Container.create ~shape:shape.container_shape ?init:aux () in
     let w =
       { w_shape = shape;
@@ -141,6 +139,6 @@ struct
 	w_set = Set.empty;
 	w_on_patch = on_patch; } in
     List.iter (add_value w) init;
-    w
+    w, container_ui
 
 end
