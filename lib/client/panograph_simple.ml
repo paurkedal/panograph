@@ -64,7 +64,7 @@ module type SIMPLE_SNAPSHOT_EDITOR =
     with type shape = Simple_shape.t
      and type ui = Html5_types.flow5 Html5.elt
 
-module Simple_patch_editor (Value : STRINGABLE) = struct
+module Simple_PE (Value : STRINGABLE) = struct
   type shape = Simple_shape.t
   let default_shape = Simple_shape.make ()
 
@@ -135,7 +135,7 @@ module Simple_patch_editor (Value : STRINGABLE) = struct
   let compare wA wB = Pervasives.compare wA.w_value wB.w_value
 end
 
-module Simple_snapshot_editor (Value : STRINGABLE) = struct
+module Simple_SE (Value : STRINGABLE) = struct
   type shape = Simple_shape.t
   let default_shape = Simple_shape.make ()
 
@@ -203,16 +203,16 @@ module String_SV = Simple_SV (String_str)
 module Int_SV = Simple_SV (Int_str)
 module Float_SV = Simple_SV (Float_str)
 
-module String_PE = Simple_patch_editor (String_str)
-module Int_PE = Simple_patch_editor (Int_str)
-module Float_PE = Simple_patch_editor (Float_str)
-module String_option_PE = Simple_patch_editor (String_option_str)
-module Int_option_PE = Simple_patch_editor (Int_option_str)
-module Float_option_PE = Simple_patch_editor (Float_option_str)
+module String_PE = Simple_PE (String_str)
+module Int_PE = Simple_PE (Int_str)
+module Float_PE = Simple_PE (Float_str)
+module String_option_PE = Simple_PE (String_option_str)
+module Int_option_PE = Simple_PE (Int_option_str)
+module Float_option_PE = Simple_PE (Float_option_str)
 
-module String_SE = Simple_snapshot_editor (String_str)
-module Int_SE = Simple_snapshot_editor (Int_str)
-module Float_SE = Simple_snapshot_editor (Float_str)
-module String_option_SE = Simple_snapshot_editor (String_option_str)
-module Int_option_SE = Simple_snapshot_editor (Int_option_str)
-module Float_option_SE = Simple_snapshot_editor (Float_option_str)
+module String_SE = Simple_SE (String_str)
+module Int_SE = Simple_SE (Int_str)
+module Float_SE = Simple_SE (Float_str)
+module String_option_SE = Simple_SE (String_option_str)
+module Int_option_SE = Simple_SE (Int_option_str)
+module Float_option_SE = Simple_SE (Float_option_str)

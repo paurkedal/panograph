@@ -48,10 +48,10 @@ module type SIMPLE_SNAPSHOT_EDITOR =
     with type shape = Simple_shape.t
      and type ui = Html5_types.flow5 Html5.elt
 
-module Simple_patch_editor (Value : STRINGABLE) :
+module Simple_PE (Value : STRINGABLE) :
   SIMPLE_PATCH_EDITOR with type value = Value.t
 
-module Simple_snapshot_editor (Value : STRINGABLE) :
+module Simple_SE (Value : STRINGABLE) :
   SIMPLE_SNAPSHOT_EDITOR with type value = Value.t
 
 module String_SV : SIMPLE_SNAPSHOT_VIEWER with type value = string
