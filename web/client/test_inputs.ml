@@ -37,7 +37,7 @@ let test_int_editor () =
   let open Html5 in
   let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
   let w, ui =
-    Int_PE.create ~shape:Simple_shape.(make ~a:[F.a_title "test"] ())
+    Int_PE.create ~shape:Int_PE.({default_shape with a_title = Some "test"})
 		  ~on_patch 19 in
   Lwt_react.E.keep (Lwt_react.E.map (Int_PE.patch w) ev);
   ui

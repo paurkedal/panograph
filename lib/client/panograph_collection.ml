@@ -151,6 +151,8 @@ module Ul_collection_container = struct
   type item = Html5_types.ul_content Html5.elt
   type static_ui = Html5_types.flow5 Html5.elt * controls_ui
 
+  let default_shape = make_default_shape ["collection"]
+
   let create ?(shape = default_shape) ?(static : static_ui option) () =
     let open Html5 in
     let ui =
@@ -176,6 +178,8 @@ module Table_collection_container = struct
   type item_ui = Html5_types.flow5 Html5.elt list * controls_ui
   type item = Html5_types.table_content Html5.elt
   type static_ui = Html5_types.flow5 Html5.elt list * controls_ui
+
+  let default_shape = make_default_shape ["collection"]
 
   let create ?(shape = default_shape) ?(static : static_ui option) () =
     let open Html5 in

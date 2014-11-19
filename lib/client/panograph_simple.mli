@@ -15,15 +15,23 @@
  *)
 
 open Eliom_content
+open Panograph_common
 open Panograph_i18n
 open Panograph_intf
 
-module type SIMPLE_SNAPSHOT_VIEWER =
-  SNAPSHOT_VIEWER
-    with type shape = Html5_types.common Html5.attrib list
-     and type ui = Html5_types.flow5 Html5.elt
+module type SIMPLE_VALUE = sig
+  include STRINGABLE
+  val css_classes : string list
+end
 
-module Simple_SV (Value : STRINGABLE) :
+module type SIMPLE_SNAPSHOT_VIEWER = sig
+  include BASIC_SHAPE_TYPE
+  include SNAPSHOT_VIEWER
+    with type shape := shape
+     and type ui = Html5_types.flow5 Html5.elt
+end
+
+module Simple_SV (Value : SIMPLE_VALUE) :
   SIMPLE_SNAPSHOT_VIEWER with type value = Value.t
 
 module Simple_shape : sig
@@ -35,24 +43,27 @@ module type SIMPLE_PATCH_EDITOR = sig
 
   type value
 
+  include BASIC_SHAPE_TYPE
   include RETRACTABLE_PATCH_EDITOR
      with type value := value
       and type key = value
       and type patch_out = [`Change of value * value]
       and type patch_in = [`Change of value * value]
-      and type shape = Simple_shape.t
+      and type shape := shape
       and type ui = Html5_types.flow5 Html5.elt
 end
 
-module type SIMPLE_SNAPSHOT_EDITOR =
-  SNAPSHOT_EDITOR
-    with type shape = Simple_shape.t
+module type SIMPLE_SNAPSHOT_EDITOR = sig
+  include BASIC_SHAPE_TYPE
+  include SNAPSHOT_EDITOR
+    with type shape := shape
      and type ui = Html5_types.flow5 Html5.elt
+end
 
-module Simple_PE (Value : STRINGABLE) :
+module Simple_PE (Value : SIMPLE_VALUE) :
   SIMPLE_PATCH_EDITOR with type value = Value.t
 
-module Simple_SE (Value : STRINGABLE) :
+module Simple_SE (Value : SIMPLE_VALUE) :
   SIMPLE_SNAPSHOT_EDITOR with type value = Value.t
 
 module String_SV : SIMPLE_SNAPSHOT_VIEWER with type value = string

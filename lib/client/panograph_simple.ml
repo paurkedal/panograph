@@ -15,27 +15,36 @@
  *)
 
 open Eliom_content
+open Panograph_common
 open Panograph_i18n
 open Panograph_intf
 open Unprime
 open Unprime_option
 
-module type SIMPLE_SNAPSHOT_VIEWER =
-  SNAPSHOT_VIEWER
-    with type shape = Html5_types.common Html5.attrib list
-     and type ui = Html5_types.flow5 Html5.elt
+module type SIMPLE_VALUE = sig
+  include STRINGABLE
+  val css_classes : string list
+end
 
-module Simple_SV (Value : STRINGABLE) = struct
+module type SIMPLE_SNAPSHOT_VIEWER = sig
+  include BASIC_SHAPE_TYPE
+  include SNAPSHOT_VIEWER
+    with type shape := shape
+     and type ui = Html5_types.flow5 Html5.elt
+end
+
+module Simple_SV (Value : SIMPLE_VALUE) = struct
+  include Basic_shape
+
   type value = Value.t
-  type shape = Html5_types.common Html5.attrib list
   type ui = Html5_types.flow5 Html5.elt
   type t = ui * ui
 
-  let default_shape = []
+  let default_shape = make_default_shape ("SV" :: Value.css_classes)
 
   let create ?(shape = default_shape) v =
     let c = Html5.D.pcdata (Value.to_string v) in
-    let p = Html5.D.span ~a:shape [c] in
+    let p = Html5.D.span ~a:(attribs_of_shape shape) [c] in
     (p, c), p
 
   let set (p, c) v =
@@ -51,23 +60,25 @@ end
 
 module type SIMPLE_PATCH_EDITOR = sig
   type value
+  include BASIC_SHAPE_TYPE
   include RETRACTABLE_PATCH_EDITOR
      with type value := value
       and type key = value
       and type patch_out = [`Change of value * value]
       and type patch_in = [`Change of value * value]
-      and type shape = Simple_shape.t
+      and type shape := shape
       and type ui = Html5_types.flow5 Html5.elt
 end
 
-module type SIMPLE_SNAPSHOT_EDITOR =
-  SNAPSHOT_EDITOR
-    with type shape = Simple_shape.t
+module type SIMPLE_SNAPSHOT_EDITOR = sig
+  include BASIC_SHAPE_TYPE
+  include SNAPSHOT_EDITOR
+    with type shape := shape
      and type ui = Html5_types.flow5 Html5.elt
+end
 
-module Simple_PE (Value : STRINGABLE) = struct
-  type shape = Simple_shape.t
-  let default_shape = Simple_shape.make ()
+module Simple_PE (Value : SIMPLE_VALUE) = struct
+  include Basic_shape
 
   type value = Value.t
   type patch_out = [`Change of value * value]
@@ -79,6 +90,8 @@ module Simple_PE (Value : STRINGABLE) = struct
     w_saved_title : string;
     mutable w_value : value; (* as received *)
   }
+
+  let default_shape = make_default_shape ("PE" :: Value.css_classes)
 
   let has_class w cls =
     Js.to_bool (w.w_dom##classList##contains(Js.string cls))
@@ -109,7 +122,7 @@ module Simple_PE (Value : STRINGABLE) = struct
 
   let create ?(shape = default_shape) ?on_patch init =
     let inp = Html5.D.input ~input_type:`Text
-			    ~a:shape.Simple_shape.input_a () in
+			    ~a:(attribs_of_shape shape) () in
     let w_dom = Html5.To_dom.of_input inp in
     let w = {w_dom; w_saved_title = Js.to_string w_dom##title;
 	     w_value = init} in
@@ -136,9 +149,8 @@ module Simple_PE (Value : STRINGABLE) = struct
   let compare wA wB = Pervasives.compare wA.w_value wB.w_value
 end
 
-module Simple_SE (Value : STRINGABLE) = struct
-  type shape = Simple_shape.t
-  let default_shape = Simple_shape.make ()
+module Simple_SE (Value : SIMPLE_VALUE) = struct
+  include Basic_shape
 
   type value = Value.t
   type ui = Html5_types.flow5 Html5.elt
@@ -146,6 +158,8 @@ module Simple_SE (Value : STRINGABLE) = struct
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;
   }
+
+  let default_shape = make_default_shape ("SE" :: Value.css_classes)
 
   let snapshot w = Value.of_string (Js.to_string w.w_dom##value)
 
@@ -158,7 +172,7 @@ module Simple_SE (Value : STRINGABLE) = struct
 
   let create ?(shape = default_shape) ?init () =
     let inp =
-      Html5.D.input ~input_type:`Text ~a:shape.Simple_shape.input_a () in
+      Html5.D.input ~input_type:`Text ~a:(attribs_of_shape shape) () in
     let w_dom = Html5.To_dom.of_input inp in
     let w = {w_dom; w_saved_title = Js.to_string w_dom##title} in
     Option.iter (fun x -> w_dom##value <- Js.string (Value.to_string x)) init;
@@ -176,24 +190,28 @@ module String_str = struct
   type t = string
   let of_string = ident
   let to_string = ident
+  let css_classes = ["string"]
 end
 
 module Int_str = struct
   type t = int
   let of_string = int_of_string
   let to_string = string_of_int
+  let css_classes = ["int"]
 end
 
 module Float_str = struct
   type t = float
   let of_string = float_of_string
   let to_string = string_of_float
+  let css_classes = ["float"]
 end
 
-module Option_str (X : STRINGABLE) = struct
+module Option_str (X : SIMPLE_VALUE) = struct
   type t = X.t option
   let of_string = function "" -> None | s -> Some (X.of_string s)
   let to_string = function None -> "" | Some x -> X.to_string x
+  let css_classes = "option" :: X.css_classes
 end
 
 module String_option_str = Option_str (String_str)
@@ -218,6 +236,11 @@ module String_option_SE = Simple_SE (String_option_str)
 module Int_option_SE = Simple_SE (Int_option_str)
 module Float_option_SE = Simple_SE (Float_option_str)
 
-module Lang_SV = Simple_SV (Lang)
-module Lang_SE = Simple_SE (Lang)
-module Lang_PE = Simple_PE (Lang)
+module Lang_V = struct
+  include Lang
+  let css_classes = ["lang"]
+end
+
+module Lang_SV = Simple_SV (Lang_V)
+module Lang_SE = Simple_SE (Lang_V)
+module Lang_PE = Simple_PE (Lang_V)

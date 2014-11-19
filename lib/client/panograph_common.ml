@@ -51,6 +51,7 @@ module type BASIC_SHAPE_TYPE = sig
   type shape = {
     a_id : string option;
     a_class : string list;
+    a_title : string option;
   }
 end
 
@@ -58,10 +59,12 @@ module Basic_shape = struct
   type shape = {
     a_id : string option;
     a_class : string list;
+    a_title : string option;
   }
-  let default_shape = {
+  let make_default_shape default_class = {
     a_id = None;
-    a_class = ["mapped"];
+    a_class = default_class;
+    a_title = None;
   }
   let attribs_of_shape s =
     [] |> Option.fold (fun id -> List.push (Html5.F.a_id id)) s.a_id
@@ -69,4 +72,5 @@ module Basic_shape = struct
 	  | [] -> ident
 	  | cls -> List.push (Html5.F.a_class cls)
 	  end
+       |> Option.fold (fun s -> List.push (Html5.F.a_title s)) s.a_title
 end

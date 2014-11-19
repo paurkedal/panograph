@@ -137,6 +137,8 @@ module Ul_mapped_container = struct
   type item = Html5_types.ul_content Html5.elt
   type static_ui = Prime.counit
 
+  let default_shape = make_default_shape ["mapped"]
+
   let create ?(shape = default_shape) ?static () =
     let a = attribs_of_shape shape in
     let ui = Html5.D.ul ~a [] in
@@ -157,6 +159,8 @@ module Table_mapped_container = struct
 	       * Html5_types.flow5 Html5.elt list
   type item = Html5_types.table_content Html5.elt
   type static_ui = Prime.counit
+
+  let default_shape = make_default_shape ["mapped"]
 
   let create ?(shape = default_shape) ?static () =
     let a = attribs_of_shape shape in
