@@ -53,7 +53,7 @@ module Table_mapped_container : sig
   include BASIC_SHAPE_TYPE
   include CONTAINER
     with type shape := shape
-     and type item_ui = Html5_types.flow5 Html5.elt
-		      * Html5_types.flow5 Html5.elt
+     and type item_ui = Html5_types.flow5 Html5.elt list
+		      * Html5_types.flow5 Html5.elt list
      and type ui = Html5_types.flow5 Html5.elt
 end

@@ -153,8 +153,8 @@ module Table_mapped_container = struct
   include Basic_shape
   type ui = Html5_types.flow5 Html5.elt
   type t = ui
-  type item_ui = Html5_types.flow5 Html5.elt
-	       * Html5_types.flow5 Html5.elt
+  type item_ui = Html5_types.flow5 Html5.elt list
+	       * Html5_types.flow5 Html5.elt list
   type item = Html5_types.table_content Html5.elt
   type static_ui = Prime.counit
 
@@ -164,7 +164,7 @@ module Table_mapped_container = struct
     ui, ui
 
   let create_item ?shape (key_ui, elt_ui) =
-    Html5.D.(tr [td [key_ui]; td [elt_ui]])
+    Html5.D.(tr (td key_ui :: List.map (fun el -> td [el]) elt_ui))
   let append ?before table tr = Html5.Manip.appendChild ?before table tr
   let remove table tr = Html5.Manip.removeChild table tr
 end
