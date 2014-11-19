@@ -15,6 +15,7 @@
  *)
 
 open Eliom_content
+open Panograph_i18n
 open Panograph_intf
 open Unprime
 open Unprime_option
@@ -216,3 +217,7 @@ module Float_SE = Simple_SE (Float_str)
 module String_option_SE = Simple_SE (String_option_str)
 module Int_option_SE = Simple_SE (Int_option_str)
 module Float_option_SE = Simple_SE (Float_option_str)
+
+module Lang_SV = Simple_SV (Lang)
+module Lang_SE = Simple_SE (Lang)
+module Lang_PE = Simple_PE (Lang)

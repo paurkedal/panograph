@@ -15,6 +15,7 @@
  *)
 
 open Eliom_content
+open Panograph_i18n
 open Panograph_intf
 
 module type SIMPLE_SNAPSHOT_VIEWER =
@@ -71,3 +72,7 @@ module Float_SE : SIMPLE_SNAPSHOT_EDITOR with type value = float
 module String_option_SE : SIMPLE_SNAPSHOT_EDITOR with type value = string option
 module Int_option_SE : SIMPLE_SNAPSHOT_EDITOR with type value = int option
 module Float_option_SE : SIMPLE_SNAPSHOT_EDITOR with type value = float option
+
+module Lang_SV : SIMPLE_SNAPSHOT_VIEWER with type value = lang
+module Lang_SE : SIMPLE_SNAPSHOT_EDITOR with type value = lang
+module Lang_PE : SIMPLE_PATCH_EDITOR with type value = lang
