@@ -29,6 +29,7 @@ Library "panograph-client"
   FindlibName: client
   Modules:
     Panograph_collection,
+    Panograph_common,
     Panograph_intf,
     Panograph_mapped,
     Panograph_simple,
