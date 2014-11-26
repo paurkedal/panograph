@@ -10,6 +10,9 @@ BuildTools: ocamlbuild
 XOCamlbuildPluginTags: package(eliom.ocamlbuild)
 OCamlVersion: >= 4.01
 
+# Package names should be changed to panograph, panograph.server and
+# panograph.client when supported by OASIS.  Cf feature request #1305.
+
 Library "panograph"
   Path: lib
   BuildDepends: js_of_ocaml.deriving, lwt, prime
@@ -20,8 +23,6 @@ Library "panograph"
 
 Library "panograph-server"
   Path: lib/server
-  FindlibParent: panograph
-  FindlibName: server
   BuildDepends: eliom.server, panograph, prime
   Modules:
     Panograph_lib,
@@ -29,8 +30,6 @@ Library "panograph-server"
 
 Library "panograph-client"
   Path: lib/client
-  FindlibParent: panograph
-  FindlibName: client
   Modules:
     Panograph_collection,
     Panograph_common,
@@ -47,7 +46,7 @@ Library "panograph-client"
 Library "test"
   Path: web
   Modules: server/Test, server/Test_twine_editor
-  BuildDepends: eliom.server, panograph.server, prime, prime.unstable
+  BuildDepends: eliom.server, panograph-server, prime, prime.unstable
   ByteOpt: -thread
   NativeOpt: -thread
   CompiledObject: native
@@ -55,7 +54,7 @@ Library "test"
 
 Executable "test"
   Path: web/client
-  BuildDepends: eliom.client, panograph.client
+  BuildDepends: eliom.client, panograph-client
   MainIs: test.ml
   ByteOpt: -thread
   Install: false
