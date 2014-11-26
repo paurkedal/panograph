@@ -12,16 +12,20 @@ OCamlVersion: >= 4.01
 
 Library "panograph"
   Path: lib
-  BuildDepends: lwt, prime
+  BuildDepends: js_of_ocaml.deriving, lwt, prime
   Modules:
     Panograph_dltree,
-    Panograph_i18n
+    Panograph_i18n,
+    Panograph_lwt
 
-#Library "panograph-server"
-#  Path: lib/server
-#  FindlibParent: panograph
-#  FindlibName: server
-#  BuildDepends: eliom.server, panograph, prime
+Library "panograph-server"
+  Path: lib/server
+  FindlibParent: panograph
+  FindlibName: server
+  BuildDepends: eliom.server, panograph, prime
+  Modules:
+    Panograph_lib,
+    Panograph_twine_editor
 
 Library "panograph-client"
   Path: lib/client
@@ -31,17 +35,19 @@ Library "panograph-client"
     Panograph_collection,
     Panograph_common,
     Panograph_intf,
+    Panograph_lib,
     Panograph_mapped,
     Panograph_simple,
-    Panograph_tabular
+    Panograph_tabular,
+    Panograph_twine_editor
   BuildDepends:
     eliom.client, lwt.syntax, js_of_ocaml.syntax,
     panograph, prime, prime.unstable
 
 Library "test"
   Path: web
-  Modules: server/Test
-  BuildDepends: eliom.server, prime, prime.unstable
+  Modules: server/Test, server/Test_twine_editor
+  BuildDepends: eliom.server, panograph.server, prime, prime.unstable
   ByteOpt: -thread
   NativeOpt: -thread
   CompiledObject: native

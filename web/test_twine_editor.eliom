@@ -14,32 +14,35 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-type lang = int deriving (Json)
+{shared{
+  open Eliom_content
+  open Panograph_lwt
+  open Panograph_twine_editor
+}}
+{client{
+  module Dep_pte = Panograph_twine_editor
+}}
 
-module Lang : sig
-  type t = lang
+open Eliom_lib
+open Panograph_i18n
 
-  val of_int : int -> lang
-  val to_int : lang -> int
-  val of_string : string -> lang
-  val to_string : lang -> string
-  val equal : lang -> lang -> bool
-  val compare : lang -> lang -> int
-end
+let on_update' = function
+  | `Add (lang, msg) ->
+    Lwt_log.debug_f "Received add %s => %s" (Lang.to_string lang) msg
+  | `Remove lang ->
+    Lwt_log.debug_f "Received remove %s" (Lang.to_string lang)
 
-module Lang_map : Prime_enummap.S with type key = lang
+let on_update = server_function Json.t<twine_editor_out> on_update'
 
-type twine = string Lang_map.t
+let render () =
+  let open Html5 in
+  let twe_el, twe_emitter, twe_patch = twine_editor () in
 
-module Twine : sig
-  type t = twine
-  val make : (lang * string) list -> t
-  val equal : t -> t -> bool
-  val compare : t -> t -> int
-  val to_string : langs: lang list -> t -> string
+  ignore {unit{
+    Lwt.async (fun () -> Emitter.iter_s %on_update %twe_emitter)
+  }};
 
-  type patch = string Lang_map.t * string Lang_map.t
-	     * (string * string) Lang_map.t
-  val diff : t -> t -> patch
-  val patch : ?strategy: [`Theirs | `Ours] -> patch -> t -> t
-end
+  D.div [
+    D.h2 [D.pcdata "Server Side"];
+    twe_el
+  ]

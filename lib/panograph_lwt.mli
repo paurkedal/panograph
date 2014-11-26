@@ -14,32 +14,17 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-type lang = int deriving (Json)
+module Emitter : sig
 
-module Lang : sig
-  type t = lang
+  type 'a t
 
-  val of_int : int -> lang
-  val to_int : lang -> int
-  val of_string : string -> lang
-  val to_string : lang -> string
-  val equal : lang -> lang -> bool
-  val compare : lang -> lang -> int
-end
+  type 'a tangle = 'a t * ('a -> unit)
 
-module Lang_map : Prime_enummap.S with type key = lang
+  val create : unit -> 'a t * ('a -> unit)
 
-type twine = string Lang_map.t
+  val next : 'a t -> 'a Lwt.t
 
-module Twine : sig
-  type t = twine
-  val make : (lang * string) list -> t
-  val equal : t -> t -> bool
-  val compare : t -> t -> int
-  val to_string : langs: lang list -> t -> string
+  val iter : ('a -> unit) -> 'a t -> unit Lwt.t
 
-  type patch = string Lang_map.t * string Lang_map.t
-	     * (string * string) Lang_map.t
-  val diff : t -> t -> patch
-  val patch : ?strategy: [`Theirs | `Ours] -> patch -> t -> t
+  val iter_s : ('a -> unit Lwt.t) -> 'a t -> unit Lwt.t
 end

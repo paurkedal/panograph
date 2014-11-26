@@ -22,7 +22,7 @@ open Unprime_string
 
 let invalid_arg_f fmt = ksprintf invalid_arg fmt
 
-type lang = int
+type lang = int deriving (Json)
 
 module Lang = struct
 

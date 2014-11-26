@@ -14,32 +14,27 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-type lang = int deriving (Json)
+open Lwt
 
-module Lang : sig
-  type t = lang
+module Emitter = struct
+  type 'a t = ('a Lwt.t * 'a Lwt.u) ref
+  type 'a tangle = 'a t * ('a -> unit)
 
-  val of_int : int -> lang
-  val to_int : lang -> int
-  val of_string : string -> lang
-  val to_string : lang -> string
-  val equal : lang -> lang -> bool
-  val compare : lang -> lang -> int
-end
+  let create () =
+    let ev_r = ref (Lwt.task ()) in
+    let emit x =
+      let ev = !ev_r in
+      ev_r := Lwt.task ();
+      Lwt.wakeup (snd ev) x in
+    ev_r, emit
 
-module Lang_map : Prime_enummap.S with type key = lang
+  let next ev_r = fst !ev_r
 
-type twine = string Lang_map.t
+  let iter_s h ev_r =
+    let rec loop () = next ev_r >>= h >>= loop in
+    loop ()
 
-module Twine : sig
-  type t = twine
-  val make : (lang * string) list -> t
-  val equal : t -> t -> bool
-  val compare : t -> t -> int
-  val to_string : langs: lang list -> t -> string
-
-  type patch = string Lang_map.t * string Lang_map.t
-	     * (string * string) Lang_map.t
-  val diff : t -> t -> patch
-  val patch : ?strategy: [`Theirs | `Ours] -> patch -> t -> t
+  let iter h ev_r =
+    let rec loop () = next ev_r >>= fun x -> Lwt.return (h x) >>= loop in
+    loop ()
 end
