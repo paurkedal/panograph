@@ -72,17 +72,17 @@ module Twine = struct
     | lang :: langs -> try Lang_map.find lang tw
 		       with Not_found -> to_string ~langs tw
 
-  let diff = Lang_map.split_union (fun _ a b -> a, b)
+  type sym_patch = string Lang_map.t * string Lang_map.t
+		 * (string * string) Lang_map.t
 
-  type patch = string Lang_map.t * string Lang_map.t
-	     * (string * string) Lang_map.t
+  let sym_diff = Lang_map.split_union (fun _ a b -> a, b)
 
-  let patch_theirs (mR, mA, mM) tw =
+  let sym_patch_theirs (mR, mA, mM) tw =
     tw |> Lang_map.fold (fun l s -> Lang_map.remove l) mR
        |> Lang_map.fold (fun l (_, s) -> Lang_map.add l s) mM
        |> Lang_map.fold (fun l s -> Lang_map.add l s) mA
 
-  let patch_ours (mR, mA, mM) tw =
+  let sym_patch_ours (mR, mA, mM) tw =
     let remove l s m =
       try if Lang_map.find l m = s then Lang_map.remove l m else m
       with Not_found -> m in
@@ -95,8 +95,8 @@ module Twine = struct
        |> Lang_map.fold modify mM
        |> Lang_map.fold add mA
 
-  let patch ?(strategy = `Theirs) =
+  let sym_patch ?(strategy = `Theirs) =
     match strategy with
-    | `Theirs -> patch_theirs
-    | `Ours -> patch_ours
+    | `Theirs -> sym_patch_theirs
+    | `Ours -> sym_patch_ours
 end

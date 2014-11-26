@@ -38,8 +38,8 @@ module Twine : sig
   val compare : t -> t -> int
   val to_string : langs: lang list -> t -> string
 
-  type patch = string Lang_map.t * string Lang_map.t
-	     * (string * string) Lang_map.t
-  val diff : t -> t -> patch
-  val patch : ?strategy: [`Theirs | `Ours] -> patch -> t -> t
+  type sym_patch = string Lang_map.t * string Lang_map.t
+		 * (string * string) Lang_map.t
+  val sym_diff : t -> t -> sym_patch
+  val sym_patch : ?strategy: [`Theirs | `Ours] -> sym_patch -> t -> t
 end
