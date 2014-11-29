@@ -26,11 +26,13 @@ Library "panograph-server"
   Path: lib/server
   BuildDepends: eliom.server, panograph, prime
   Modules:
+    Panograph_basic_editors,
     Panograph_twine_editor
 
 Library "panograph-client"
   Path: lib/client
   Modules:
+    Panograph_basic_editors,
     Panograph_collection,
     Panograph_common,
     Panograph_intf,
