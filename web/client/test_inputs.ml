@@ -19,6 +19,7 @@ open Panograph_intf
 open Panograph_simple
 open Panograph_mapped
 open Panograph_collection
+open Panograph_types
 
 let (>|=) = Lwt.(>|=)
 

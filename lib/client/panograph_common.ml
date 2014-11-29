@@ -16,6 +16,7 @@
 
 open Eliom_content
 open Panograph_intf
+open Panograph_types
 open Unprime
 open Unprime_list
 open Unprime_option

@@ -15,10 +15,7 @@
  *)
 
 open Eliom_content
-
-type ack =
-  | Ack_ok
-  | Ack_error of string
+open Panograph_types
 
 type controls_ui = [`Button | `Img | `Img_interactive | `Span] Html5.elt list
 

@@ -18,8 +18,8 @@
   open Eliom_lib
   open Eliom_content
   open Panograph_i18n
-  open Panograph_lib
   open Panograph_lwt
+  open Panograph_types
 
   type twine_editor_out = [`Add of lang * string | `Remove of lang]
 			  deriving (Json)
@@ -27,7 +27,8 @@
 
   type twine_editor = {
     twe_container_dom : Dom_html.element Js.t;
-    twe_emit : twine_editor_out -> unit;
+    twe_error_dom : Dom_html.element Js.t;
+    twe_patch_out : twine_editor_out -> ack Lwt.t;
     mutable twe_map : (Dom_html.element Js.t * Dom_html.inputElement Js.t)
 		      Lang_map.t;
   }
@@ -37,21 +38,39 @@
   open Unprime
   open Unprime_option
 
+  let set_error twe msg =
+    twe.twe_error_dom##innerHTML <- Js.string "";
+    Dom.appendChild twe.twe_error_dom
+		    (Dom_html.document##createTextNode(Js.string msg));
+    twe.twe_error_dom##style##visibility <- Js.string "visible";
+    twe.twe_container_dom##classList##add(Js.string "error")
+
+  let clear_error twe =
+    twe.twe_error_dom##style##visibility <- Js.string "hidden";
+    twe.twe_error_dom##innerHTML <- Js.string "";
+    twe.twe_container_dom##classList##remove(Js.string "error")
+
+  let patch_out twe p =
+    twe.twe_patch_out p >|=
+    function Ack_ok -> clear_error twe
+	   | Ack_error msg -> set_error twe msg
+
   let remove_translation twe lang =
     let item_dom, _ = Lang_map.find lang twe.twe_map in
     Dom.removeChild twe.twe_container_dom item_dom;
-    twe.twe_map <- Lang_map.remove lang twe.twe_map;
-    twe.twe_emit (`Remove lang)
+    twe.twe_map <- Lang_map.remove lang twe.twe_map
 
   let add_translation (twe : twine_editor) lang msg =
     let open Html5 in
     try
       let _, inp_dom = Lang_map.find lang twe.twe_map in
+      inp_dom##classList##remove(Js.string "dirty");
       inp_dom##value <- Js.string msg
     with Not_found ->
       let inp = D.input ~input_type:`Text ~value:msg () in
       let inp_dom = To_dom.of_input inp in
       let remove_button = D.button ~button_type:`Button [D.pcdata "−"] in
+      let remove_dom = To_dom.of_button remove_button in
       let item = D.span [D.span [D.pcdata (Lang.to_string lang)];
 			 inp; remove_button] in
       let next = Option.map (fst *< snd)
@@ -61,20 +80,24 @@
       twe.twe_map <- Lang_map.add lang (item_dom, inp_dom) twe.twe_map;
       Lwt_js_events.(async @@ fun () ->
 	changes inp_dom @@ fun _ _ ->
-	twe.twe_emit (`Add (lang, Js.to_string (To_dom.of_input inp)##value));
-	Lwt.return_unit);
+	let msg = Js.to_string (To_dom.of_input inp)##value in
+	inp_dom##classList##add(Js.string "dirty");
+	if msg = "" then patch_out twe (`Remove lang)
+		    else patch_out twe (`Add (lang, msg)));
       Lwt_js_events.(async @@ fun () ->
-	clicks (To_dom.of_button remove_button) @@ fun _ _ ->
-	remove_translation twe lang;
-	Lwt.return_unit)
+	clicks remove_dom @@ fun _ _ ->
+	remove_dom##classList##add(Js.string "dirty");
+	patch_out twe (`Remove lang))
 
-  let handle twe = function
+  let patch_in twe p =
+    match p with
     | `Add (lang, msg) -> add_translation twe lang msg
     | `Remove lang -> remove_translation twe lang
 }}
 
 {shared{
-  let twine_editor ?value:(tw : Twine.t = Twine.make []) () =
+  let twine_editor ?value:(tw : Twine.t = Twine.make [])
+		   (patch_out : (twine_editor_out -> ack Lwt.t) client_value) =
     let open Html5 in
     let add_input =
       D.input ~input_type:`Text
@@ -82,14 +105,18 @@
     let add_button = D.button ~button_type:`Button [D.pcdata "+"] in
     let add_span = D.span ~a:[D.a_class ["ui"]] [add_input; add_button] in
     let trans_span = D.span ~a:[D.a_class ["main"]] [] in
-    let outer = D.span ~a:[D.a_class ["twine-editor"]] [trans_span; add_span] in
-    let comm = {twine_editor_in Emitter.tangle{
+    let error_span = D.span ~a:[D.a_class ["error"]] [] in
+    let outer = D.span ~a:[D.a_class ["twine-editor"]]
+		       [trans_span; add_span; error_span] in
+    let patch_in = {twine_editor_in -> unit{
       let open Html5 in
-      let emitter, emit = Emitter.create () in
       let add_input_dom = To_dom.of_input %add_input in
+      let error_dom = To_dom.of_element %error_span in
+      error_dom##style##visibility <- Js.string "hidden";
       let twe =
 	{ twe_container_dom = To_dom.of_element %trans_span;
-	  twe_emit = emit;
+	  twe_error_dom = To_dom.of_element %error_span;
+	  twe_patch_out = %patch_out;
 	  twe_map = Lang_map.empty } in
       Lang_map.iter (add_translation twe) %tw;
       Lwt_js_events.(async @@ fun () ->
@@ -98,9 +125,7 @@
 			"";
 	add_input_dom##value <- Js.string "";
 	Lwt.return_unit);
-      emitter, handle twe
+      patch_in twe
     }} in
-    outer,
-    {twine_editor_in Emitter.t{fst %comm}},
-    {twine_editor_in -> unit{snd %comm}}
+    outer, patch_in
 }}

@@ -18,6 +18,7 @@
   open Eliom_content
   open Panograph_lwt
   open Panograph_twine_editor
+  open Panograph_types
 }}
 {client{
   module Dep_pte = Panograph_twine_editor
@@ -26,21 +27,26 @@
 open Eliom_lib
 open Panograph_i18n
 
-let on_update' = function
+let stream, emit = Lwt_stream.create ()
+let comet = Eliom_comet.Channel.create ~scope:`Site stream
+
+let on_update' p =
+  begin match p with
   | `Add (lang, msg) ->
     Lwt_log.debug_f "Received add %s => %s" (Lang.to_string lang) msg
   | `Remove lang ->
     Lwt_log.debug_f "Received remove %s" (Lang.to_string lang)
+  end >>
+  Lwt_unix.sleep 1.0 >>
+  (emit (Some p); Lwt.return Ack_ok)
 
 let on_update = server_function Json.t<twine_editor_out> on_update'
 
 let render () =
   let open Html5 in
-  let twe_el, twe_emitter, twe_patch = twine_editor () in
+  let twe_el, twe_patch = twine_editor {{ %on_update }} in
 
-  ignore {unit{
-    Lwt.async (fun () -> Emitter.iter_s %on_update %twe_emitter)
-  }};
+  ignore {unit{Lwt.async (fun () -> Lwt_stream.iter %twe_patch %comet)}};
 
   D.div [
     D.h2 [D.pcdata "Server Side"];

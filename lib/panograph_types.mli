@@ -14,15 +14,6 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
-  open Eliom_lib
-  open Panograph_lwt
-}}
-
-{client{
-  type (+'a, 'b, 'c) editor = 'a * 'b Emitter.t * ('c -> unit)
-}}
-{server{
-  type (+'a, 'b, 'c) editor = 'a * 'b Emitter.t client_value
-				 * ('c -> unit) client_value
-}}
+type ack =
+  | Ack_ok
+  | Ack_error of string
