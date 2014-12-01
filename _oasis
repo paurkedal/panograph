@@ -46,7 +46,10 @@ Library "panograph-client"
 
 Library "test"
   Path: web
-  Modules: server/Test, server/Test_twine_editor
+  Modules:
+    server/Test,
+    server/Test_basic_editors,
+    server/Test_twine_editor
   BuildDepends: eliom.server, panograph-server, prime, prime.unstable
   ByteOpt: -thread
   NativeOpt: -thread

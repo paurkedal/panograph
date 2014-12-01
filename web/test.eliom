@@ -20,6 +20,7 @@
   open Unprime_option
 }}
 {client{
+  module Dep_tbe = Test_basic_editors
   module Dep_tte = Test_twine_editor
 }}
 
@@ -42,6 +43,7 @@ let test_services = List.map make_test_service [
   "tabular1", (fun () -> Html5.C.node {{Test_tabular1.render ()}});
   "tabular2", (fun () -> Html5.C.node {{Test_tabular2.render ()}});
   "tabular3", (fun () -> Html5.C.node {{Test_tabular3.render ()}});
+  "basic_editors", Test_basic_editors.render;
   "twine_editor", Test_twine_editor.render;
 ]
 
