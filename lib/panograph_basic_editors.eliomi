@@ -20,7 +20,19 @@
 }}
 
 {client{
-  val outfit_input_editor :
+  class type basicInteractiveElement = object
+    inherit Dom_html.element
+    method value : Js.js_string Js.t Js.prop
+  end
+
+  val outfit_interactive :
+	to_string: ('a -> string) ->
+	of_string: (string -> 'b) ->
+	?value: 'a ->
+	basicInteractiveElement Js.t ->
+	('b -> ack Lwt.t) -> ('a -> unit)
+
+  val outfit_input :
 	to_string: ('a -> string) ->
 	of_string: (string -> 'b) ->
 	?value: 'a ->

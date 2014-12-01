@@ -22,6 +22,11 @@
 }}
 
 {client{
+  class type basicInteractiveElement = object
+    inherit Dom_html.element
+    method value : Js.js_string Js.t Js.prop
+  end
+
   let outfit_interactive ~to_string ~of_string ?value input_dom patch_out =
     let saved_title = ref (Js.to_string input_dom##title) in
     Lwt_js_events.(async @@ fun () ->
@@ -51,7 +56,7 @@
     Option.iter patch_in value;
     patch_in
 
-  let outfit_input_editor ~to_string ~of_string ?value input patch_out =
+  let outfit_input ~to_string ~of_string ?value input patch_out =
     outfit_interactive ~to_string ~of_string ?value
 		       (Html5.To_dom.of_input input) patch_out
 
@@ -67,8 +72,8 @@
 		    (patch_out : (string -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {string -> unit{
-      outfit_input_editor ~to_string:ident ~of_string:ident
-			  ?value:%value %input %patch_out
+      outfit_input ~to_string:ident ~of_string:ident
+		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
@@ -76,8 +81,8 @@
 		 (patch_out : (int -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {int -> unit{
-      outfit_input_editor ~to_string:string_of_int ~of_string:int_of_string
-			  ?value:%value %input %patch_out
+      outfit_input ~to_string:string_of_int ~of_string:int_of_string
+		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
@@ -85,8 +90,8 @@
 		   (patch_out : (float -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {float -> unit{
-      outfit_input_editor ~to_string:string_of_float ~of_string:float_of_string
-			  ?value:%value %input %patch_out
+      outfit_input ~to_string:string_of_float ~of_string:float_of_string
+		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
@@ -97,7 +102,7 @@
     let patch_in = {string option -> unit{
       let to_string = function None -> "" | Some x -> x in
       let of_string = function "" -> None | x -> Some x in
-      outfit_input_editor ~to_string ~of_string ?value:%value %input %patch_out
+      outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
 
@@ -108,7 +113,7 @@
     let patch_in = {int option -> unit{
       let to_string = function None -> "" | Some x -> string_of_int x in
       let of_string = function "" -> None | x -> Some (int_of_string x) in
-      outfit_input_editor ~to_string ~of_string ?value:%value %input %patch_out
+      outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
 
@@ -119,7 +124,7 @@
     let patch_in = {float option -> unit{
       let to_string = function None -> "" | Some x -> string_of_float x in
       let of_string = function "" -> None | x -> Some (float_of_string x) in
-      outfit_input_editor ~to_string ~of_string ?value:%value %input %patch_out
+      outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
 
