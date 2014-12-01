@@ -27,7 +27,7 @@
 	[< Html5_types.input] Html5.elt ->
 	('b -> ack Lwt.t) -> ('a -> unit)
 
-  val outfit_select_editor :
+  val outfit_select :
 	to_string: ('a -> string) ->
 	of_string: (string -> 'b) ->
 	?value: 'a ->
@@ -71,4 +71,10 @@
 	?value: float option ->
 	(float option -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (float option -> unit) client_value
+
+  val string_option_menu :
+	?a: Html5_types.select_attrib Html5.attrib list ->
+	values: string list -> ?value: string option ->
+	(string option -> ack Lwt.t) client_value ->
+	[> Html5_types.select] Html5.elt * (string option -> unit) client_value
 }}

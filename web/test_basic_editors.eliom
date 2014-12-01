@@ -54,6 +54,19 @@ let int_option_out = server_function Json.t<int option> @@ fun x_opt ->
   Lwt_unix.sleep 0.3 >>
   (int_option_out' (Some (Option.map succ x_opt)); Lwt.return Ack_ok)
 
+let string_option_menu_stream, string_option_menu_out' = Lwt_stream.create ()
+let string_option_menu_comet =
+  Eliom_comet.Channel.create ~scope:`Site string_option_menu_stream
+let string_option_menu_out =
+	server_function Json.t<string option> @@ fun x_opt ->
+  begin match x_opt with
+  | None -> Lwt_log.debug "Selected string option None."
+  | Some x -> Lwt_log.debug_f "Selected string option Some %s." x
+  end >>
+  Lwt_unix.sleep 0.3 >>
+  let swap = function "Sun" -> "Earth" | "Earth" -> "Sun" | x -> x in
+  (string_option_menu_out' (Some (Option.map swap x_opt)); Lwt.return Ack_ok)
+
 let render () =
   let open Html5 in
 
@@ -70,6 +83,12 @@ let render () =
   ignore {unit{Lwt.async @@ fun () ->
     Lwt_stream.iter %int_option_in %int_option_comet}};
 
+  let string_option_menu, string_option_menu_in =
+    string_option_menu ~values:["Earth"; "Sun"; "The Milky Way"]
+			   {{ %string_option_menu_out }} in
+  ignore {unit{Lwt.async @@ fun () ->
+    Lwt_stream.iter %string_option_menu_in %string_option_menu_comet}};
+
   D.div [
     D.h2 [D.pcdata "Server Side Inputs"];
     D.ul [
@@ -77,5 +96,6 @@ let render () =
       D.li [int_ed];
       D.li [float_ed];
       D.li [int_option_ed];
+      D.li [string_option_menu];
     ]
   ]

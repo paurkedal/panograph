@@ -22,7 +22,7 @@
 }}
 
 {client{
-  let outfit_editor ~to_string ~of_string ?value input_dom patch_out =
+  let outfit_interactive ~to_string ~of_string ?value input_dom patch_out =
     let saved_title = ref (Js.to_string input_dom##title) in
     Lwt_js_events.(async @@ fun () ->
       changes input_dom @@ fun _ _ ->
@@ -52,12 +52,12 @@
     patch_in
 
   let outfit_input_editor ~to_string ~of_string ?value input patch_out =
-    outfit_editor ~to_string ~of_string ?value
-		  (Html5.To_dom.of_input input) patch_out
+    outfit_interactive ~to_string ~of_string ?value
+		       (Html5.To_dom.of_input input) patch_out
 
-  let outfit_select_editor ~to_string ~of_string ?value select patch_out =
-    outfit_editor ~to_string ~of_string ?value
-		  (Html5.To_dom.of_select select) patch_out
+  let outfit_select ~to_string ~of_string ?value select patch_out =
+    outfit_interactive ~to_string ~of_string ?value
+		       (Html5.To_dom.of_select select) patch_out
 }}
 
 {shared{
@@ -122,4 +122,17 @@
       outfit_input_editor ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
+
+  let string_option_menu ?a ~values ?(value : string option = None)
+	(patch_out : (string option -> ack Lwt.t) client_value) =
+    let make_option label = D.option ~a:[D.a_value label] (D.pcdata label) in
+    let options = D.option ~a:[D.a_value "__none__"] (D.pcdata "-") ::
+		  List.map make_option values in
+    let select = D.Raw.select ?a options in
+    let patch_in = {string option -> unit{
+      let of_string = function "__none__" -> None | s -> Some s in
+      let to_string = function None -> "__none__" | Some s -> s in
+      outfit_select ~to_string ~of_string ~value:%value %select %patch_out
+    }} in
+    select, patch_in
 }}
