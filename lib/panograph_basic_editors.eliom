@@ -22,9 +22,7 @@
 }}
 
 {client{
-  let outfit_input_editor ~to_string ~of_string ?value input patch_out =
-    let open Html5 in
-    let input_dom = To_dom.of_input input in
+  let outfit_editor ~to_string ~of_string ?value input_dom patch_out =
     let saved_title = ref (Js.to_string input_dom##title) in
     Lwt_js_events.(async @@ fun () ->
       changes input_dom @@ fun _ _ ->
@@ -52,6 +50,14 @@
       input_dom##value <- Js.string (to_string v) in
     Option.iter patch_in value;
     patch_in
+
+  let outfit_input_editor ~to_string ~of_string ?value input patch_out =
+    outfit_editor ~to_string ~of_string ?value
+		  (Html5.To_dom.of_input input) patch_out
+
+  let outfit_select_editor ~to_string ~of_string ?value select patch_out =
+    outfit_editor ~to_string ~of_string ?value
+		  (Html5.To_dom.of_select select) patch_out
 }}
 
 {shared{

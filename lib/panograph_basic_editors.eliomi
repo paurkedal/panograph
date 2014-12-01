@@ -26,6 +26,13 @@
 	?value: 'a ->
 	[< Html5_types.input] Html5.elt ->
 	('b -> ack Lwt.t) -> ('a -> unit)
+
+  val outfit_select_editor :
+	to_string: ('a -> string) ->
+	of_string: (string -> 'b) ->
+	?value: 'a ->
+	[< Html5_types.select] Html5.elt ->
+	('b -> ack Lwt.t) -> ('a -> unit)
 }}
 
 {shared{
