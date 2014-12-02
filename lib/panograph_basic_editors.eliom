@@ -19,6 +19,7 @@
   open Panograph_types
   open Unprime
   open Unprime_option
+  open Unprime_string
 }}
 
 {client{
@@ -27,8 +28,27 @@
     method value : Js.js_string Js.t Js.prop
   end
 
+  let failed_prefix = "** "
+  let failed_suffix = " **\n"
+  let failed_class = Js.string "failed"
+
+  let set_failed dom msg =
+    if not (Js.to_bool (dom##classList##contains(failed_class))) then begin
+      dom##classList##add(failed_class);
+      let orig_title = Js.to_string dom##title in
+      dom##title <- Js.string (failed_prefix ^ msg ^ failed_suffix ^ orig_title)
+    end
+
+  let clear_failed dom =
+    if Js.to_bool (dom##classList##contains(failed_class)) then begin
+      dom##classList##remove(failed_class);
+      match String.cut_affix failed_suffix (Js.to_string dom##title) with
+      | Some (_ as msg, orig_title) when String.has_prefix failed_prefix msg ->
+	dom##title <- Js.string orig_title
+      | _ -> ()
+    end
+
   let outfit_interactive ~to_string ~of_string ?value input_dom patch_out =
-    let saved_title = ref (Js.to_string input_dom##title) in
     Lwt_js_events.(async @@ fun () ->
       changes input_dom @@ fun _ _ ->
       input_dom##classList##add(Js.string "dirty");
@@ -38,20 +58,15 @@
 	  Lwt.return (Ack_error "Invalid input.")
       with
       | Ack_ok ->
-	input_dom##classList##remove(Js.string "error");
+	clear_failed input_dom;
 	Lwt.return_unit
       | Ack_error msg ->
-	saved_title := Js.to_string input_dom##title;
-	input_dom##classList##add(Js.string "error");
-	input_dom##title <- Js.string ("Error: " ^ msg ^ "\n" ^ !saved_title);
+	set_failed input_dom msg;
 	Lwt.return_unit);
     let patch_in v =
       input_dom##classList##remove(Js.string "dirty");
       if Js.to_bool (input_dom##classList##contains(Js.string "error")) then
-      begin
-	input_dom##classList##remove(Js.string "error");
-	input_dom##title <- Js.string !saved_title
-      end;
+	clear_failed input_dom;
       input_dom##value <- Js.string (to_string v) in
     Option.iter patch_in value;
     patch_in

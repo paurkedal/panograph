@@ -3,7 +3,7 @@ body {
 	color: black;
 }
 .dirty { border-color: #0000ff; }
-.error { color: #990000; font-weight: bold; }
+.failed { color: #990000; font-weight: bold; }
 
 td { border: solid thin #aaa; }
 
