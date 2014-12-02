@@ -101,4 +101,10 @@
 	values: string list -> ?value: string option ->
 	(string option -> ack Lwt.t) client_value ->
 	[> Html5_types.select] Html5.elt * (string option -> unit) client_value
+
+  val bool_checkbox :
+	?a: Html5_types.input_attrib Html5.attrib list ->
+	?value: bool ->
+	(bool -> ack Lwt.t) client_value ->
+	[> Html5_types.input] Html5.elt * (bool -> unit) client_value
 }}

@@ -175,4 +175,30 @@
       outfit_select ~to_string ~of_string ~value:%value %select %patch_out
     }} in
     select, patch_in
+
+  let bool_checkbox ?(a = []) ?(value = false)
+		    (patch_out : (bool -> ack Lwt.t) client_value) =
+    let open Html5 in
+    let a = if value then D.a_checked `Checked :: a else a in
+    let input = D.input ~input_type:`Checkbox ~a () in
+    let patch_in = {bool -> unit{
+      let open Html5 in
+      let input_dom = To_dom.of_input %input in
+      Lwt_js_events.(async @@ fun () ->
+	changes input_dom @@ fun _ _ ->
+	input_dom##classList##add(Js.string "dirty");
+	match_lwt %patch_out (Js.to_bool input_dom##checked) with
+	| Ack_ok ->
+	  clear_failed input_dom;
+	  Lwt.return_unit
+	| Ack_error msg ->
+	  set_failed input_dom msg;
+	  Lwt.return_unit);
+      let patch_in v =
+	clear_failed input_dom;
+	input_dom##classList##remove(Js.string "dirty");
+	input_dom##checked <- Js.bool v in
+      patch_in
+    }} in
+    input, patch_in
 }}
