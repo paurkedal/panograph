@@ -50,36 +50,48 @@
 {shared{
   val string_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (string -> string) client_value ->
+	?of_string: (string -> string) client_value ->
 	?value: string ->
 	(string -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (string -> unit) client_value
 
   val int_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (int -> string) client_value ->
+	?of_string: (string -> int) client_value ->
 	?value: int ->
 	(int -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (int -> unit) client_value
 
   val float_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (float -> string) client_value ->
+	?of_string: (string -> float) client_value ->
 	?value: float ->
 	(float -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (float -> unit) client_value
 
   val string_option_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (string -> string) client_value ->
+	?of_string: (string -> string) client_value ->
 	?value: string option ->
 	(string option -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (string option -> unit) client_value
 
   val int_option_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (int -> string) client_value ->
+	?of_string: (string -> int) client_value ->
 	?value: int option ->
 	(int option -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (int option -> unit) client_value
 
   val float_option_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (float -> string) client_value ->
+	?of_string: (string -> float) client_value ->
 	?value: float option ->
 	(float option -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (float option -> unit) client_value

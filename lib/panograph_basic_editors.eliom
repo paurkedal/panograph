@@ -68,62 +68,82 @@
 {shared{
   open Html5
 
-  let string_editor ?a ?(value : string option)
+  let string_ident_cv = {string -> string{ident}}
+
+  let string_editor ?a
+		    ?(to_string = string_ident_cv)
+		    ?(of_string = string_ident_cv)
+		    ?(value : string option)
 		    (patch_out : (string -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {string -> unit{
-      outfit_input ~to_string:ident ~of_string:ident
+      outfit_input ~to_string:%to_string ~of_string:%of_string
 		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
-  let int_editor ?a ?(value : int option)
+  let int_editor ?a
+		 ?(to_string = {int -> string{string_of_int}})
+		 ?(of_string = {string -> int{int_of_string}})
+		 ?(value : int option)
 		 (patch_out : (int -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {int -> unit{
-      outfit_input ~to_string:string_of_int ~of_string:int_of_string
+      outfit_input ~to_string:%to_string ~of_string:%of_string
 		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
-  let float_editor ?a ?(value : float option)
+  let float_editor ?a
+		   ?(to_string = {float -> string{string_of_float}})
+		   ?(of_string = {string -> float{float_of_string}})
+		   ?(value : float option)
 		   (patch_out : (float -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {float -> unit{
-      outfit_input ~to_string:string_of_float ~of_string:float_of_string
+      outfit_input ~to_string:%to_string ~of_string:%of_string
 		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
   let string_option_editor
-	?a ?(value : string option option)
+	?a
+	?(to_string = string_ident_cv)
+	?(of_string = string_ident_cv)
+	?(value : string option option)
 	(patch_out : (string option -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {string option -> unit{
-      let to_string = function None -> "" | Some x -> x in
-      let of_string = function "" -> None | x -> Some x in
+      let to_string = function None -> "" | Some x -> %to_string x in
+      let of_string = function "" -> None | x -> Some (%of_string x) in
       outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
 
   let int_option_editor
-	?a ?(value : int option option)
+	?a
+	?(to_string = {int -> string{string_of_int}})
+	?(of_string = {string -> int{int_of_string}})
+	?(value : int option option)
 	(patch_out : (int option -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {int option -> unit{
-      let to_string = function None -> "" | Some x -> string_of_int x in
-      let of_string = function "" -> None | x -> Some (int_of_string x) in
+      let to_string = function None -> "" | Some x -> %to_string x in
+      let of_string = function "" -> None | x -> Some (%of_string x) in
       outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
 
   let float_option_editor
-	?a ?(value : float option option)
+	?a
+	?(to_string = {float -> string{string_of_float}})
+	?(of_string = {string -> float{float_of_string}})
+	?(value : float option option)
 	(patch_out : (float option -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {float option -> unit{
-      let to_string = function None -> "" | Some x -> string_of_float x in
-      let of_string = function "" -> None | x -> Some (float_of_string x) in
+      let to_string = function None -> "" | Some x -> %to_string x in
+      let of_string = function "" -> None | x -> Some (%of_string x) in
       outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
