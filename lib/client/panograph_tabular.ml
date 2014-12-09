@@ -200,63 +200,51 @@ module Tabular = struct
 
   let update_cell_rs_attribs rs tc =
     tc##rowSpan <- (Dltree.get rs).rsn_span;
+    let rec clear sfx rs =
+      Option.iter (fun cls -> tc##classList##remove(Js.string (cls ^ sfx)))
+		  (Dltree.get rs).rsn_css_class;
+      Option.iter (clear sfx) (Dltree.up rs) in
     let rec update_fr rs =
       match Dltree.up rs with
       | None -> ()
-      | Some up_rs ->
-	begin match (Dltree.get up_rs).rsn_css_class with
-	| None -> ()
-	| Some cls ->
-	  if Dltree.is_first rs then begin
-	    tc##classList##add(Js.string (cls ^ "-fr"));
-	    update_fr up_rs
-	  end else
-	    tc##classList##remove(Js.string (cls ^ "-fr"))
-	end in
+      | Some up_rs when Dltree.is_first rs ->
+	Option.iter (fun cls -> tc##classList##add(Js.string (cls ^ "-fr")))
+		    (Dltree.get up_rs).rsn_css_class;
+	update_fr up_rs
+      | Some up_rs -> clear "-fr" up_rs in
     let rec update_lr rs =
       match Dltree.up rs with
       | None -> ()
-      | Some up_rs ->
-	begin match (Dltree.get up_rs).rsn_css_class with
-	| None -> ()
-	| Some cls ->
-	  if Dltree.is_last rs then begin
-	    tc##classList##add(Js.string (cls ^ "-lr"));
-	    update_lr up_rs
-	  end else
-	    tc##classList##remove(Js.string (cls ^ "-lr"));
-	end in
+      | Some up_rs when Dltree.is_last rs ->
+	Option.iter (fun cls -> tc##classList##add(Js.string (cls ^ "-lr")))
+		    (Dltree.get up_rs).rsn_css_class;
+	update_lr up_rs
+      | Some up_rs -> clear "-lr" up_rs in
     update_fr rs;
     update_lr rs
 
   let update_cell_cs_attribs cs tc =
     tc##colSpan <- (Dltree.get cs).csn_span;
+    let rec clear sfx cs =
+      Option.iter (fun cls -> tc##classList##remove(Js.string (cls ^ sfx)))
+		  (Dltree.get cs).csn_css_class;
+      Option.iter (clear sfx) (Dltree.up cs) in
     let rec update_fc cs =
       match Dltree.up cs with
       | None -> ()
-      | Some up_cs ->
-	begin match (Dltree.get up_cs).csn_css_class with
-	| None -> ()
-	| Some cls ->
-	  if Dltree.is_first cs then begin
-	    tc##classList##add(Js.string (cls ^ "-fc"));
-	    update_fc up_cs
-	  end else
-	    tc##classList##remove(Js.string (cls ^ "-fc"))
-	end in
+      | Some up_cs when Dltree.is_first cs ->
+	Option.iter (fun cls -> tc##classList##add(Js.string (cls ^ "-fc")))
+		    (Dltree.get up_cs).csn_css_class;
+	update_fc up_cs
+      | Some up_cs -> clear "-fc" up_cs in
     let rec update_lc cs =
       match Dltree.up cs with
       | None -> ()
-      | Some up_cs ->
-	begin match (Dltree.get up_cs).csn_css_class with
-	| None -> ()
-	| Some cls ->
-	  if Dltree.is_last cs then begin
-	    tc##classList##add(Js.string (cls ^ "-lc"));
-	    update_lc up_cs
-	  end else
-	    tc##classList##remove(Js.string (cls ^ "-lc"));
-	end in
+      | Some up_cs when Dltree.is_last cs ->
+	Option.iter (fun cls -> tc##classList##add(Js.string (cls ^ "-lc")))
+		    (Dltree.get up_cs).csn_css_class;
+	update_lc up_cs
+      | Some up_cs -> clear "-lc" up_cs in
     update_fc cs;
     update_lc cs
 
