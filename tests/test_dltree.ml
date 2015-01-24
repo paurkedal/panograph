@@ -171,6 +171,17 @@ let test_random () =
     done
   done
 
+let test_exists () =
+  let root = Dltree.make 0 in
+  let a = test_add_first 1 root in
+  let aa = test_add_first 2 a in
+  assert (Dltree.exists ((==) a) root);
+  assert (not (Dltree.exists ((==) aa) root));
+  assert (not (Dltree.exists ((!=) a) root));
+  assert (Dltree.exists ~depth:2 ((==) aa) root);
+  assert (not (Dltree.exists ~depth:2 ((==) a) root));
+  assert (not (Dltree.exists ~depth:2 ((!=) aa) root))
+
 let () =
   let root = Dltree.make 0 in
   assert (Dltree.is_root root);
@@ -184,6 +195,7 @@ let () =
   assert (Dltree.first root = None);
   assert (Dltree.last root = None);
 
+  test_exists ();
   test_sub root;
   test_sub (Option.get (Dltree.first root));
   test_random ()

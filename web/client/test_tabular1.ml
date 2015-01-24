@@ -58,8 +58,12 @@ let render () =
   Eliom_lib.debug "here";
   let rs3 = Tabular.Rowspan.add_last tab rs_body in
   draw3 rs3 ~-.0.1 ~-.0.2 1.0;
+  let csT0 = Tabular.Colspan.add_last tab csT in
+  let csT1 = Tabular.Colspan.add_last tab csT in
+  Tabular.refine tab 0 1 rs3 csT;
 
-  Tabular.draw_td tab rs3 csT [D.pcdata "c"];
+  Tabular.draw_td tab rs3 csT0 [D.pcdata "c₀"];
+  Tabular.draw_td tab rs3 csT1 [D.pcdata "c₁"];
 
   let mk_remove_rs rs cs =
     let button = D.button ~button_type:`Button [F.pcdata "-"] in
