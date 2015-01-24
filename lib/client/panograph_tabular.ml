@@ -103,14 +103,8 @@ module Tabular = struct
   }
 
   let has_subblock ?skip_rs ?skip_cs lr lc rs cs =
-    Dltree.exists ~depth:lr
-      (fun rs ->
-	not (Option.exists ((==) rs) skip_rs) &&
-	Dltree.exists ~depth:lc
-	  (fun cs ->
-	    not (Option.exists ((==) cs) skip_cs))
-	  cs)
-      rs
+    Dltree.exists ~depth:lr (fun rs' -> Option.for_all ((!=) rs') skip_rs) rs &&
+    Dltree.exists ~depth:lc (fun cs' -> Option.for_all ((!=) cs') skip_cs) cs
 
   let is_leaf ?skip c =
     match skip with
@@ -426,6 +420,10 @@ module Tabular = struct
     with Not_found ->
       Option.search (fun rs -> cover_at_cs rs cs) (Dltree.up rs)
 
+  let is_alloc tab rs cs =
+    let rsn, csn = Dltree.get rs, Dltree.get cs in
+    Hashtbl.mem rsn.rsn_blocks csn.csn_id
+
   let fill_cell ?(rem_lr = 0) ?(rem_lc = 0) tab rs cs =
     let rsn, csn = Dltree.get rs, Dltree.get cs in
     assert (rem_lr >= 0 && rem_lc >= 0);
@@ -447,6 +445,7 @@ module Tabular = struct
 
   let rec unfill tab rs cs =
     let rsn, csn = Dltree.(get rs, get cs) in
+    assert (Hashtbl.mem rsn.rsn_blocks csn.csn_id);
     let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
     begin match blk.blk_state with
     | Refined (lr, lc) -> drop_refinement tab blk
@@ -557,7 +556,7 @@ module Tabular = struct
       if rem_lc > 0 && not (Dltree.is_leaf div_cs) then
 	Dltree.iter (loop_cs next_lr (rem_lc - 1)) div_cs else
       match cover_at_cs rs div_cs with
-      | None -> unfill tab old_rs div_cs
+      | None -> if is_alloc tab old_rs div_cs then unfill tab old_rs div_cs
       | Some cov_blk ->
 	let cov_rs = cov_blk.blk_rs in
 	begin match cov_blk.blk_state with
@@ -570,9 +569,9 @@ module Tabular = struct
 	    drop_refinement ?transfer tab cov_blk
 	  end else if lc > 0 && not (Dltree.is_leaf div_cs) then
 	    loop_cs (Dltree.level cov_rs + lr) lc div_cs
-	  else begin
+	  else if Dltree.level old_rs = Dltree.level cov_rs + lr then begin
 	    assert (lr > 0);
-	    assert (not (Dltree.is_only old_rs));
+	    assert (lr > 1 || not (Dltree.is_only old_rs));
 	    unfill tab old_rs div_cs;
 	  end
 	end in
@@ -648,7 +647,7 @@ module Tabular = struct
       if rem_lr > 0 && not (Dltree.is_leaf div_rs) then
 	Dltree.iter (loop_rs next_lc (rem_lr - 1)) div_rs else
       match cover_at_rs div_rs cs with
-      | None -> unfill tab div_rs old_cs
+      | None -> if is_alloc tab div_rs old_cs then unfill tab div_rs old_cs
       | Some cov_blk ->
 	let cov_cs = cov_blk.blk_cs in
 	begin match cov_blk.blk_state with
@@ -660,9 +659,9 @@ module Tabular = struct
 	    drop_refinement tab cov_blk
 	  else if lr > 0 && not (Dltree.is_leaf div_rs) then
 	    loop_rs (Dltree.level cov_cs + lc) lr div_rs
-	  else begin
+	  else if Dltree.level old_cs = Dltree.level cov_cs + lc then begin
 	    assert (lc > 0);
-	    assert (not (Dltree.is_only old_cs));
+	    assert (lc > 1 || not (Dltree.is_only old_cs));
 	    unfill tab div_rs old_cs
 	  end
 	end in
