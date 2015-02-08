@@ -22,6 +22,7 @@
 {client{
   module Dep_tbe = Test_basic_editors
   module Dep_tte = Test_twine_editor
+  module Dep_opr = Test_operated
 }}
 
 module App = Eliom_registration.App (struct let application_name = "test" end)
@@ -44,6 +45,7 @@ let test_services = List.map make_test_service [
   "tabular2", (fun () -> Html5.C.node {{Test_tabular2.render ()}});
   "tabular3", (fun () -> Html5.C.node {{Test_tabular3.render ()}});
   "basic_editors", Test_basic_editors.render;
+  "operated", Test_operated.render;
   "twine_editor", Test_twine_editor.render;
 ]
 

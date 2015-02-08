@@ -17,10 +17,14 @@ Library "panograph"
   Path: lib
   BuildDepends: js_of_ocaml.deriving, lwt, prime
   Modules:
+    Operated_types,
     Panograph_dltree,
     Panograph_i18n,
     Panograph_lwt,
-    Panograph_types
+    Panograph_types,
+    Presentation_sigs,
+    Presentation_types,
+    Presenting_set
 
 Library "panograph-server"
   Path: lib/server
@@ -32,6 +36,7 @@ Library "panograph-server"
 Library "panograph-client"
   Path: lib/client
   Modules:
+    Operated_html5,
     Panograph_basic_editors,
     Panograph_collection,
     Panograph_common,
@@ -49,6 +54,7 @@ Library "test"
   Modules:
     server/Test,
     server/Test_basic_editors,
+    server/Test_operated,
     server/Test_twine_editor
   BuildDepends: eliom.server, panograph-server, prime, prime.unstable
   ByteOpt: -thread
