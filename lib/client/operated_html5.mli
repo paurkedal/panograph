@@ -46,4 +46,17 @@ module O : sig
 	    'ev, 'ep, [< dl_content_fun],
 	    'ev list, ('ev, 'ep) grid1_op, [> dl]) star
 
+  val table :
+    ?caption: [< caption] Html5.elt ->
+    ?columns: [< colgroup] Html5.elt list ->
+    ?thead: [< thead] Html5.elt ->
+    ?tfoot: [< tfoot] Html5.elt ->
+    ([ table_attrib],
+     'ev, 'ep, [< table_content_fun],
+     'ev list, ('ev, 'ep) grid1_op, [> table]) star
+
+  val tr : ([< tr_attrib],
+	    'ev, 'ep, [< tr_content_fun],
+	    'ev list, ('ev, 'ep) grid1_op, [> tr]) star
+
 end
