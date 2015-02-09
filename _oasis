@@ -24,6 +24,7 @@ Library "panograph"
     Panograph_types,
     Presentation_sigs,
     Presentation_types,
+    Presenting_map,
     Presenting_set
 
 Library "panograph-server"
