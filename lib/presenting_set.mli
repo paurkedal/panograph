@@ -33,4 +33,4 @@ module Make (Set : PRESENTABLE_SET) :
     with type t = Set.t
      and type dt = Set.elt set_patch
      and type p = Set.elt list
-     and type dp = (Set.elt, counit) grid1_op option
+     and type dp = (Set.elt, counit) grid1_op

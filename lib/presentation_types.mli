@@ -24,3 +24,5 @@ type ('k, 'e, 'de) map_patch =
   | Map_remove of 'k
   | Map_at of 'k * 'de
   deriving (Json)
+
+exception Conflict of string

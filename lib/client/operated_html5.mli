@@ -42,4 +42,8 @@ module O : sig
 	    'ev, 'ep, [< ol_content_fun],
 	    'ev list, ('ev, 'ep) grid1_op, [> ol]) star
 
+  val dl : ([< dl_attrib],
+	    'ev, 'ep, [< dl_content_fun],
+	    'ev list, ('ev, 'ep) grid1_op, [> dl]) star
+
 end

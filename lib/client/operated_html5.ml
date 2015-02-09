@@ -81,4 +81,10 @@ module O = struct
     let ol = Html5.D.ol (intro @ List.flatten (List.map snd ys)) in
     (list_op f state (Html5.To_dom.of_ol ol) ys, ol)
 
+  let dl ?a ?(intro = []) f xs =
+    let ys = List.map f xs in
+    let state = ref (Enumlist.of_list ys) in
+    let dl = Html5.D.dl (intro @ List.flatten (List.map snd ys)) in
+    (list_op f state (Html5.To_dom.of_dl dl) ys, dl)
+
 end
