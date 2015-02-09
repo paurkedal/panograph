@@ -61,7 +61,7 @@ let render () =
       let delete _ = Lwt.async (fun () -> %patch_c (Set_remove x)) in
       let delete_button = D.button ~button_type:`Button ~a:[D.a_onclick delete]
 				   [D.pcdata "−"] in
-      absurd, D.li [D.pcdata x; D.pcdata " "; delete_button] in
+      absurd, [D.li [D.pcdata x; D.pcdata " "; delete_button]] in
     let patch_ul, ul = O.ul ~intro:[add_li] make_li %p in
     Lwt_react.E.keep (React.E.trace patch_ul %ev_c);
     ul

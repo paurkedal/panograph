@@ -23,7 +23,7 @@ module O : sig
   type ('attr, 'ev, 'ep, 'eu, 'cv, 'cp, 'cu) star =
     ?a: ('attr Html5.attrib) list ->
     ?intro: 'eu Html5.elt list ->
-    ('ev -> ('ep -> unit) * 'eu Html5.elt) ->
+    ('ev -> ('ep -> unit) * 'eu Html5.elt list) ->
     'cv -> ('cp -> unit) * 'cu Html5.elt
 
   val div : ([< div_attrib],
