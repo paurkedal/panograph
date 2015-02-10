@@ -58,6 +58,16 @@ module O = struct
     | Grid1_at (pos, dx) ->
       fst (Enumlist.get pos !state) dx
 
+  let p ?a ?(intro = []) f xs =
+    let ys = List.map f xs in
+    let elem = Html5.D.p ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+
+  let pre ?a ?(intro = []) f xs =
+    let ys = List.map f xs in
+    let elem = Html5.D.pre ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+
   let div ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let elem = Html5.D.div ?a (intro @ List.flatten (List.map snd ys)) in
@@ -92,5 +102,16 @@ module O = struct
   let tr ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let elem = Html5.D.tr ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+
+  let select ?a ?(intro = []) f xs =
+    let ys = List.map f xs in
+    let elem = Html5.D.Raw.select ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+
+  let optgroup ~label ?a ?(intro = []) f xs =
+    let ys = List.map f xs in
+    let elem = Html5.D.Raw.optgroup ~label ?a
+				    (intro @ List.flatten (List.map snd ys)) in
     (list_op f (Html5.To_dom.of_element elem) ys, elem)
 end

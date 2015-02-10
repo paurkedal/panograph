@@ -26,13 +26,21 @@ module O : sig
     ('ev -> ('ep -> unit) * 'eu Html5.elt list) ->
     'cv -> ('cp -> unit) * 'cu Html5.elt
 
+  val p : ([< p_attrib],
+	   'ev, 'ep, [< p_content_fun],
+	   'ev list, ('ev, 'ep) grid1_op, [> p]) star
+
+  val pre : ([< pre_attrib],
+	     'ev, 'ep, [< pre_content_fun],
+	     'ev list, ('ev, 'ep) grid1_op, [> pre]) star
+
   val div : ([< div_attrib],
-	    'ev, 'ep, [< div_content_fun],
-	    'ev list, ('ev, 'ep) grid1_op, [> div]) star
+	     'ev, 'ep, [< div_content_fun],
+	     'ev list, ('ev, 'ep) grid1_op, [> div]) star
 
   val span : ([< span_attrib],
-	    'ev, 'ep, [< span_content_fun],
-	    'ev list, ('ev, 'ep) grid1_op, [> span]) star
+	      'ev, 'ep, [< span_content_fun],
+	      'ev list, ('ev, 'ep) grid1_op, [> span]) star
 
   val ul : ([< ul_attrib],
 	    'ev, 'ep, [< ul_content_fun],
@@ -59,4 +67,12 @@ module O : sig
 	    'ev, 'ep, [< tr_content_fun],
 	    'ev list, ('ev, 'ep) grid1_op, [> tr]) star
 
+  val select : ([< select_attrib],
+		'ev, 'ep, [< select_content_fun],
+		'ev list, ('ev, 'ep) grid1_op, [> select]) star
+
+  val optgroup : label: string ->
+		 ([< optgroup_attrib],
+		  'ev, 'ep, [< optgroup_content_fun],
+		  'ev list, ('ev, 'ep) grid1_op, [> optgroup]) star
 end
