@@ -60,31 +60,31 @@ module O = struct
   let div ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let state = ref (Enumlist.of_list ys) in
-    let div = Html5.D.div (intro @ List.flatten (List.map snd ys)) in
+    let div = Html5.D.div ?a (intro @ List.flatten (List.map snd ys)) in
     (list_op f state (Html5.To_dom.of_span div) ys, div)
 
   let span ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let state = ref (Enumlist.of_list ys) in
-    let span = Html5.D.span (intro @ List.flatten (List.map snd ys)) in
+    let span = Html5.D.span ?a (intro @ List.flatten (List.map snd ys)) in
     (list_op f state (Html5.To_dom.of_span span) ys, span)
 
   let ul ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let state = ref (Enumlist.of_list ys) in
-    let ul = Html5.D.ul (intro @ List.flatten (List.map snd ys)) in
+    let ul = Html5.D.ul ?a (intro @ List.flatten (List.map snd ys)) in
     (list_op f state (Html5.To_dom.of_ul ul) ys, ul)
 
   let ol ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let state = ref (Enumlist.of_list ys) in
-    let ol = Html5.D.ol (intro @ List.flatten (List.map snd ys)) in
+    let ol = Html5.D.ol ?a (intro @ List.flatten (List.map snd ys)) in
     (list_op f state (Html5.To_dom.of_ol ol) ys, ol)
 
   let dl ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let state = ref (Enumlist.of_list ys) in
-    let dl = Html5.D.dl (intro @ List.flatten (List.map snd ys)) in
+    let dl = Html5.D.dl ?a (intro @ List.flatten (List.map snd ys)) in
     (list_op f state (Html5.To_dom.of_dl dl) ys, dl)
 
   let table ?caption ?columns ?thead ?tfoot ?a ?(intro = []) f xs =
@@ -97,6 +97,6 @@ module O = struct
   let tr ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let state = ref (Enumlist.of_list ys) in
-    let tr = Html5.D.tr (intro @ List.flatten (List.map snd ys)) in
+    let tr = Html5.D.tr ?a (intro @ List.flatten (List.map snd ys)) in
     (list_op f state (Html5.To_dom.of_tr tr) ys, tr)
 end
