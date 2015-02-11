@@ -15,8 +15,8 @@
  *)
 
 type ('e, 'de) grid1_op =
-  | Grid1_insert of int * 'e
-  | Grid1_delete of int
-  | Grid1_move of int * int
-  | Grid1_at of int * 'de
-  deriving (Show)
+  [ `Insert of int * 'e
+  | `Delete of int
+  | `Move of int * int
+  | `Update of int * 'de ]
+  deriving (Show, Json)

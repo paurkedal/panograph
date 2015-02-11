@@ -40,9 +40,9 @@ module Make (Set : PRESENTABLE_SET) = struct
     | Set_add e -> fun s ->
       let is_present, pos = Set.locate e s in
       if is_present then raise (Conflict "Element to insert exists.");
-      Grid1_insert (pos, e), Set.add e s
+      `Insert (pos, e), Set.add e s
     | Set_remove e -> fun s ->
       let is_present, pos = Set.locate e s in
       if not is_present then raise (Conflict "Element to remove is missing.");
-      Grid1_delete pos, Set.remove e s
+      `Delete pos, Set.remove e s
 end

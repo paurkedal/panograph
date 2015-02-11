@@ -42,20 +42,20 @@ module O = struct
       let item_dom = To_dom.of_element item in
       Dom.removeChild container_dom item_dom in
     function
-    | Grid1_insert (pos, x) ->
+    | `Insert (pos, x) ->
       let y = f x in
       List.iter (insert_at pos) (snd y);
       state := Enumlist.insert pos y !state
-    | Grid1_delete pos ->
+    | `Delete pos ->
       List.iter delete (snd (Enumlist.get pos !state));
       state := Enumlist.delete pos !state
-    | Grid1_move (pos, pos') ->
+    | `Move (pos, pos') ->
       let f, items = Enumlist.get pos !state in
       List.iter delete items;
       state := Enumlist.delete pos !state;
       List.iter (insert_at pos') items;
       state := Enumlist.insert pos (f, items) !state
-    | Grid1_at (pos, dx) ->
+    | `Update (pos, dx) ->
       fst (Enumlist.get pos !state) dx
 
   let p ?a ?(intro = []) f xs =

@@ -41,15 +41,15 @@ module Make (Map : PRESENTABLE_MAP) (Elt : PRESENTATION) = struct
     | Map_add (k, e) -> fun m ->
       let is_present, pos = Map.locate k m in
       if is_present then raise (Conflict "Key already bound in map.");
-      Grid1_insert (pos, (k, Elt.present e)), Map.add k e m
+      `Insert (pos, (k, Elt.present e)), Map.add k e m
     | Map_remove k -> fun m ->
       let is_present, pos = Map.locate k m in
       if not is_present then raise (Conflict "Missing key to remove.");
-      Grid1_delete pos, Map.remove k m
+      `Delete pos, Map.remove k m
     | Map_at (k, p) -> fun m ->
       let is_present, pos = Map.locate k m in
       if not is_present then raise (Conflict "Missing key to modify.");
       let e = Map.find k m in
       let c, e' = Elt.change p e in
-      Grid1_at (pos, c), Map.add k e' m
+      `Update (pos, c), Map.add k e' m
 end
