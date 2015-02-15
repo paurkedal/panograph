@@ -21,6 +21,7 @@
 }}
 {client{
   module Dep_tbe = Test_basic_editors
+  module Dep_ted = Test_editable
   module Dep_tte = Test_twine_editor
   module Dep_opr = Test_operated
   module Dep_twt = Test_weaktbl
@@ -41,6 +42,7 @@ let make_test_service (name, render) =
     (simple_handler name render)
 
 let test_services = List.map make_test_service [
+  "editable", Test_editable.render;
   "inputs", (fun () -> Html5.C.node {{Test_inputs.render ()}});
   "tabular1", (fun () -> Html5.C.node {{Test_tabular1.render ()}});
   "tabular2", (fun () -> Html5.C.node {{Test_tabular2.render ()}});
