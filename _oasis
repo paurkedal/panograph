@@ -45,7 +45,8 @@ Library "panograph-client"
     Panograph_mapped,
     Panograph_simple,
     Panograph_tabular,
-    Panograph_twine_editor
+    Panograph_twine_editor,
+    Pandom_weaktbl
   BuildDepends:
     eliom.client, lwt.syntax, js_of_ocaml.syntax,
     panograph, prime, prime.unstable
@@ -56,6 +57,7 @@ Library "test"
     server/Test,
     server/Test_basic_editors,
     server/Test_operated,
+    server/Test_weaktbl,
     server/Test_twine_editor
   BuildDepends: eliom.server, panograph-server, prime, prime.unstable
   ByteOpt: -thread
