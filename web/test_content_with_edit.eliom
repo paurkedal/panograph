@@ -18,12 +18,12 @@
 open Eliom_content
 open Eliom_content.Html5
 open Panograph_types
-open Panui_editable
+open Panui_content_with_edit
 let (>|=) = Lwt.(>|=)
 }}
 
 {client{
-  module Dep_editable = Panui_editable
+  module Dep_content_with_edit = Panui_content_with_edit
 
   let a_ev, emit_a = React.E.create ()
   let b_ev, emit_b = React.E.create ()
@@ -33,8 +33,8 @@ let (>|=) = Lwt.(>|=)
 }}
 
 let render () =
-  let set_a, elem_a = editable_string {{emit_a'}} "value a" in
-  let set_b, elem_b = editable_string {{emit_b'}} "value b" in
+  let set_a, elem_a = pcdata_with_edit {{emit_a'}} "value a" in
+  let set_b, elem_b = pcdata_with_edit {{emit_b'}} "value b" in
   ignore {unit{
     Lwt_react.E.keep (React.E.trace %set_a a_ev);
     Lwt_react.E.keep (React.E.trace %set_b b_ev)

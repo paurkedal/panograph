@@ -33,7 +33,7 @@ Library "panograph-server"
   Modules:
     Panograph_basic_editors,
     Panograph_twine_editor,
-    Panui_editable
+    Panui_content_with_edit
 
 Library "panograph-client"
   Path: lib/client
@@ -48,7 +48,7 @@ Library "panograph-client"
     Panograph_tabular,
     Panograph_twine_editor,
     Pandom_weaktbl,
-    Panui_editable
+    Panui_content_with_edit
   BuildDepends:
     eliom.client, lwt.syntax, js_of_ocaml.syntax,
     panograph, prime, prime.unstable
@@ -58,7 +58,7 @@ Library "test"
   Modules:
     server/Test,
     server/Test_basic_editors,
-    server/Test_editable,
+    server/Test_content_with_edit,
     server/Test_operated,
     server/Test_weaktbl,
     server/Test_twine_editor

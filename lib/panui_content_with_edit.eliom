@@ -28,7 +28,7 @@ let error_cls = Js.string "error"
 
 {shared{
 
-let editable_string ?a (emit_value : (string -> ack Lwt.t) client_value) x =
+let pcdata_with_edit ?a (emit_value : (string -> ack Lwt.t) client_value) x =
 
   let pcdata = D.pcdata x in
   let span = D.span ?a [pcdata] in

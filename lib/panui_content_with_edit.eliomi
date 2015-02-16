@@ -20,7 +20,7 @@ open Eliom_content
 open Html5_types
 open Panograph_types
 
-val editable_string :
+val pcdata_with_edit :
   ?a: [< span_attrib] Html5.attrib list ->
   (string -> ack Lwt.t) client_value -> string ->
   (string -> unit) client_value * [> span] Html5.elt
