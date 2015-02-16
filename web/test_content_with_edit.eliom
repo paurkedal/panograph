@@ -27,16 +27,23 @@ let (>|=) = Lwt.(>|=)
 
   let a_ev, emit_a = React.E.create ()
   let b_ev, emit_b = React.E.create ()
+  let c_ev, emit_c = React.E.create ()
 
   let emit_a' x = Lwt_js.sleep 0.5 >|= fun () -> emit_a x; Ack_ok
   let emit_b' x = Lwt_js.sleep 0.5 >|= fun () -> emit_b x; Ack_ok
+  let emit_c' x = Lwt_js.sleep 0.5 >|= fun () -> emit_c x; Ack_ok
 }}
 
 let render () =
   let set_a, elem_a = pcdata_with_edit {{emit_a'}} "value a" in
   let set_b, elem_b = pcdata_with_edit {{emit_b'}} "value b" in
+  let set_c, elem_c = p_with_edit {{emit_c'}} "A paragraph." in
   ignore {unit{
     Lwt_react.E.keep (React.E.trace %set_a a_ev);
-    Lwt_react.E.keep (React.E.trace %set_b b_ev)
+    Lwt_react.E.keep (React.E.trace %set_b b_ev);
+    Lwt_react.E.keep (React.E.trace %set_c c_ev)
   }};
-  D.div [elem_a; D.pcdata ", "; elem_b]
+  D.div [
+    D.p [elem_a; D.pcdata ", "; elem_b];
+    elem_c;
+  ]

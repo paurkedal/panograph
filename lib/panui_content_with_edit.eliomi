@@ -25,4 +25,9 @@ val pcdata_with_edit :
   (string -> ack Lwt.t) client_value -> string ->
   (string -> unit) client_value * [> span] Html5.elt
 
+val p_with_edit :
+  ?a: [< p_attrib] Html5.attrib list ->
+  (string -> ack Lwt.t) client_value -> string ->
+  (string -> unit) client_value * [> p] Html5.elt
+
 }}
