@@ -31,6 +31,7 @@
   let failed_prefix = "** "
   let failed_suffix = " **\n"
   let failed_class = Js.string "failed"
+  let dirty_class = Js.string "dirty"
 
   let set_failed dom msg =
     if not (Js.to_bool (dom##classList##contains(failed_class))) then begin
@@ -51,7 +52,7 @@
   let outfit_interactive ~to_string ~of_string ?value input_dom patch_out =
     Lwt_js_events.(async @@ fun () ->
       changes input_dom @@ fun _ _ ->
-      input_dom##classList##add(Js.string "dirty");
+      input_dom##classList##add(dirty_class);
       match_lwt
 	try patch_out (of_string (Js.to_string input_dom##value))
 	with Invalid_argument _ | Failure _ ->
@@ -64,9 +65,8 @@
 	set_failed input_dom msg;
 	Lwt.return_unit);
     let patch_in v =
-      input_dom##classList##remove(Js.string "dirty");
-      if Js.to_bool (input_dom##classList##contains(Js.string "error")) then
-	clear_failed input_dom;
+      input_dom##classList##remove(dirty_class);
+      clear_failed input_dom;
       input_dom##value <- Js.string (to_string v) in
     Option.iter patch_in value;
     patch_in
@@ -186,7 +186,7 @@
       let input_dom = To_dom.of_input %input in
       Lwt_js_events.(async @@ fun () ->
 	changes input_dom @@ fun _ _ ->
-	input_dom##classList##add(Js.string "dirty");
+	input_dom##classList##add(dirty_class);
 	match_lwt %patch_out (Js.to_bool input_dom##checked) with
 	| Ack_ok ->
 	  clear_failed input_dom;
@@ -196,7 +196,7 @@
 	  Lwt.return_unit);
       let patch_in v =
 	clear_failed input_dom;
-	input_dom##classList##remove(Js.string "dirty");
+	input_dom##classList##remove(dirty_class);
 	input_dom##checked <- Js.bool v in
       patch_in
     }} in
