@@ -16,25 +16,23 @@
 
 open Lwt
 
-module Emitter = struct
-  type 'a t = ('a Lwt.t * 'a Lwt.u) ref
-  type 'a tangle = 'a t * ('a -> unit)
+type 'a t = ('a Lwt.t * 'a Lwt.u) ref
+type 'a tangle = 'a t * ('a -> unit)
 
-  let create () =
-    let ev_r = ref (Lwt.task ()) in
-    let emit x =
-      let ev = !ev_r in
-      ev_r := Lwt.task ();
-      Lwt.wakeup (snd ev) x in
-    ev_r, emit
+let create () =
+  let ev_r = ref (Lwt.task ()) in
+  let emit x =
+    let ev = !ev_r in
+    ev_r := Lwt.task ();
+    Lwt.wakeup (snd ev) x in
+  ev_r, emit
 
-  let next ev_r = fst !ev_r
+let next ev_r = fst !ev_r
 
-  let iter_s h ev_r =
-    let rec loop () = next ev_r >>= h >>= loop in
-    loop ()
+let iter_s h ev_r =
+  let rec loop () = next ev_r >>= h >>= loop in
+  loop ()
 
-  let iter h ev_r =
-    let rec loop () = next ev_r >>= fun x -> Lwt.return (h x) >>= loop in
-    loop ()
-end
+let iter h ev_r =
+  let rec loop () = next ev_r >>= fun x -> Lwt.return (h x) >>= loop in
+  loop ()

@@ -14,17 +14,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-module Emitter : sig
+type 'a t
 
-  type 'a t
+type 'a tangle = 'a t * ('a -> unit)
 
-  type 'a tangle = 'a t * ('a -> unit)
+val create : unit -> 'a t * ('a -> unit)
 
-  val create : unit -> 'a t * ('a -> unit)
+val next : 'a t -> 'a Lwt.t
 
-  val next : 'a t -> 'a Lwt.t
+val iter : ('a -> unit) -> 'a t -> unit Lwt.t
 
-  val iter : ('a -> unit) -> 'a t -> unit Lwt.t
-
-  val iter_s : ('a -> unit Lwt.t) -> 'a t -> unit Lwt.t
-end
+val iter_s : ('a -> unit Lwt.t) -> 'a t -> unit Lwt.t

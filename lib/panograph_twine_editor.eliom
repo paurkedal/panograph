@@ -18,7 +18,6 @@
   open Eliom_lib
   open Eliom_content
   open Panograph_i18n
-  open Panograph_lwt
   open Panograph_types
 
   type twine_editor_out = [`Add of lang * string | `Remove of lang]

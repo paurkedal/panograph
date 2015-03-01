@@ -16,7 +16,6 @@
 
 {shared{
   open Eliom_content
-  open Panograph_lwt
   open Panograph_twine_editor
   open Panograph_types
 }}
