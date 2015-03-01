@@ -22,6 +22,7 @@ Library "panograph"
     Panograph_i18n,
     Panograph_types,
     Pwt_emitter,
+    Pwt_hashtbl,
     Pwt_list,
     Pwt_option,
     Presentation_sigs,
