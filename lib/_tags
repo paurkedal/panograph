@@ -1,3 +1,4 @@
 <**/*.{ml,mli,eliom,eliomi}>: syntax(camlp4o), \
     package(deriving.syntax), \
     package(js_of_ocaml.deriving.syntax)
+<pwt_*.ml>: syntax(camlp4o), package(lwt.syntax)

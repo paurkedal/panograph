@@ -29,4 +29,17 @@ let rec search_p f = function
   | [] -> return None
   | x :: xs ->
     let m = search_s f xs in
-    bind (f x) (function | Some _ as r -> return r | None -> m)
+    bind (f x) (function Some _ as r -> return r | None -> m)
+
+let rec fmap_s f = function
+  | [] -> return []
+  | x :: xs ->
+    lwt yo = f x in
+    lwt ys = fmap_s f xs in
+    return (match yo with None -> ys | Some y -> y :: ys)
+
+let rec fmap_p f = function
+  | [] -> return []
+  | x :: xs ->
+    lwt yo = f x and ys = fmap_p f xs in
+    return (match yo with None -> ys | Some y -> y :: ys)

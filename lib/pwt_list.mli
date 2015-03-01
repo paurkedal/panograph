@@ -19,3 +19,5 @@
 val fold_s : ('a -> 'b -> 'b Lwt.t) -> 'a list -> 'b -> 'b Lwt.t
 val search_s : ('a -> 'b option Lwt.t) -> 'a list -> 'b option Lwt.t
 val search_p : ('a -> 'b option Lwt.t) -> 'a list -> 'b option Lwt.t
+val fmap_s : ('a -> 'b option Lwt.t) -> 'a list -> 'b list Lwt.t
+val fmap_p : ('a -> 'b option Lwt.t) -> 'a list -> 'b list Lwt.t
