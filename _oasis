@@ -82,3 +82,12 @@ Executable "test_dltree"
   MainIs: test_dltree.ml
   Install: false
   BuildDepends: panograph, prime
+
+Document api
+  Title: Panograph Base Library
+  Type: ocamlbuild (0.4)
+  InstallDir: $htmldir/html
+  BuildTools+: ocamldoc
+  XOCamlbuildPath: lib
+  XOCamlbuildLibraries: panograph
+  DataFiles: COPYING ($docdir), COPYING.LESSER ($docdir)

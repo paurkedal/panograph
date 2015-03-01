@@ -14,13 +14,13 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Lwt
+(** Lwt operations over options. *)
 
-val iter_s : ('a -> unit t) -> 'a option -> unit t
-val fold_s : ('a -> 'b -> 'b t) -> 'a option -> 'b -> 'b t
-val for_all_s : ('a -> bool t) -> 'a option -> bool t
-val exists_s : ('a -> bool t) -> 'a option -> bool t
-val filter_s : ('a -> bool t) -> 'a option -> 'a option t
-val map_s : ('a -> 'b t) -> 'a option -> 'b option t
-val fmap_s : ('a -> 'b option t) -> 'a option -> 'b option t
+val iter_s : ('a -> unit Lwt.t) -> 'a option -> unit Lwt.t
+val fold_s : ('a -> 'b -> 'b Lwt.t) -> 'a option -> 'b -> 'b Lwt.t
+val for_all_s : ('a -> bool Lwt.t) -> 'a option -> bool Lwt.t
+val exists_s : ('a -> bool Lwt.t) -> 'a option -> bool Lwt.t
+val filter_s : ('a -> bool Lwt.t) -> 'a option -> 'a option Lwt.t
+val map_s : ('a -> 'b Lwt.t) -> 'a option -> 'b option Lwt.t
+val fmap_s : ('a -> 'b option Lwt.t) -> 'a option -> 'b option Lwt.t
 (* search_s = fmap_s *)
