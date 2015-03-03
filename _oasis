@@ -1,6 +1,6 @@
 OASISFormat: 0.4
 Name: panograph
-Version: 0.1
+Version: 0.1.1
 Synopsis: Data-Centric Widgets for Eliom
 Authors: Petter A. Urkedal
 License: LGPL-3 with OCaml linking exception
