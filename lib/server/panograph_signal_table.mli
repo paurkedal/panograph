@@ -20,6 +20,8 @@ module Make (Key : Hashtbl.HashedType) : sig
   type 'a t
   val create : int -> 'a t
   val signal : 'a t -> Key.t -> 'a -> 'a React.S.t
+  val signal_opt : 'a t -> Key.t -> 'a React.S.t option
+  val value_opt : 'a t -> Key.t -> 'a option
   val set : 'a t -> Key.t -> 'a -> unit
   val size : 'a t -> int
 end

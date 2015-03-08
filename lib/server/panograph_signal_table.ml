@@ -14,8 +14,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open Unprime_option
+
 type ex_spair =
   Ex_spair : 'a React.S.t * ('a -> unit) -> ex_spair
+
+let dummy = Ex_spair (React.S.const (), (fun () -> assert false))
 
 let enclose x () = ignore x
 
@@ -36,7 +40,6 @@ module Make (Key : Hashtbl.HashedType) = struct
   let signal (wt : 'a t) key x : 'a React.S.t =
     let (_, Ex_spair (signal, _)) =
       try
-	let dummy = Ex_spair (React.S.const x, (fun _ -> assert false)) in
 	Wt.find wt (key, dummy)
       with Not_found ->
 	let signal, set = React.S.create x in
@@ -45,11 +48,19 @@ module Make (Key : Hashtbl.HashedType) = struct
 	Wt.add wt node; node in
     Obj.magic signal
 
+  let signal_opt (wt : 'a t) key : 'a React.S.t option =
+    try
+      let (_, Ex_spair (signal, _)) = Wt.find wt (key, dummy) in
+      Some (Obj.magic signal : 'a React.S.t)
+    with Not_found ->
+      None
+
+  let value_opt (wt : 'a t) key = Option.map React.S.value (signal_opt wt key)
+
   let set (wt : 'a t) key (x : 'a) =
     try
-      let dummy = Ex_spair (React.S.const x, (fun _ -> assert false)) in
       let (_, Ex_spair (_, set)) = Wt.find wt (key, dummy) in
-      Obj.magic set x
+      (Obj.magic set : 'a -> unit) x
     with Not_found ->
       ()
 

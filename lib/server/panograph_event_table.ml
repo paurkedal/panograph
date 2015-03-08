@@ -46,6 +46,13 @@ module Make (Key : Hashtbl.HashedType) = struct
 	Wt.add wt node; node in
     Obj.magic event (*[1]*)
 
+  let event_opt (wt : 'a t) key : 'a React.E.t option =
+    try
+      let (_, Ex_epair (event, _)) = Wt.find wt (key, ex_epair_dummy) in
+      Some (Obj.magic event : 'a React.E.t)
+    with Not_found ->
+      None
+
   let emit (wt : 'a t) key (x : 'a) =
     try
       let (_, Ex_epair (_, emit)) = Wt.find wt (key, ex_epair_dummy) in
