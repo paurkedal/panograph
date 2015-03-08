@@ -24,6 +24,17 @@
   let with_setter elem (to_string : 'a -> string) (value : 'a option) =
     let set x = Manip.replaceChildren elem [D.pcdata (to_string x)] in
     Option.iter set value; set
+
+  let with_opt_setter elem (to_string : 'a -> string)
+		      (value : 'a option option) =
+    let set = function
+      | None ->
+	Manip.Class.add elem "none";
+	Manip.removeChildren elem
+      | Some x ->
+	Manip.Class.remove elem "none";
+	Manip.replaceChildren elem [D.pcdata (to_string x)] in
+    Option.iter set value; set
 }}
 
 {shared{
@@ -46,23 +57,23 @@
     span, g
 
   let string_option_viewer
-	?a ~(to_string : (string option -> string) client_value)
+	?a ~(to_string : (string -> string) client_value)
 	?(value : string option option) () =
     let span = D.span ?a [] in
-    let g = {string option -> unit{with_setter %span %to_string %value}} in
+    let g = {string option -> unit{with_opt_setter %span %to_string %value}} in
     span, g
 
   let int_option_viewer
-	?a ~(to_string : (int option -> string) client_value)
+	?a ~(to_string : (int -> string) client_value)
 	?(value : int option option) () =
     let span = D.span ?a [] in
-    let g = {int option -> unit{with_setter %span %to_string %value}} in
+    let g = {int option -> unit{with_opt_setter %span %to_string %value}} in
     span, g
 
   let float_option_viewer
-	?a ~(to_string : (float option -> string) client_value)
+	?a ~(to_string : (float -> string) client_value)
 	?(value : float option option) () =
     let span = D.span ?a [] in
-    let g = {float option -> unit{with_setter %span %to_string %value}} in
+    let g = {float option -> unit{with_opt_setter %span %to_string %value}} in
     span, g
 }}
