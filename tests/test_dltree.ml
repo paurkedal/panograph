@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2015  Petter Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -182,7 +182,7 @@ let test_exists () =
   assert (not (Dltree.exists ~depth:2 ((==) a) root));
   assert (not (Dltree.exists ~depth:2 ((!=) aa) root))
 
-let () =
+let run () =
   let root = Dltree.make 0 in
   assert (Dltree.is_root root);
   assert (Dltree.is_leaf root);

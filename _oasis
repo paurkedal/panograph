@@ -80,11 +80,16 @@ Executable "test"
   ByteOpt: -thread
   Install: false
 
-Executable "test_dltree"
+Executable "testsuite"
   Path: tests
-  MainIs: test_dltree.ml
+  MainIs: testsuite.ml
   Install: false
-  BuildDepends: panograph, prime
+  BuildDepends: panograph, prime, oUnit
+  Build$: flag(tests)
+
+Test "testsuite"
+  Type: Custom (0.4)
+  Command: $testsuite
 
 Document api
   Title: Panograph Base Library
