@@ -38,6 +38,7 @@ Library "panograph-server"
   Modules:
     Panograph_basic_editors,
     Panograph_event_table,
+    Panograph_signal_table,
     Panograph_twine_editor,
     Panui_content_with_edit
   ByteOpt: -thread
