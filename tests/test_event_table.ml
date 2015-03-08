@@ -14,13 +14,37 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open OUnit
+module String_hashable = struct
+  type t = string
+  let hash = Hashtbl.hash
+  let equal = (=)
+end
 
-let suite = "panograph" >::: [
-  "test_dltree" >:: Test_dltree.run;
-  "test_event_table" >:: Test_event_table.run;
-]
+module Et = Panograph_event_table.Make (String_hashable)
 
-let _ =
-  Random.self_init ();
-  run_test_tt_main suite
+let test1 et =
+  let a_ev = Et.event et "a" in
+  let b_ev = Et.event et "b" in
+  let a_r = ref 0 in
+  let a_ev = React.E.trace (fun x -> a_r := !a_r + x) a_ev in
+  let b_ev = React.E.trace (fun _ -> assert false) b_ev in
+  assert (Et.size et = 2);
+  Et.emit et "a" 1;
+  Gc.full_major ();
+  Et.emit et "a" 10;
+  Et.emit et "a" 100;
+  assert (!a_r = 111);
+  assert (Et.size et = 2);
+  ignore a_ev;
+  ignore b_ev
+
+let run () =
+  let et = Et.create 23 in
+  assert (Et.size et = 0);
+  Et.emit et "a" 0;
+  Et.emit et "b" 0;
+  assert (Et.size et = 0);
+  test1 et;
+  Gc.full_major ();
+  Et.emit et "b" 0;
+  assert (Et.size et = 0)

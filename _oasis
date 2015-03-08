@@ -37,8 +37,11 @@ Library "panograph-server"
   BuildDepends: eliom.server, panograph, prime
   Modules:
     Panograph_basic_editors,
+    Panograph_event_table,
     Panograph_twine_editor,
     Panui_content_with_edit
+  ByteOpt: -thread
+  NativeOpt: -thread
 
 Library "panograph-client"
   Path: lib/client
@@ -84,8 +87,10 @@ Executable "testsuite"
   Path: tests
   MainIs: testsuite.ml
   Install: false
-  BuildDepends: panograph, prime, oUnit
+  BuildDepends: panograph, panograph-server, prime, oUnit
   Build$: flag(tests)
+  ByteOpt: -thread
+  NativeOpt: -thread
 
 Test "testsuite"
   Type: Custom (0.4)

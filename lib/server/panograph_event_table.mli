@@ -14,13 +14,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open OUnit
+(** A weak table of events. *)
 
-let suite = "panograph" >::: [
-  "test_dltree" >:: Test_dltree.run;
-  "test_event_table" >:: Test_event_table.run;
-]
-
-let _ =
-  Random.self_init ();
-  run_test_tt_main suite
+module Make (Key : Hashtbl.HashedType) : sig
+  type 'a t
+  val create : int -> 'a t
+  val event : 'a t -> Key.t -> 'a React.E.t
+  val emit : 'a t -> Key.t -> 'a -> unit
+  val size : 'a t -> int
+end
