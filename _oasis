@@ -37,6 +37,7 @@ Library "panograph-server"
   BuildDepends: eliom.server, panograph, prime
   Modules:
     Panograph_basic_editors,
+    Panograph_basic_viewers,
     Panograph_event_table,
     Panograph_signal_table,
     Panograph_twine_editor,
@@ -49,6 +50,7 @@ Library "panograph-client"
   Modules:
     Operated_html5,
     Panograph_basic_editors,
+    Panograph_basic_viewers,
     Panograph_collection,
     Panograph_common,
     Panograph_intf,
