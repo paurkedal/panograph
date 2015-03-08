@@ -15,11 +15,13 @@ OCamlVersion: >= 4.01
 
 Library "panograph"
   Path: lib
-  BuildDepends: js_of_ocaml.deriving, lwt, prime
+  BuildDepends: js_of_ocaml.deriving, lwt, prime, react
   Modules:
     Operated_types,
     Panograph_dltree,
+    Panograph_event_table,
     Panograph_i18n,
+    Panograph_signal_table,
     Panograph_types,
     Pwt,
     Pwt_emitter,
@@ -38,8 +40,6 @@ Library "panograph-server"
   Modules:
     Panograph_basic_editors,
     Panograph_basic_viewers,
-    Panograph_event_table,
-    Panograph_signal_table,
     Panograph_twine_editor,
     Panui_content_with_edit
   ByteOpt: -thread
