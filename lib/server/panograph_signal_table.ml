@@ -16,6 +16,17 @@
 
 open Unprime_option
 
+module type S = sig
+  type key
+  type 'a t
+  val create : int -> 'a t
+  val signal : 'a t -> key -> 'a -> 'a React.S.t
+  val signal_opt : 'a t -> key -> 'a React.S.t option
+  val value_opt : 'a t -> key -> 'a option
+  val set : 'a t -> key -> 'a -> unit
+  val size : 'a t -> int
+end
+
 type ex_spair =
   Ex_spair : 'a React.S.t * ('a -> unit) -> ex_spair
 
@@ -24,6 +35,8 @@ let dummy = Ex_spair (React.S.const (), (fun () -> assert false))
 let enclose x () = ignore x
 
 module Make (Key : Hashtbl.HashedType) = struct
+
+  type key = Key.t
 
   module Node = struct
     type t = Key.t * ex_spair

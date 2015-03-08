@@ -14,6 +14,16 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+module type S = sig
+  type key
+  type 'a t
+  val create : int -> 'a t
+  val event : 'a t -> key -> 'a React.E.t
+  val event_opt : 'a t -> key -> 'a React.E.t option
+  val emit : 'a t -> key -> 'a -> unit
+  val size : 'a t -> int
+end
+
 type ex_epair =
   Ex_epair : 'a React.E.t * ('a -> unit) -> ex_epair
 
@@ -22,6 +32,8 @@ let ex_epair_dummy = Ex_epair (React.E.never, (fun _ -> assert false))
 let enclose x () = ignore x
 
 module Make (Key : Hashtbl.HashedType) = struct
+
+  type key = Key.t
 
   module Node = struct
     type t = Key.t * ex_epair

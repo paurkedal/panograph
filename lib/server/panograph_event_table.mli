@@ -16,11 +16,14 @@
 
 (** A weak table of events. *)
 
-module Make (Key : Hashtbl.HashedType) : sig
+module type S = sig
+  type key
   type 'a t
   val create : int -> 'a t
-  val event : 'a t -> Key.t -> 'a React.E.t
-  val event_opt : 'a t -> Key.t -> 'a React.E.t option
-  val emit : 'a t -> Key.t -> 'a -> unit
+  val event : 'a t -> key -> 'a React.E.t
+  val event_opt : 'a t -> key -> 'a React.E.t option
+  val emit : 'a t -> key -> 'a -> unit
   val size : 'a t -> int
 end
+
+module Make (Key : Hashtbl.HashedType) : S with type key = Key.t

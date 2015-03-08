@@ -16,12 +16,15 @@
 
 (** A weak table of signals. *)
 
-module Make (Key : Hashtbl.HashedType) : sig
+module type S = sig
+  type key
   type 'a t
   val create : int -> 'a t
-  val signal : 'a t -> Key.t -> 'a -> 'a React.S.t
-  val signal_opt : 'a t -> Key.t -> 'a React.S.t option
-  val value_opt : 'a t -> Key.t -> 'a option
-  val set : 'a t -> Key.t -> 'a -> unit
+  val signal : 'a t -> key -> 'a -> 'a React.S.t
+  val signal_opt : 'a t -> key -> 'a React.S.t option
+  val value_opt : 'a t -> key -> 'a option
+  val set : 'a t -> key -> 'a -> unit
   val size : 'a t -> int
 end
+
+module Make (Key : Hashtbl.HashedType) : S with type key = Key.t
