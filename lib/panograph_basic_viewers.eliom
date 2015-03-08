@@ -17,6 +17,7 @@
 {shared{
   open Eliom_content.Html5
   open Eliom_lib
+  open Unprime
   open Unprime_option
 }}
 
@@ -38,40 +39,40 @@
 }}
 
 {shared{
-  let string_viewer ?a ~(to_string : (string -> string) client_value)
+  let string_viewer ?a ?(to_string = {string -> string{ident}})
 		    ?(value : string option) () =
     let span = D.span ?a [] in
     let g = {string -> unit{with_setter %span %to_string %value}} in
     span, g
 
-  let int_viewer ?a ~(to_string : (int -> string) client_value)
+  let int_viewer ?a ?(to_string = {int -> string{string_of_int}})
 		 ?(value : int option) () =
     let span = D.span ?a [] in
     let g = {int -> unit{with_setter %span %to_string %value}} in
     span, g
 
-  let float_viewer ?a ~(to_string : (float -> string) client_value)
+  let float_viewer ?a ?(to_string = {float -> string{string_of_float}})
 		   ?(value : float option) () =
     let span = D.span ?a [] in
     let g = {float -> unit{with_setter %span %to_string %value}} in
     span, g
 
   let string_option_viewer
-	?a ~(to_string : (string -> string) client_value)
+	?a ?(to_string = {string -> string{ident}})
 	?(value : string option option) () =
     let span = D.span ?a [] in
     let g = {string option -> unit{with_opt_setter %span %to_string %value}} in
     span, g
 
   let int_option_viewer
-	?a ~(to_string : (int -> string) client_value)
+	?a ?(to_string = {int -> string{string_of_int}})
 	?(value : int option option) () =
     let span = D.span ?a [] in
     let g = {int option -> unit{with_opt_setter %span %to_string %value}} in
     span, g
 
   let float_option_viewer
-	?a ~(to_string : (float -> string) client_value)
+	?a ?(to_string = {float -> string{string_of_float}})
 	?(value : float option option) () =
     let span = D.span ?a [] in
     let g = {float option -> unit{with_opt_setter %span %to_string %value}} in
