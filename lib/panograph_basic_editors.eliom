@@ -23,6 +23,25 @@
 }}
 
 {client{
+
+  let string_of_bool_option = function
+    | None -> ""
+    | Some false -> "false"
+    | Some true -> "true"
+
+  let bool_option_of_string = function
+    | "false" -> Some false
+    | "true" -> Some true
+    | _ -> None
+
+  let string_of_int_option = function
+    | None -> ""
+    | Some n -> string_of_int n
+
+  let int_option_of_string = function
+    | "" -> None
+    | s -> Some (int_of_string s)
+
   class type basicInteractiveElement = object
     inherit Dom_html.element
     method value : Js.js_string Js.t Js.prop
@@ -162,6 +181,55 @@
       outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
+
+  let bool_option_selector ?a ?none_label ~false_label ~true_label
+			   ?(value : bool option option)
+			   (emit : (bool option -> ack Lwt.t) client_value) =
+    let none_label =
+      match none_label with
+      | None -> "<" ^ false_label ^ "|" ^ true_label ^ ">"
+      | Some label -> label in
+    let elem = D.Raw.select ?a [
+      D.Raw.option ~a:[D.a_value ""] (D.pcdata none_label);
+      D.Raw.option ~a:[D.a_value "false"] (D.pcdata false_label);
+      D.Raw.option ~a:[D.a_value "true"] (D.pcdata true_label);
+    ] in
+    let absorb = {bool option -> unit{
+      outfit_select
+	~to_string:string_of_bool_option ~of_string:bool_option_of_string
+	?value:%value %elem %emit
+    }} in
+    elem, absorb
+
+  let int_option_selector ?a ?none_label ~items ?(value : int option option)
+			  (emit : (int option -> ack Lwt.t) client_value) =
+    let none_label =
+      match none_label with
+      | None -> "<none>"
+      | Some label -> label in
+
+    let mk_option (value, label, enabled) =
+      let s = string_of_int value in
+      let a = if enabled then [D.a_value s]
+			 else [D.a_value s; D.a_disabled `Disabled] in
+      D.Raw.option ~a (D.pcdata label) in
+
+    let mk_optgroup (label_opt, subitems) =
+      let suboptions = List.map mk_option subitems in
+      match label_opt with
+      | None -> suboptions
+      | Some label -> [D.Raw.optgroup ~label suboptions] in
+
+    let elem =
+      D.Raw.select ?a (D.Raw.option ~a:[D.a_value ""] (D.pcdata none_label) ::
+		       List.flatten (List.map mk_optgroup items)) in
+    let absorb = {int option -> unit{
+      outfit_select
+	~to_string:string_of_int_option
+	~of_string:int_option_of_string
+	?value:%value %elem %emit
+    }} in
+    elem, absorb
 
   let string_option_menu ?a ~values ?(value : string option = None)
 	(patch_out : (string option -> ack Lwt.t) client_value) =

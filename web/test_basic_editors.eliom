@@ -54,6 +54,28 @@ let int_option_out = server_function Json.t<int option> @@ fun x_opt ->
   Lwt_unix.sleep 0.3 >>
   (int_option_out' (Some (Option.map succ x_opt)); Lwt.return Ack_ok)
 
+let bool_option_stream, bool_option_out' = Lwt_stream.create ()
+let bool_option_comet =
+  Eliom_comet.Channel.create ~scope:`Site bool_option_stream
+let bool_option_out = server_function Json.t<bool option> @@ fun x_opt ->
+  begin match x_opt with
+  | None -> Lwt_log.debug "Received bool option None from select."
+  | Some x -> Lwt_log.debug_f "Received bool option %b from select." x
+  end >>
+  Lwt_unix.sleep 0.3 >>
+  (bool_option_out' (Some (Option.map not x_opt)); Lwt.return Ack_ok)
+
+let int_option_stream, int_option_out' = Lwt_stream.create ()
+let int_option_comet =
+  Eliom_comet.Channel.create ~scope:`Site int_option_stream
+let int_option_out = server_function Json.t<int option> @@ fun x_opt ->
+  begin match x_opt with
+  | None -> Lwt_log.debug "Received int option None from select."
+  | Some x -> Lwt_log.debug_f "Received int option %d from select." x
+  end >>
+  Lwt_unix.sleep 0.3 >>
+  (int_option_out' (Some (Option.map succ x_opt)); Lwt.return Ack_ok)
+
 let string_option_menu_stream, string_option_menu_out' = Lwt_stream.create ()
 let string_option_menu_comet =
   Eliom_comet.Channel.create ~scope:`Site string_option_menu_stream
@@ -83,6 +105,19 @@ let render () =
   ignore {unit{Lwt.async @@ fun () ->
     Lwt_stream.iter %int_option_in %int_option_comet}};
 
+  let bool_option_ed, bool_option_in =
+    bool_option_selector ~false_label:"false" ~true_label:"true"
+			 {{ %bool_option_out }} in
+  ignore {unit{Lwt.async @@ fun () ->
+    Lwt_stream.iter %bool_option_in %bool_option_comet}};
+
+  let int_option_ed, int_option_in =
+    int_option_selector ~items:[None, [0, "zero", true; 1, "one", true];
+				Some "g", [2, "two", true; 3, "three", false]]
+			{{ %int_option_out }} in
+  ignore {unit{Lwt.async @@ fun () ->
+    Lwt_stream.iter %int_option_in %int_option_comet}};
+
   let string_option_menu, string_option_menu_in =
     string_option_menu ~values:["Earth"; "Sun"; "The Milky Way"]
 			   {{ %string_option_menu_out }} in
@@ -96,6 +131,7 @@ let render () =
       D.li [int_ed];
       D.li [float_ed];
       D.li [int_option_ed];
+      D.li [bool_option_ed];
       D.li [string_option_menu];
     ]
   ]

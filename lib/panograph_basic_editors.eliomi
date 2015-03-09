@@ -96,6 +96,23 @@
 	(float option -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (float option -> unit) client_value
 
+  val bool_option_selector :
+	?a: Html5_types.select_attrib Html5.attrib list ->
+	?none_label: string ->
+	false_label: string ->
+	true_label: string ->
+	?value: bool option ->
+	(bool option -> ack Lwt.t) client_value ->
+	[> Html5_types.select] Html5.elt * (bool option -> unit) client_value
+
+  val int_option_selector :
+	?a: Html5_types.select_attrib Html5.attrib list ->
+	?none_label: string ->
+	items: (string option * (int * string * bool) list) list ->
+	?value: int option ->
+	(int option -> ack Lwt.t) client_value ->
+	[> Html5_types.select] Html5.elt * (int option -> unit) client_value
+
   val string_option_menu :
 	?a: Html5_types.select_attrib Html5.attrib list ->
 	values: string list -> ?value: string option ->
