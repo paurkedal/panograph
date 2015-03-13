@@ -64,6 +64,22 @@
 	(int -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (int -> unit) client_value
 
+  val int32_editor :
+	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (int32 -> string) client_value ->
+	?of_string: (string -> int32) client_value ->
+	?value: int32 ->
+	(int32 -> ack Lwt.t) client_value ->
+	[> Html5_types.input] Html5.elt * (int32 -> unit) client_value
+
+  val int64_editor :
+	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (int64 -> string) client_value ->
+	?of_string: (string -> int64) client_value ->
+	?value: int64 ->
+	(int64 -> ack Lwt.t) client_value ->
+	[> Html5_types.input] Html5.elt * (int64 -> unit) client_value
+
   val float_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
 	?to_string: (float -> string) client_value ->
@@ -87,6 +103,22 @@
 	?value: int option ->
 	(int option -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (int option -> unit) client_value
+
+  val int32_option_editor :
+	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (int32 -> string) client_value ->
+	?of_string: (string -> int32) client_value ->
+	?value: int32 option ->
+	(int32 option -> ack Lwt.t) client_value ->
+	[> Html5_types.input] Html5.elt * (int32 option -> unit) client_value
+
+  val int64_option_editor :
+	?a: Html5_types.input_attrib Html5.attrib list ->
+	?to_string: (int64 -> string) client_value ->
+	?of_string: (string -> int64) client_value ->
+	?value: int64 option ->
+	(int64 option -> ack Lwt.t) client_value ->
+	[> Html5_types.input] Html5.elt * (int64 option -> unit) client_value
 
   val float_option_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
@@ -112,6 +144,22 @@
 	?value: int option ->
 	(int option -> ack Lwt.t) client_value ->
 	[> Html5_types.select] Html5.elt * (int option -> unit) client_value
+
+  val int32_option_selector :
+	?a: Html5_types.select_attrib Html5.attrib list ->
+	?none_label: string ->
+	items: (string option * (int32 * string * bool) list) list ->
+	?value: int32 option ->
+	(int32 option -> ack Lwt.t) client_value ->
+	[> Html5_types.select] Html5.elt * (int32 option -> unit) client_value
+
+  val int64_option_selector :
+	?a: Html5_types.select_attrib Html5.attrib list ->
+	?none_label: string ->
+	items: (string option * (int64 * string * bool) list) list ->
+	?value: int64 option ->
+	(int64 option -> ack Lwt.t) client_value ->
+	[> Html5_types.select] Html5.elt * (int64 option -> unit) client_value
 
   val string_option_menu :
 	?a: Html5_types.select_attrib Html5.attrib list ->

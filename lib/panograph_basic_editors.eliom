@@ -24,6 +24,14 @@
 
 {client{
 
+  let string_of_option f = function
+    | None -> ""
+    | Some x -> f x
+
+  let option_of_string f = function
+    | "" -> None
+    | s -> Some (f s)
+
   let string_of_bool_option = function
     | None -> ""
     | Some false -> "false"
@@ -32,15 +40,15 @@
   let bool_option_of_string = function
     | "false" -> Some false
     | "true" -> Some true
-    | _ -> None
-
-  let string_of_int_option = function
-    | None -> ""
-    | Some n -> string_of_int n
-
-  let int_option_of_string = function
     | "" -> None
-    | s -> Some (int_of_string s)
+    | _ -> invalid_arg "bool_option_of_string"
+
+  let string_of_int_option = string_of_option string_of_int
+  let int_option_of_string = option_of_string int_of_string
+  let string_of_int32_option = string_of_option Int32.to_string
+  let int32_option_of_string = option_of_string Int32.of_string
+  let string_of_int64_option = string_of_option Int64.to_string
+  let int64_option_of_string = option_of_string Int64.of_string
 
   class type basicInteractiveElement = object
     inherit Dom_html.element
@@ -128,6 +136,30 @@
     }} in
     input, patch_in
 
+  let int32_editor ?a
+		   ?(to_string = {int32 -> string{Int32.to_string}})
+		   ?(of_string = {string -> int32{Int32.of_string}})
+		   ?(value : int32 option)
+		 (patch_out : (int32 -> ack Lwt.t) client_value) =
+    let input = D.input ~input_type:`Text ?a () in
+    let patch_in = {int32 -> unit{
+      outfit_input ~to_string:%to_string ~of_string:%of_string
+		   ?value:%value %input %patch_out
+    }} in
+    input, patch_in
+
+  let int64_editor ?a
+		   ?(to_string = {int64 -> string{Int64.to_string}})
+		   ?(of_string = {string -> int64{Int64.of_string}})
+		   ?(value : int64 option)
+		 (patch_out : (int64 -> ack Lwt.t) client_value) =
+    let input = D.input ~input_type:`Text ?a () in
+    let patch_in = {int64 -> unit{
+      outfit_input ~to_string:%to_string ~of_string:%of_string
+		   ?value:%value %input %patch_out
+    }} in
+    input, patch_in
+
   let float_editor ?a
 		   ?(to_string = {float -> string{string_of_float}})
 		   ?(of_string = {string -> float{float_of_string}})
@@ -148,8 +180,8 @@
 	(patch_out : (string option -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {string option -> unit{
-      let to_string = function None -> "" | Some x -> %to_string x in
-      let of_string = function "" -> None | x -> Some (%of_string x) in
+      let to_string = string_of_option %to_string in
+      let of_string = option_of_string %of_string in
       outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
@@ -162,8 +194,36 @@
 	(patch_out : (int option -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {int option -> unit{
-      let to_string = function None -> "" | Some x -> %to_string x in
-      let of_string = function "" -> None | x -> Some (%of_string x) in
+      let to_string = string_of_option %to_string in
+      let of_string = option_of_string %of_string in
+      outfit_input ~to_string ~of_string ?value:%value %input %patch_out
+    }} in
+    input, patch_in
+
+  let int32_option_editor
+	?a
+	?(to_string = {int32 -> string{Int32.to_string}})
+	?(of_string = {string -> int32{Int32.of_string}})
+	?(value : int32 option option)
+	(patch_out : (int32 option -> ack Lwt.t) client_value) =
+    let input = D.input ~input_type:`Text ?a () in
+    let patch_in = {int32 option -> unit{
+      let to_string = string_of_option %to_string in
+      let of_string = option_of_string %of_string in
+      outfit_input ~to_string ~of_string ?value:%value %input %patch_out
+    }} in
+    input, patch_in
+
+  let int64_option_editor
+	?a
+	?(to_string = {int64 -> string{Int64.to_string}})
+	?(of_string = {string -> int64{Int64.of_string}})
+	?(value : int64 option option)
+	(patch_out : (int64 option -> ack Lwt.t) client_value) =
+    let input = D.input ~input_type:`Text ?a () in
+    let patch_in = {int64 option -> unit{
+      let to_string = string_of_option %to_string in
+      let of_string = option_of_string %of_string in
       outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
@@ -176,8 +236,8 @@
 	(patch_out : (float option -> ack Lwt.t) client_value) =
     let input = D.input ~input_type:`Text ?a () in
     let patch_in = {float option -> unit{
-      let to_string = function None -> "" | Some x -> %to_string x in
-      let of_string = function "" -> None | x -> Some (%of_string x) in
+      let to_string = string_of_option %to_string in
+      let of_string = option_of_string %of_string in
       outfit_input ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
@@ -201,32 +261,53 @@
     }} in
     elem, absorb
 
-  let int_option_selector ?a ?none_label ~items ?(value : int option option)
-			  (emit : (int option -> ack Lwt.t) client_value) =
+  let mk_option_selector conv ?a ?none_label ~items () =
     let none_label =
       match none_label with
       | None -> "<none>"
       | Some label -> label in
-
     let mk_option (value, label, enabled) =
-      let s = string_of_int value in
+      let s = conv value in
       let a = if enabled then [D.a_value s]
 			 else [D.a_value s; D.a_disabled `Disabled] in
       D.Raw.option ~a (D.pcdata label) in
-
     let mk_optgroup (label_opt, subitems) =
       let suboptions = List.map mk_option subitems in
       match label_opt with
       | None -> suboptions
       | Some label -> [D.Raw.optgroup ~label suboptions] in
+    D.Raw.select ?a (D.Raw.option ~a:[D.a_value ""] (D.pcdata none_label) ::
+		     List.flatten (List.map mk_optgroup items))
 
-    let elem =
-      D.Raw.select ?a (D.Raw.option ~a:[D.a_value ""] (D.pcdata none_label) ::
-		       List.flatten (List.map mk_optgroup items)) in
+  let int_option_selector ?a ?none_label ~items ?(value : int option option)
+			  (emit : (int option -> ack Lwt.t) client_value) =
+    let elem = mk_option_selector string_of_int ?a ?none_label ~items () in
     let absorb = {int option -> unit{
       outfit_select
 	~to_string:string_of_int_option
 	~of_string:int_option_of_string
+	?value:%value %elem %emit
+    }} in
+    elem, absorb
+
+  let int32_option_selector ?a ?none_label ~items ?(value : int32 option option)
+			    (emit : (int32 option -> ack Lwt.t) client_value) =
+    let elem = mk_option_selector Int32.to_string ?a ?none_label ~items () in
+    let absorb = {int32 option -> unit{
+      outfit_select
+	~to_string:string_of_int32_option
+	~of_string:int32_option_of_string
+	?value:%value %elem %emit
+    }} in
+    elem, absorb
+
+  let int64_option_selector ?a ?none_label ~items ?(value : int64 option option)
+			    (emit : (int64 option -> ack Lwt.t) client_value) =
+    let elem = mk_option_selector Int64.to_string ?a ?none_label ~items () in
+    let absorb = {int64 option -> unit{
+      outfit_select
+	~to_string:string_of_int64_option
+	~of_string:int64_option_of_string
 	?value:%value %elem %emit
     }} in
     elem, absorb
