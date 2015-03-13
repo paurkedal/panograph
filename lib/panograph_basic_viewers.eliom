@@ -51,6 +51,18 @@
     let g = {int -> unit{with_setter %span %to_string %value}} in
     span, g
 
+  let int32_viewer ?a ?(to_string = {int32 -> string{Int32.to_string}})
+		   ?(value : int32 option) () =
+    let span = D.span ?a [] in
+    let g = {int32 -> unit{with_setter %span %to_string %value}} in
+    span, g
+
+  let int64_viewer ?a ?(to_string = {int64 -> string{Int64.to_string}})
+		   ?(value : int64 option) () =
+    let span = D.span ?a [] in
+    let g = {int64 -> unit{with_setter %span %to_string %value}} in
+    span, g
+
   let float_viewer ?a ?(to_string = {float -> string{string_of_float}})
 		   ?(value : float option) () =
     let span = D.span ?a [] in
@@ -69,6 +81,20 @@
 	?(value : int option option) () =
     let span = D.span ?a [] in
     let g = {int option -> unit{with_opt_setter %span %to_string %value}} in
+    span, g
+
+  let int32_option_viewer
+	?a ?(to_string = {int32 -> string{Int32.to_string}})
+	?(value : int32 option option) () =
+    let span = D.span ?a [] in
+    let g = {int32 option -> unit{with_opt_setter %span %to_string %value}} in
+    span, g
+
+  let int64_option_viewer
+	?a ?(to_string = {int64 -> string{Int64.to_string}})
+	?(value : int64 option option) () =
+    let span = D.span ?a [] in
+    let g = {int64 option -> unit{with_opt_setter %span %to_string %value}} in
     span, g
 
   let float_option_viewer

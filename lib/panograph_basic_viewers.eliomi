@@ -29,6 +29,18 @@
 	?value: int -> unit ->
 	[> Html5_types.span] elt * (int -> unit) client_value
 
+  val int32_viewer :
+	?a: Html5_types.span_attrib attrib list ->
+	?to_string: (int32 -> string) client_value ->
+	?value: int32 -> unit ->
+	[> Html5_types.span] elt * (int32 -> unit) client_value
+
+  val int64_viewer :
+	?a: Html5_types.span_attrib attrib list ->
+	?to_string: (int64 -> string) client_value ->
+	?value: int64 -> unit ->
+	[> Html5_types.span] elt * (int64 -> unit) client_value
+
   val float_viewer :
 	?a: Html5_types.span_attrib attrib list ->
 	?to_string: (float -> string) client_value ->
@@ -46,6 +58,18 @@
 	?to_string: (int -> string) client_value ->
 	?value: int option -> unit ->
 	[> Html5_types.span] elt * (int option -> unit) client_value
+
+  val int32_option_viewer :
+	?a: Html5_types.span_attrib attrib list ->
+	?to_string: (int32 -> string) client_value ->
+	?value: int32 option -> unit ->
+	[> Html5_types.span] elt * (int32 option -> unit) client_value
+
+  val int64_option_viewer :
+	?a: Html5_types.span_attrib attrib list ->
+	?to_string: (int64 -> string) client_value ->
+	?value: int64 option -> unit ->
+	[> Html5_types.span] elt * (int64 option -> unit) client_value
 
   val float_option_viewer :
 	?a: Html5_types.span_attrib attrib list ->
