@@ -1,0 +1,20 @@
+div.pan-dialog-veil {
+        z-index: 98;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        opacity: 0.33;
+        filter: alpha(opacity=33); /* IE<=8 */
+        background-color: #777;
+}
+div.pan-dialog-box {
+        z-index: 99;
+        position: fixed;
+        top: 15%; left: 15%; right: 15%;
+        border: solid thin #777;
+        border-top: solid medium #777;
+        background-color: #fff;
+        padding: 3mm;
+}
+div.pan-dialog-buttons { text-align: left; }
+div.pan-dialog-buttons button:first-child { margin-left: 0; }
+div.pan-dialog-buttons button { margin: 0 1mm; }

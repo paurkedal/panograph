@@ -21,6 +21,7 @@
 }}
 {client{
   module Dep_cwe = Test_content_with_edit
+  module Dep_dia = Test_dialogs
   module Dep_tbe = Test_basic_editors
   module Dep_tte = Test_twine_editor
   module Dep_opr = Test_operated
@@ -29,10 +30,12 @@
 
 module App = Eliom_registration.App (struct let application_name = "test" end)
 
+let css = [["css"; "panograph.css"]; ["css"; "panograph-test.css"]]
+
 let simple_handler title render () () =
   let open Html5 in
   Lwt.return @@
-    Eliom_tools.D.html ~title ~css:[["css"; "panograph.css"]]
+    Eliom_tools.D.html ~title ~css
       (D.body [D.h1 [D.pcdata title]; render ()])
 
 let make_test_service (name, render) =
@@ -43,6 +46,7 @@ let make_test_service (name, render) =
 
 let test_services = List.map make_test_service [
   "content_with_edit", Test_content_with_edit.render;
+  "dialogs", Test_dialogs.render;
   "inputs", (fun () -> Html5.C.node {{Test_inputs.render ()}});
   "tabular1", (fun () -> Html5.C.node {{Test_tabular1.render ()}});
   "tabular2", (fun () -> Html5.C.node {{Test_tabular2.render ()}});
@@ -59,8 +63,7 @@ let main_handler () () =
     F.li [F.a ~service [F.pcdata name] ()] in
   Lwt.return @@
     Eliom_tools.D.html
-      ~title:"Panograph Test"
-      ~css:[["css"; "panograph.css"]]
+      ~title:"Panograph Test" ~css
       (F.body [
 	F.h1 [F.pcdata "Panograph Test"];
 	F.ul (List.map test_service_item test_services);

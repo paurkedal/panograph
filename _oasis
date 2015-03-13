@@ -44,6 +44,7 @@ Library "panograph-server"
     Panui_content_with_edit
   ByteOpt: -thread
   NativeOpt: -thread
+  DataFiles: ../../static/css/*.css ($datadir/panograph/static/css)
 
 Library "panograph-client"
   Path: lib/client
@@ -59,7 +60,8 @@ Library "panograph-client"
     Panograph_tabular,
     Panograph_twine_editor,
     Pandom_weaktbl,
-    Panui_content_with_edit
+    Panui_content_with_edit,
+    Panui_dialogs
   BuildDepends:
     eliom.client, lwt.syntax, js_of_ocaml.syntax,
     panograph, prime, prime.unstable
@@ -69,6 +71,7 @@ Library "test"
   Modules:
     server/Test,
     server/Test_basic_editors,
+    server/Test_dialogs,
     server/Test_content_with_edit,
     server/Test_operated,
     server/Test_weaktbl,
