@@ -22,7 +22,9 @@ open Unprime
 let ok_label = [D.pcdata "Ok"]
 let cancel_label = [D.pcdata "Cancel"]
 
-let modal_veil = D.div ~a:[D.a_class ["pan-dialog-veil"]] []
+let close_all_r = ref (fun () -> ())
+let modal_veil = D.div ~a:[D.a_class ["pan-dialog-veil"];
+			   D.a_onclick (fun _ -> !close_all_r ())] []
 let modal_dialogs = ref []
 
 module Modal_dialog = struct
@@ -32,35 +34,36 @@ module Modal_dialog = struct
   let open_veil () = Manip.appendToBody modal_veil
   let close_veil () = Manip.removeSelf modal_veil
 
-  let open_bare ?(on_close = ident) content =
+  let open_bare ?(on_cancel = ident) content =
     if !modal_dialogs = [] then open_veil ();
     let elem = D.div ~a:[D.a_class ["pan-dialog-box"]] content in
     Manip.appendToBody elem;
-    modal_dialogs := (elem, on_close) :: !modal_dialogs;
+    modal_dialogs := (elem, on_cancel) :: !modal_dialogs;
     elem
 
-  let open_std ?(on_close = ident) content buttons =
-    open_bare [
+  let open_std ?on_cancel content buttons =
+    open_bare ?on_cancel [
       D.div ~a:[D.a_class ["pan-dialog-content"]] content;
       D.div ~a:[D.a_class ["pan-dialog-buttons"]] buttons;
     ]
 
   let rec close elem =
     match !modal_dialogs with
-    | (elem', on_close) :: elems ->
-      Manip.removeSelf elem'; on_close ();
+    | (elem', on_cancel) :: elems ->
       modal_dialogs := elems;
-      if !modal_dialogs = [] then close_veil ();
-      if elem' != elem then close elem
+      Manip.removeSelf elem';
+      if elem' != elem then (on_cancel (); close elem);
+      if !modal_dialogs = [] then close_veil ()
     | [] ->
       Eliom_lib.debug "Modal dialog was already closed."
 
   let close_all () =
-    List.iter (fun (elem, on_close) -> Manip.removeSelf elem; on_close ())
+    List.iter (fun (elem, on_cancel) -> Manip.removeSelf elem; on_cancel ())
 	      !modal_dialogs;
     modal_dialogs := [];
     close_veil ()
 
+  let () = close_all_r := close_all
 end
 
 let confirm_lwt ?(ok = ok_label) ?(cancel = cancel_label) content =
@@ -68,7 +71,7 @@ let confirm_lwt ?(ok = ok_label) ?(cancel = cancel_label) content =
   let cancel_button = D.button ~button_type:`Button cancel in
   let close_waiter, close_wakener = Lwt.wait () in
   let dialog =
-    Modal_dialog.open_std ~on_close:(Lwt.wakeup close_wakener)
+    Modal_dialog.open_std ~on_cancel:(fun () -> Lwt.wakeup close_wakener false)
 			  content [ok_button; cancel_button] in
   Lwt.choose [
     ( Lwt_js_events.click (To_dom.of_button ok_button) >|= fun _ ->

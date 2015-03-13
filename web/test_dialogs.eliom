@@ -28,12 +28,16 @@ let render () =
       lwt ans = confirm_lwt [
 	D.p [D.pcdata "How about it?"];
       ] in
-      if ans then Manip.appendToBody (D.div [D.pcdata "It's done."]);
+      if ans then Manip.appendToBody (D.div [D.pcdata "It's done."])
+	     else Manip.appendToBody (D.div [D.pcdata "It's not done."]);
       Lwt.return_unit
     end
   }};
   D.div [
-    D.h1 [D.pcdata "Dialog Test"];
+    D.p [
+      D.pcdata "In user interface design, a modal window is a graphical control element subordinate to an application's main window which creates a mode where the main window can't be used. The modal window is a child window that requires users to interact with it before it can return to operating the parent application, thus preventing the workflow on the application main window. Modal windows are often called heavy windows or modal dialogs because the window is often used to display a dialog box.";
+      D.i [D.pcdata " -- Wikipedia"]
+    ];
     D.p [trigger];
-    D.h2 [D.pcdata "Confirmations"];
+    D.h2 [D.pcdata "Log"];
   ]

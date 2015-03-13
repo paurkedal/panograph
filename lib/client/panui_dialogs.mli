@@ -22,11 +22,11 @@ module Modal_dialog : sig
   type t
 
   val open_bare :
-	?on_close: (unit -> unit) ->
+	?on_cancel: (unit -> unit) ->
 	[< div_content_fun] elt list -> t
 
   val open_std :
-	?on_close: (unit -> unit) ->
+	?on_cancel: (unit -> unit) ->
 	[< div_content_fun] elt list ->
 	[< div_content_fun] elt list -> t
 
