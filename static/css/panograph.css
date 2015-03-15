@@ -18,3 +18,8 @@ div.pan-dialog-box {
 div.pan-dialog-buttons { text-align: left; }
 div.pan-dialog-buttons button:first-child { margin-left: 0; }
 div.pan-dialog-buttons button { margin: 0 1mm; }
+
+span.pan-comboselect			{ display: inline-block; }
+span.pan-comboselect.other select	{ width: 3em; }
+span.pan-comboselect       input	{ display: none; }
+span.pan-comboselect.other input	{ display: inline; }

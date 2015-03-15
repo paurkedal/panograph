@@ -20,6 +20,7 @@
   open Unprime_option
 }}
 {client{
+  module Dep_cse = Test_combo_selectors
   module Dep_cwe = Test_content_with_edit
   module Dep_dia = Test_dialogs
   module Dep_tbe = Test_basic_editors
@@ -45,6 +46,7 @@ let make_test_service (name, render) =
     (simple_handler name render)
 
 let test_services = List.map make_test_service [
+  "combo_selectors", Test_combo_selectors.render;
   "content_with_edit", Test_content_with_edit.render;
   "dialogs", Test_dialogs.render;
   "inputs", (fun () -> Html5.C.node {{Test_inputs.render ()}});

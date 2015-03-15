@@ -42,6 +42,7 @@ Library "panograph-server"
     Panograph_basic_viewers,
     Panograph_twine_editor,
     Panui_basic_selectors,
+    Panui_combo_selectors,
     Panui_content,
     Panui_content_intf,
     Panui_content_with_edit
@@ -64,6 +65,7 @@ Library "panograph-client"
     Panograph_twine_editor,
     Pandom_weaktbl,
     Panui_basic_selectors,
+    Panui_combo_selectors,
     Panui_content,
     Panui_content_intf,
     Panui_content_with_edit,
@@ -76,6 +78,7 @@ Library "test"
   Path: web
   Modules:
     server/Test,
+    server/Test_combo_selectors,
     server/Test_basic_editors,
     server/Test_dialogs,
     server/Test_content_with_edit,
