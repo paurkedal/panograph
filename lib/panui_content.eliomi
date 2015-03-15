@@ -19,7 +19,7 @@
 
   module Selection : sig
     type ('a, +'tag) elt = private 'tag Eliom_content.Html5.elt
-    type 'a t = ('a, Html5_types.selectoption) elt list
+    type 'a t = ('a, Html5_types.select_content_fun) elt list
     module F : Selection with type ('a, 'tag) elt := ('a, 'tag) elt
     module D : Selection with type ('a, 'tag) elt := ('a, 'tag) elt
   end

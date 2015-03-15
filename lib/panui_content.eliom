@@ -69,7 +69,7 @@
 
   module Selection = struct
     type ('a, 'tag) elt = 'tag Eliom_content.Html5.elt
-    type 'a t = ('a, Html5_types.selectoption) elt list
+    type 'a t = ('a, Html5_types.select_content_fun) elt list
     module F =
       Make_selection (struct
 	module Svg = Eliom_content.Svg.F
