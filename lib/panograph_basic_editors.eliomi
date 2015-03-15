@@ -136,6 +136,7 @@
 	?value: bool option ->
 	(bool option -> ack Lwt.t) client_value ->
 	[> Html5_types.select] Html5.elt * (bool option -> unit) client_value
+  (** @deprecated Use {!Panui_basic_selectors}. *)
 
   val int_option_selector :
 	?a: Html5_types.select_attrib Html5.attrib list ->
@@ -144,6 +145,7 @@
 	?value: int option ->
 	(int option -> ack Lwt.t) client_value ->
 	[> Html5_types.select] Html5.elt * (int option -> unit) client_value
+  (** @deprecated Use {!Panui_basic_selectors}. *)
 
   val int32_option_selector :
 	?a: Html5_types.select_attrib Html5.attrib list ->
@@ -152,6 +154,7 @@
 	?value: int32 option ->
 	(int32 option -> ack Lwt.t) client_value ->
 	[> Html5_types.select] Html5.elt * (int32 option -> unit) client_value
+  (** @deprecated Use {!Panui_basic_selectors}. *)
 
   val int64_option_selector :
 	?a: Html5_types.select_attrib Html5.attrib list ->
@@ -160,12 +163,14 @@
 	?value: int64 option ->
 	(int64 option -> ack Lwt.t) client_value ->
 	[> Html5_types.select] Html5.elt * (int64 option -> unit) client_value
+  (** @deprecated Use {!Panui_basic_selectors}. *)
 
   val string_option_menu :
 	?a: Html5_types.select_attrib Html5.attrib list ->
 	values: string list -> ?value: string option ->
 	(string option -> ack Lwt.t) client_value ->
 	[> Html5_types.select] Html5.elt * (string option -> unit) client_value
+  (** @deprecated Use {!Panui_basic_selectors}. *)
 
   val bool_checkbox :
 	?a: Html5_types.input_attrib Html5.attrib list ->

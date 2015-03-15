@@ -41,6 +41,7 @@ Library "panograph-server"
     Panograph_basic_editors,
     Panograph_basic_viewers,
     Panograph_twine_editor,
+    Panui_basic_selectors,
     Panui_content,
     Panui_content_intf,
     Panui_content_with_edit
@@ -62,6 +63,7 @@ Library "panograph-client"
     Panograph_tabular,
     Panograph_twine_editor,
     Pandom_weaktbl,
+    Panui_basic_selectors,
     Panui_content,
     Panui_content_intf,
     Panui_content_with_edit,
