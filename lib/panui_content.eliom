@@ -49,9 +49,9 @@
     let (^:) label opts = group label opts
 
     let unsafe ?(disabled = false) label value =
-      let a = [Html5.a_label label] in
+      let a = [Html5.a_value value] in
       let a = if disabled then Html5.a_disabled `Disabled :: a else a in
-      Html5.option ~a (Html5.pcdata value)
+      Html5.option ~a (Html5.pcdata label)
 
     let conv to_string ?disabled label x = unsafe ?disabled label (to_string x)
     let string = conv ident
