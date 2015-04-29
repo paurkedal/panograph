@@ -11,6 +11,8 @@ let oasis_executables = [
   "web/client/test.byte";
 ]
 
+let () = mark_tag_used "tests"
+
 let () = Ocamlbuild_plugin.dispatch @@ fun hook ->
   dispatch_default hook;
   M.dispatcher ~oasis_executables hook;
