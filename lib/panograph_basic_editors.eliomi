@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -95,6 +95,15 @@
 	?value: string option ->
 	(string option -> ack Lwt.t) client_value ->
 	[> Html5_types.input] Html5.elt * (string option -> unit) client_value
+
+  val string_option_textarea :
+	?a: Html5_types.textarea_attrib Html5.attrib list ->
+	?to_string: (string -> string) client_value ->
+	?of_string: (string -> string) client_value ->
+	?value: string option ->
+	(string option -> ack Lwt.t) client_value ->
+	[> Html5_types.textarea] Html5.elt
+	  * (string option -> unit) client_value
 
   val int_option_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->

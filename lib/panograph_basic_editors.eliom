@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -105,6 +105,10 @@
   let outfit_select ~to_string ~of_string ?value select patch_out =
     outfit_interactive ~to_string ~of_string ?value
 		       (Html5.To_dom.of_select select) patch_out
+
+  let outfit_textarea ~to_string ~of_string ?value textarea patch_out =
+    outfit_interactive ~to_string ~of_string ?value
+		       (Html5.To_dom.of_textarea textarea) patch_out
 }}
 
 {shared{
@@ -183,6 +187,20 @@
       let to_string = string_of_option %to_string in
       let of_string = option_of_string %of_string in
       outfit_input ~to_string ~of_string ?value:%value %input %patch_out
+    }} in
+    input, patch_in
+
+  let string_option_textarea
+	?a
+	?(to_string = string_ident_cv)
+	?(of_string = string_ident_cv)
+	?(value : string option option)
+	(patch_out : (string option -> ack Lwt.t) client_value) =
+    let input = D.Raw.textarea ?a (D.pcdata "") in
+    let patch_in = {string option -> unit{
+      let to_string = string_of_option %to_string in
+      let of_string = option_of_string %of_string in
+      outfit_textarea ~to_string ~of_string ?value:%value %input %patch_out
     }} in
     input, patch_in
 

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -89,6 +89,19 @@ let string_option_menu_out =
   let swap = function "Sun" -> "Earth" | "Earth" -> "Sun" | x -> x in
   (string_option_menu_out' (Some (Option.map swap x_opt)); Lwt.return Ack_ok)
 
+let string_option_textarea_stream, string_option_textarea_out' = Lwt_stream.create ()
+let string_option_textarea_comet =
+  Eliom_comet.Channel.create ~scope:`Site string_option_textarea_stream
+let string_option_textarea_out =
+	server_function Json.t<string option> @@ fun x_opt ->
+  begin match x_opt with
+  | None -> Lwt_log.debug "Selected string option None."
+  | Some x -> Lwt_log.debug_f "Selected string option Some %s." x
+  end >>
+  Lwt_unix.sleep 0.3 >>
+  let tr x = String.uppercase x in
+  (string_option_textarea_out' (Some (Option.map tr x_opt)); Lwt.return Ack_ok)
+
 let render () =
   let open Html5 in
 
@@ -124,6 +137,11 @@ let render () =
   ignore {unit{Lwt.async @@ fun () ->
     Lwt_stream.iter %string_option_menu_in %string_option_menu_comet}};
 
+  let string_option_textarea, string_option_textarea_in =
+    string_option_textarea {{ %string_option_textarea_out }} in
+  ignore {unit{Lwt.async @@ fun () ->
+    Lwt_stream.iter %string_option_textarea_in %string_option_textarea_comet}};
+
   D.div [
     D.h2 [D.pcdata "Server Side Inputs"];
     D.ul [
@@ -133,5 +151,6 @@ let render () =
       D.li [int_option_ed];
       D.li [bool_option_ed];
       D.li [string_option_menu];
+      D.li [string_option_textarea];
     ]
   ]
