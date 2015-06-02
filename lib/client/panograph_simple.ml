@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -136,6 +136,8 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
 	  | Ack_ok -> Lwt.return_unit
 	  | Ack_error msg -> set_error w msg; Lwt.return_unit
 	with
+	| Invalid_input msg ->
+	  clear_dirty w; set_error w msg; Lwt.return_unit
 	| Failure _ | Invalid_argument _ ->
 	  clear_dirty w; set_error w "Invalid input."; Lwt.return_unit in
       Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change)) on_patch;
@@ -181,7 +183,9 @@ module Simple_SE (Value : SIMPLE_VALUE) = struct
       Lwt.wrap begin fun () ->
 	try clear_error w;
 	    ignore (Value.of_string (Js.to_string w_dom##value))
-	with Failure _ | Invalid_argument _ -> set_error w "Invalid input."
+	with
+	| Invalid_input msg -> set_error w msg
+	| Failure _ | Invalid_argument _ -> set_error w "Invalid input."
       end in
     Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change);
     w, (inp :> ui)

@@ -23,6 +23,7 @@
 }}
 
 {client{
+  open Panograph_common
 
   let string_of_option f = function
     | None -> ""
@@ -77,12 +78,13 @@
     end
 
   let outfit_interactive ~to_string ~of_string ?value input_dom patch_out =
-    Lwt_js_events.(async @@ fun () ->
-      changes input_dom @@ fun _ _ ->
+    Lwt_js_events.async begin fun () ->
+      Lwt_js_events.changes input_dom @@ fun _ _ ->
       input_dom##classList##add(dirty_class);
       match_lwt
-	try patch_out (of_string (Js.to_string input_dom##value))
-	with Invalid_argument _ | Failure _ ->
+	try patch_out (of_string (Js.to_string input_dom##value)) with
+	| Invalid_input msg -> Lwt.return (Ack_error msg)
+	| Invalid_argument _ | Failure _ ->
 	  Lwt.return (Ack_error "Invalid input.")
       with
       | Ack_ok ->
@@ -90,7 +92,8 @@
 	Lwt.return_unit
       | Ack_error msg ->
 	set_failed input_dom msg;
-	Lwt.return_unit);
+	Lwt.return_unit
+    end;
     let patch_in v =
       input_dom##classList##remove(dirty_class);
       clear_failed input_dom;
