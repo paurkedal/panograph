@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,8 +14,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-(** Infix operators from Lwt.  This provides an easy way to import infix
-    operators without importing everything from the Lwt module. *)
+(** Obsoleted by Lwt.Infix
+
+    @deprecated Lwt.Infix is available since lwt-2.4.8. *)
 
 open Lwt
 
