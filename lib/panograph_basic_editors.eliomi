@@ -29,7 +29,7 @@
 	to_string: ('a -> string) ->
 	of_string: (string -> 'b) ->
 	?value: 'a ->
-	basicInteractiveElement Js.t ->
+	#basicInteractiveElement Js.t ->
 	('b -> ack Lwt.t) -> ('a -> unit)
 
   val outfit_input :
