@@ -21,9 +21,6 @@ open Unprime
 open Unprime_list
 open Unprime_option
 
-let (>>=) = Lwt.(>>=)
-let (>|=) = Lwt.(>|=)
-
 exception Invalid_input of string
 
 let make_button f content =
