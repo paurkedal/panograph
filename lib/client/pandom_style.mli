@@ -16,12 +16,17 @@
 
 (** Stylistic tweaks of elements *)
 
+val hidden_class : Js.js_string Js.t
+
 val error_class : Js.js_string Js.t
 (** Class used to indicate that an input has a invalid value or failed to be
     commited for other reasons. *)
 
 val dirty_class : Js.js_string Js.t
 (** Class used to indicate that an input has not been committed. *)
+
+val set_hidden : #Dom_html.element Js.t -> unit
+val clear_hidden : #Dom_html.element Js.t -> unit
 
 val set_error : string -> #Dom_html.element Js.t -> unit
 (** [set_error msg elem] adjusts [elem] to indicate a failure with a tooltip

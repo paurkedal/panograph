@@ -31,35 +31,41 @@ open Panui_completion
     | x :: x' :: xs -> (x' - x) :: diff (x' :: xs)
     | [] -> raise Not_found
 
-  let rec divf = function
+  let rec quot = function
     | [_] -> []
-    | x :: x' :: xs when x <> 0 && x' mod x = 0 -> (x' / x) :: divf (x' :: xs)
+    | x :: x' :: xs when x <> 0 && x' mod x = 0 -> (x' / x) :: quot (x' :: xs)
     | _ -> raise Not_found
 
   let rec predict = function
     | [] -> []
-    | x :: (_ :: _ as xs) when List.for_all ((=) x) xs -> [x]
+    | x :: xs when List.for_all ((=) x) xs -> [x]
     | xs ->
       let ys0 = try predict (diff xs) with Not_found -> [] in
-      let ys1 = try predict (divf xs) with Not_found -> [] in
+      let ys1 = try predict (quot xs) with Not_found -> [] in
       let x = List.hd (List.rev xs) in
-      List.map ((+) x) ys0 @ List.map (( * ) x) ys1
-}}
+      List.sort_uniq compare (List.map ((+) x) ys0 @ List.map (( * ) x) ys1)
 
-let fetch = {{fun s ->
-  let xs = String.chop_consecutive Char.is_space s in
-  let xs = List.map int_of_string xs in
-  let ys = predict xs in
-  let zss = List.map (fun y -> xs @ [y]) ys in
-  Lwt.return
-    (List.map (fun zs -> String.concat " " (List.map string_of_int zs)) zss)
-}}
+  let state, set_state = React.S.create "1 2 4"
 
-let commit = {{fun s ->
-  Lwt.return Ack_ok
+  let int_list_of_string s =
+    let xs = String.chop_consecutive Char.is_space s in
+    List.map int_of_string xs
+
+  let commit s =
+    Lwt_js.sleep 1.0 >>
+    try ignore (int_list_of_string s); set_state s; Lwt.return Ack_ok
+    with Failure msg -> Lwt.return (Ack_error ("Invalid: " ^ msg))
+
+  let fetch s =
+    let xs = int_list_of_string s in
+    let ys = predict xs in
+    let zss = List.map (fun y -> xs @ [y]) ys in
+    Lwt.return
+      (List.map (fun zs -> String.concat " " (List.map string_of_int zs)) zss)
 }}
 
 let render () =
   let value = "1 2 4" in
-  let elem, absorb = string_completion_input ~value fetch commit in
+  let elem, absorb = string_completion_input ~value {{fetch}} {{commit}} in
+  ignore {unit{ Lwt_react.S.keep (React.S.trace %absorb state) }};
   D.p [elem]

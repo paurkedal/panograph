@@ -16,6 +16,7 @@
 
 {shared{
   open Eliom_content.Html5
+  open Lwt.Infix
   open Panograph_types
   open Printf
   open Unprime
@@ -32,20 +33,66 @@
 	?(value : string option)
 	(fetch : (string -> string list Lwt.t) client_value)
 	(commit : (string -> ack Lwt.t) client_value) =
-    let id = unique_id () in
-    let input_elem = D.input ~input_type:`Text ~a:[D.a_list id] () in
-    let datalist_elem = D.datalist ~a:[D.a_id id] () in
+
+    let input_elem = D.input ~input_type:`Text () in
+    let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in
+
     let absorb = {string -> unit{
       let input_dom = To_dom.of_input %input_elem in
-      let on_input _ _ =
+      let choices_dom = To_dom.of_span %choices_elem in
+
+      let committing_choice = ref false in
+      Lwt_js_events.(async @@ fun () -> mousedowns choices_dom @@ fun _ _ ->
+	committing_choice := true;
+	Lwt_js.sleep 0.01 >|= fun () -> committing_choice := false);
+
+      Lwt_js_events.(async @@ fun () -> blurs input_dom @@ fun _ _ ->
+	if not !committing_choice then Pandom_style.set_hidden choices_dom;
+	Lwt.return_unit);
+
+      let commit v =
+	Pandom_style.set_dirty input_dom;
+	Pandom_style.set_hidden choices_dom;
+	match_lwt %commit v with
+	| Ack_ok ->
+	  Pandom_style.clear_error input_dom;
+	  Lwt.return_unit
+	| Ack_error msg ->
+	  Pandom_style.clear_dirty input_dom;
+	  Pandom_style.set_error msg input_dom;
+	  Lwt.return_unit in
+
+      let make_choice v =
+	let choice_elem = D.span ~a:[D.a_class ["pan-choice"]] [D.pcdata v] in
+	let choice_dom = To_dom.of_span choice_elem in
+	let on_choice_click _ _ =
+	  commit v in
+	Lwt_js_events.(async @@ fun () -> clicks choice_dom on_choice_click);
+	choice_elem in
+
+      let on_input_input _ _ =
 	lwt completions = %fetch (Js.to_string input_dom##value) in
-	let options = List.map (fun v -> D.option (D.pcdata v)) completions in
-	Eliom_lib.debug "Got %d options" (List.length options);
-	Manip.replaceChildren %datalist_elem options;
+	Pandom_style.clear_hidden choices_dom;
+	let choices = List.map make_choice completions in
+	Manip.replaceChildren %choices_elem choices;
 	Lwt.return_unit in
-      Lwt_js_events.(async (fun () -> inputs input_dom on_input));
-      Pandom_interactive.outfit_interactive ?value:%value
-	~to_string:ident ~of_string:ident input_dom %commit
+
+      let on_input_change _ _ =
+	if !committing_choice then Lwt.return_unit else begin
+	  Pandom_style.clear_error input_dom;
+	  commit (Js.to_string input_dom##value)
+	end in
+
+      Lwt_js_events.(async @@ fun () -> inputs input_dom on_input_input);
+      Lwt_js_events.(async @@ fun () -> changes input_dom on_input_change);
+
+      fun v ->
+	Pandom_style.clear_dirty input_dom;
+	Pandom_style.clear_error input_dom;
+	input_dom##value <- Js.string v
     }} in
-    D.span [input_elem; datalist_elem], absorb
+
+    D.span ~a:[D.a_class ["pan-completion-input"]]
+      [input_elem; D.span ~a:[D.a_class ["pan-dropdown"]] [choices_elem]],
+    absorb
 }}

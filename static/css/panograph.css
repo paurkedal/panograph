@@ -1,3 +1,4 @@
+.pan-hidden { visibility: hidden; }
 .pan-dirty { background-color: #ed7; }
 .pan-error { background-color: #c00; color: #fff; }
 
@@ -27,3 +28,30 @@ span.pan-comboselect			{ display: inline-block; }
 span.pan-comboselect.other select	{ width: 3em; }
 span.pan-comboselect       input	{ display: none; }
 span.pan-comboselect.other input	{ display: inline; }
+
+span.pan-completion-input { display: inline-block; }
+span.pan-completion-input input { display: block; }
+
+span.pan-dropdown {
+	display: block;
+	position: absolute;
+	height: 0;
+	overflow: visible;
+}
+.pan-choices {
+	display: block;
+	background-color: Menu;
+	color: MenuText;
+	border: solid thin ButtonShadow;
+	border-top: None;
+	cursor: pointer;
+}
+.pan-choice {
+	display: block;
+	padding-left: 1pt;
+	padding-right: 1pt;
+}
+.pan-choice:hover {
+	background-color: Highlight;
+	color: HighlightText;
+}

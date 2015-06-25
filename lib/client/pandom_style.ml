@@ -17,6 +17,7 @@
 open Lwt.Infix
 open Unprime_string
 
+let hidden_class = Js.string "pan-hidden"
 let error_prefix = "** "
 let error_suffix = " **\n"
 let error_class = Js.string "pan-error"
@@ -45,3 +46,5 @@ let flash_error msg dom =
 
 let set_dirty dom = dom##classList##add(dirty_class)
 let clear_dirty dom = dom##classList##remove(dirty_class)
+let set_hidden dom = dom##classList##add(hidden_class)
+let clear_hidden dom = dom##classList##remove(hidden_class)
