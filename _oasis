@@ -64,6 +64,8 @@ Library "panograph-client"
     Panograph_simple,
     Panograph_tabular,
     Panograph_twine_editor,
+    Pandom_interactive,
+    Pandom_style,
     Pandom_weaktbl,
     Panui_basic_selectors,
     Panui_combo_selectors,

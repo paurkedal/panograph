@@ -44,7 +44,7 @@
 	Manip.replaceChildren %datalist_elem options;
 	Lwt.return_unit in
       Lwt_js_events.(async (fun () -> inputs input_dom on_input));
-      Panograph_basic_editors.outfit_interactive ?value:%value
+      Pandom_interactive.outfit_interactive ?value:%value
 	~to_string:ident ~of_string:ident input_dom %commit
     }} in
     D.span [input_elem; datalist_elem], absorb

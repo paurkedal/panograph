@@ -23,6 +23,7 @@
 }}
 
 {client{
+  open Pandom_interactive
   open Panograph_common
 
   let string_of_option f = function
@@ -50,68 +51,6 @@
   let int32_option_of_string = option_of_string Int32.of_string
   let string_of_int64_option = string_of_option Int64.to_string
   let int64_option_of_string = option_of_string Int64.of_string
-
-  class type basicInteractiveElement = object
-    inherit Dom_html.element
-    method value : Js.js_string Js.t Js.prop
-  end
-
-  let failed_prefix = "** "
-  let failed_suffix = " **\n"
-  let failed_class = Js.string "failed"
-  let dirty_class = Js.string "dirty"
-
-  let set_failed dom msg =
-    if not (Js.to_bool (dom##classList##contains(failed_class))) then begin
-      dom##classList##add(failed_class);
-      let orig_title = Js.to_string dom##title in
-      dom##title <- Js.string (failed_prefix ^ msg ^ failed_suffix ^ orig_title)
-    end
-
-  let clear_failed dom =
-    if Js.to_bool (dom##classList##contains(failed_class)) then begin
-      dom##classList##remove(failed_class);
-      match String.cut_affix failed_suffix (Js.to_string dom##title) with
-      | Some (_ as msg, orig_title) when String.has_prefix failed_prefix msg ->
-	dom##title <- Js.string orig_title
-      | _ -> ()
-    end
-
-  let outfit_interactive ~to_string ~of_string ?value input_dom patch_out =
-    Lwt_js_events.async begin fun () ->
-      Lwt_js_events.changes input_dom @@ fun _ _ ->
-      input_dom##classList##add(dirty_class);
-      match_lwt
-	try patch_out (of_string (Js.to_string input_dom##value)) with
-	| Invalid_input msg -> Lwt.return (Ack_error msg)
-	| Invalid_argument _ | Failure _ ->
-	  Lwt.return (Ack_error "Invalid input.")
-      with
-      | Ack_ok ->
-	clear_failed input_dom;
-	Lwt.return_unit
-      | Ack_error msg ->
-	set_failed input_dom msg;
-	Lwt.return_unit
-    end;
-    let patch_in v =
-      input_dom##classList##remove(dirty_class);
-      clear_failed input_dom;
-      input_dom##value <- Js.string (to_string v) in
-    Option.iter patch_in value;
-    patch_in
-
-  let outfit_input ~to_string ~of_string ?value input patch_out =
-    outfit_interactive ~to_string ~of_string ?value
-		       (Html5.To_dom.of_input input) patch_out
-
-  let outfit_select ~to_string ~of_string ?value select patch_out =
-    outfit_interactive ~to_string ~of_string ?value
-		       (Html5.To_dom.of_select select) patch_out
-
-  let outfit_textarea ~to_string ~of_string ?value textarea patch_out =
-    outfit_interactive ~to_string ~of_string ?value
-		       (Html5.To_dom.of_textarea textarea) patch_out
 }}
 
 {shared{
@@ -356,17 +295,17 @@
       let input_dom = To_dom.of_input %input in
       Lwt_js_events.(async @@ fun () ->
 	changes input_dom @@ fun _ _ ->
-	input_dom##classList##add(dirty_class);
+	Pandom_style.set_dirty input_dom;
 	match_lwt %patch_out (Js.to_bool input_dom##checked) with
 	| Ack_ok ->
-	  clear_failed input_dom;
+	  Pandom_style.clear_error input_dom;
 	  Lwt.return_unit
 	| Ack_error msg ->
-	  set_failed input_dom msg;
+	  Pandom_style.set_error msg input_dom;
 	  Lwt.return_unit);
       let patch_in v =
-	clear_failed input_dom;
-	input_dom##classList##remove(dirty_class);
+	Pandom_style.clear_error input_dom;
+	Pandom_style.clear_dirty input_dom;
 	input_dom##checked <- Js.bool v in
       patch_in
     }} in

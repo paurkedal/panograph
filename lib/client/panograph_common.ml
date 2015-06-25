@@ -26,19 +26,6 @@ let (>|=) = Lwt.(>|=)
 
 exception Invalid_input of string
 
-let set_error dom msg =
-  dom##classList##add(Js.string "error");
-  dom##title <- Js.string msg
-
-let clear_error dom =
-  dom##classList##remove(Js.string "error");
-  dom##title <- Js.string ""
-
-let flash_error dom msg =
-  set_error dom msg;
-  Lwt_js.sleep 4.0 >|= fun () ->
-  clear_error dom
-
 let make_button f content =
   let open Html5 in
   let button = D.button ~button_type:`Button content in
@@ -46,7 +33,7 @@ let make_button f content =
   let on_click _ _ =
     match_lwt f () with
     | Ack_ok -> Lwt.return_unit
-    | Ack_error msg -> flash_error button_dom msg in
+    | Ack_error msg -> Pandom_style.flash_error msg button_dom in
   Lwt.async (fun () -> Lwt_js_events.clicks button_dom on_click);
   button
 

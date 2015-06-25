@@ -19,34 +19,6 @@
   open Panograph_types
 }}
 
-{client{
-  class type basicInteractiveElement = object
-    inherit Dom_html.element
-    method value : Js.js_string Js.t Js.prop
-  end
-
-  val outfit_interactive :
-	to_string: ('a -> string) ->
-	of_string: (string -> 'b) ->
-	?value: 'a ->
-	#basicInteractiveElement Js.t ->
-	('b -> ack Lwt.t) -> ('a -> unit)
-
-  val outfit_input :
-	to_string: ('a -> string) ->
-	of_string: (string -> 'b) ->
-	?value: 'a ->
-	[< Html5_types.input] Html5.elt ->
-	('b -> ack Lwt.t) -> ('a -> unit)
-
-  val outfit_select :
-	to_string: ('a -> string) ->
-	of_string: (string -> 'b) ->
-	?value: 'a ->
-	[< Html5_types.select] Html5.elt ->
-	('b -> ack Lwt.t) -> ('a -> unit)
-}}
-
 {shared{
   val string_editor :
 	?a: Html5_types.input_attrib Html5.attrib list ->
