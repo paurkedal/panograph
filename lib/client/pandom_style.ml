@@ -19,8 +19,8 @@ open Unprime_string
 
 let error_prefix = "** "
 let error_suffix = " **\n"
-let error_class = Js.string "error"
-let dirty_class = Js.string "dirty"
+let error_class = Js.string "pan-error"
+let dirty_class = Js.string "pan-dirty"
 
 let set_error msg dom =
   if not (Js.to_bool (dom##classList##contains(error_class))) then begin

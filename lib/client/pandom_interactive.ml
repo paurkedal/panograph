@@ -27,7 +27,8 @@ end
 let outfit_interactive ~to_string ~of_string ?value input_dom emit =
   Lwt_js_events.async begin fun () ->
     Lwt_js_events.changes input_dom @@ fun _ _ ->
-    input_dom##classList##add(dirty_class);
+    clear_error input_dom;
+    set_dirty input_dom;
     match_lwt
       try emit (of_string (Js.to_string input_dom##value)) with
       | Invalid_input msg -> Lwt.return (Ack_error msg)
@@ -38,11 +39,12 @@ let outfit_interactive ~to_string ~of_string ?value input_dom emit =
       clear_error input_dom;
       Lwt.return_unit
     | Ack_error msg ->
+      clear_dirty input_dom;
       set_error msg input_dom;
       Lwt.return_unit
   end;
   let absorb v =
-    input_dom##classList##remove(dirty_class);
+    clear_dirty input_dom;
     clear_error input_dom;
     input_dom##value <- Js.string (to_string v) in
   Option.iter absorb value;

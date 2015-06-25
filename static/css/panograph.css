@@ -1,3 +1,6 @@
+.pan-dirty { background-color: #ed7; }
+.pan-error { background-color: #c00; color: #fff; }
+
 div.pan-dialog-veil {
         z-index: 98;
         position: fixed;
