@@ -70,12 +70,14 @@
 	Lwt_js_events.(async @@ fun () -> clicks choice_dom on_choice_click);
 	choice_elem in
 
-      let on_input_input _ _ =
+      let update_choices = Pwt.async_updater @@ fun () ->
 	lwt completions = %fetch (Js.to_string input_dom##value) in
 	Pandom_style.clear_hidden choices_dom;
 	let choices = List.map make_choice completions in
 	Manip.replaceChildren %choices_elem choices;
 	Lwt.return_unit in
+
+      let on_input_input _ _ = update_choices (); Lwt.return_unit in
 
       let on_input_change _ _ =
 	if !committing_choice then Lwt.return_unit else begin

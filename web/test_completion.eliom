@@ -60,6 +60,7 @@ open Panui_completion
     let xs = int_list_of_string s in
     let ys = predict xs in
     let zss = List.map (fun y -> xs @ [y]) ys in
+    Lwt_js.sleep 1.0 >>
     Lwt.return
       (List.map (fun zs -> String.concat " " (List.map string_of_int zs)) zss)
 }}
