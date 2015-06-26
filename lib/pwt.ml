@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,12 +14,31 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Lwt
+open Lwt.Infix
 open Printf
 
-let when_s c f = if c then f () else return_unit
+let when_s c f = if c then f () else Lwt.return_unit
 
 let failwith s = Lwt.fail (Failure s)
 let failwith_f fmt = ksprintf failwith fmt
 let invalid_arg s = Lwt.fail (Invalid_argument s)
 let invalid_arg_f fmt = ksprintf invalid_arg fmt
+
+let async_updater f =
+  let cond = Lwt_condition.create () in
+  let state = ref None in
+  let is_finalised = ref false in
+  let rec loop () =
+    match !state with
+    | None ->
+      if !is_finalised then Lwt.return_unit
+		       else Lwt_condition.wait cond >> loop ()
+    | Some x ->
+      state := None;
+      f x >> loop () in
+  let g x =
+    state := Some x;
+    Lwt_condition.signal cond () in
+  Lwt.async loop;
+  Gc.finalise (fun _ -> is_finalised := true; Lwt_condition.signal cond ()) g;
+  g
