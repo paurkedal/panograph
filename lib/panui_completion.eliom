@@ -38,6 +38,7 @@
     let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in
 
     let absorb = {string -> unit{
+      let stored_value = ref (Option.get_or "" %value) in
       let input_dom = To_dom.of_input %input_elem in
       let choices_dom = To_dom.of_span %choices_elem in
 
@@ -51,16 +52,21 @@
 	Lwt.return_unit);
 
       let commit v =
-	Pandom_style.set_dirty input_dom;
 	Pandom_style.set_hidden choices_dom;
-	match_lwt %commit v with
-	| Ack_ok ->
-	  Pandom_style.clear_error input_dom;
+	if v = !stored_value then begin
+	  input_dom##value <- Js.string v;
 	  Lwt.return_unit
-	| Ack_error msg ->
-	  Pandom_style.clear_dirty input_dom;
-	  Pandom_style.set_error msg input_dom;
-	  Lwt.return_unit in
+	end else begin
+	  Pandom_style.set_dirty input_dom;
+	  match_lwt %commit v with
+	  | Ack_ok ->
+	    Pandom_style.clear_error input_dom;
+	    Lwt.return_unit
+	  | Ack_error msg ->
+	    Pandom_style.clear_dirty input_dom;
+	    Pandom_style.set_error msg input_dom;
+	    Lwt.return_unit
+	end in
 
       let make_choice v =
 	let choice_elem = D.span ~a:[D.a_class ["pan-choice"]] [D.pcdata v] in
@@ -91,6 +97,7 @@
       fun v ->
 	Pandom_style.clear_dirty input_dom;
 	Pandom_style.clear_error input_dom;
+	stored_value := v;
 	input_dom##value <- Js.string v
     }} in
 
