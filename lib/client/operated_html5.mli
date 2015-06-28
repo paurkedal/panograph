@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -59,7 +59,7 @@ module O : sig
     ?columns: [< colgroup] Html5.elt list ->
     ?thead: [< thead] Html5.elt ->
     ?tfoot: [< tfoot] Html5.elt ->
-    ([ table_attrib],
+    ([< table_attrib],
      'ev, 'ep, [< table_content_fun],
      'ev list, ('ev, 'ep) grid1_op, [> table]) star
 

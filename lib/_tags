@@ -1,4 +1,36 @@
-<**/*.{ml,mli,eliom,eliomi}>: syntax(camlp4o), \
-    package(deriving.syntax), \
-    package(js_of_ocaml.deriving.syntax)
+"client/pandom_interactive.ml": syntax(camlp4o), \
+    package(lwt.syntax), package(js_of_ocaml.syntax)
+"client/pandom_style.ml": syntax(camlp4o), \
+    package(js_of_ocaml.syntax)
+"client/pandom_weaktbl.ml": syntax(camlp4o), \
+    package(js_of_ocaml.syntax)
+
+<**/operated_types.mli>: syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"operated_types.ml": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"panograph_i18n.mli": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"panograph_i18n.ml": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"panograph_types.mli": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"panograph_types.ml": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"presentation_types.mli": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"presentation_types.ml": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"panograph_twine_editor.eliomi": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"panograph_twine_editor.eliom": syntax(camlp4o), \
+    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+
+"client/panograph_common.ml": syntax(camlp4o), \
+    package(lwt.syntax)
+"client/panograph_simple.ml": syntax(camlp4o), \
+    package(lwt.syntax), package(js_of_ocaml.syntax)
+"client/panograph_tabular.ml": syntax(camlp4o), \
+    package(js_of_ocaml.syntax)
+
 <pwt*.ml>: syntax(camlp4o), package(lwt.syntax)

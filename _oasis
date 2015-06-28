@@ -75,7 +75,7 @@ Library "panograph-client"
     Panui_content_with_edit,
     Panui_dialogs
   BuildDepends:
-    eliom.client, lwt.syntax, js_of_ocaml.syntax,
+    eliom.client,
     panograph, prime, prime.unstable
 
 Library "test"
