@@ -23,10 +23,69 @@
   open Unprime_option
 }}
 
-{client{ let unique_id = let c = ref (-1) in
-			 fun () -> incr c; sprintf "pan-id-c%d" !c }}
-{server{ let unique_id = let c = ref (-1) in
-			 fun () -> incr c; sprintf "pan-id-c%d" !c }}
+{client{
+  let string_completion_client input_elem choices_elem value commit fetch =
+    let stored_value = ref (Option.get_or "" value) in
+    let input_dom = To_dom.of_input input_elem in
+    let choices_dom = To_dom.of_span choices_elem in
+
+    let committing_choice = ref false in
+    Lwt_js_events.(async @@ fun () -> mousedowns choices_dom @@ fun _ _ ->
+      committing_choice := true;
+      Lwt_js.sleep 0.01 >|= fun () -> committing_choice := false);
+
+    Lwt_js_events.(async @@ fun () -> blurs input_dom @@ fun _ _ ->
+      if not !committing_choice then Pandom_style.set_hidden choices_dom;
+      Lwt.return_unit);
+
+    let on_commit v =
+      Pandom_style.set_hidden choices_dom;
+      if v = !stored_value then begin
+	input_dom##value <- Js.string v;
+	Lwt.return_unit
+      end else begin
+	Pandom_style.set_dirty input_dom;
+	match_lwt commit v with
+	| Ack_ok ->
+	  Pandom_style.clear_error input_dom;
+	  Lwt.return_unit
+	| Ack_error msg ->
+	  Pandom_style.clear_dirty input_dom;
+	  Pandom_style.set_error msg input_dom;
+	  Lwt.return_unit
+      end in
+
+    let make_choice v =
+      let choice_elem = D.span ~a:[D.a_class ["pan-choice"]] [D.pcdata v] in
+      let choice_dom = To_dom.of_span choice_elem in
+      let on_choice_click _ _ = on_commit v in
+      Lwt_js_events.(async @@ fun () -> clicks choice_dom on_choice_click);
+      choice_elem in
+
+    let update_choices = Pwt.async_updater @@ fun () ->
+      lwt completions = fetch (Js.to_string input_dom##value) in
+      Pandom_style.clear_hidden choices_dom;
+      let choices = List.map make_choice completions in
+      Manip.replaceChildren choices_elem choices;
+      Lwt.return_unit in
+
+    let on_input_input _ _ = update_choices (); Lwt.return_unit in
+
+    let on_input_change _ _ =
+      if !committing_choice then Lwt.return_unit else begin
+	Pandom_style.clear_error input_dom;
+	on_commit (Js.to_string input_dom##value)
+      end in
+
+    Lwt_js_events.(async @@ fun () -> inputs input_dom on_input_input);
+    Lwt_js_events.(async @@ fun () -> changes input_dom on_input_change);
+
+    fun v ->
+      Pandom_style.clear_dirty input_dom;
+      Pandom_style.clear_error input_dom;
+      stored_value := v;
+      input_dom##value <- Js.string v
+}}
 
 {shared{
   let string_completion_input
@@ -38,67 +97,7 @@
     let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in
 
     let absorb = {string -> unit{
-      let stored_value = ref (Option.get_or "" %value) in
-      let input_dom = To_dom.of_input %input_elem in
-      let choices_dom = To_dom.of_span %choices_elem in
-
-      let committing_choice = ref false in
-      Lwt_js_events.(async @@ fun () -> mousedowns choices_dom @@ fun _ _ ->
-	committing_choice := true;
-	Lwt_js.sleep 0.01 >|= fun () -> committing_choice := false);
-
-      Lwt_js_events.(async @@ fun () -> blurs input_dom @@ fun _ _ ->
-	if not !committing_choice then Pandom_style.set_hidden choices_dom;
-	Lwt.return_unit);
-
-      let commit v =
-	Pandom_style.set_hidden choices_dom;
-	if v = !stored_value then begin
-	  input_dom##value <- Js.string v;
-	  Lwt.return_unit
-	end else begin
-	  Pandom_style.set_dirty input_dom;
-	  match_lwt %commit v with
-	  | Ack_ok ->
-	    Pandom_style.clear_error input_dom;
-	    Lwt.return_unit
-	  | Ack_error msg ->
-	    Pandom_style.clear_dirty input_dom;
-	    Pandom_style.set_error msg input_dom;
-	    Lwt.return_unit
-	end in
-
-      let make_choice v =
-	let choice_elem = D.span ~a:[D.a_class ["pan-choice"]] [D.pcdata v] in
-	let choice_dom = To_dom.of_span choice_elem in
-	let on_choice_click _ _ =
-	  commit v in
-	Lwt_js_events.(async @@ fun () -> clicks choice_dom on_choice_click);
-	choice_elem in
-
-      let update_choices = Pwt.async_updater @@ fun () ->
-	lwt completions = %fetch (Js.to_string input_dom##value) in
-	Pandom_style.clear_hidden choices_dom;
-	let choices = List.map make_choice completions in
-	Manip.replaceChildren %choices_elem choices;
-	Lwt.return_unit in
-
-      let on_input_input _ _ = update_choices (); Lwt.return_unit in
-
-      let on_input_change _ _ =
-	if !committing_choice then Lwt.return_unit else begin
-	  Pandom_style.clear_error input_dom;
-	  commit (Js.to_string input_dom##value)
-	end in
-
-      Lwt_js_events.(async @@ fun () -> inputs input_dom on_input_input);
-      Lwt_js_events.(async @@ fun () -> changes input_dom on_input_change);
-
-      fun v ->
-	Pandom_style.clear_dirty input_dom;
-	Pandom_style.clear_error input_dom;
-	stored_value := v;
-	input_dom##value <- Js.string v
+      string_completion_client %input_elem %choices_elem %value %commit %fetch
     }} in
 
     D.span ~a:[D.a_class ["pan-completion-input"]]
