@@ -2,6 +2,8 @@
     package(lwt.syntax), package(js_of_ocaml.syntax)
 "client/pandom_style.ml": syntax(camlp4o), \
     package(js_of_ocaml.syntax)
+"client/pandom_weakchan.ml": syntax(camlp4o), \
+    package(js_of_ocaml.syntax)
 "client/pandom_weaktbl.ml": syntax(camlp4o), \
     package(js_of_ocaml.syntax)
 

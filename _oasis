@@ -66,6 +66,7 @@ Library "panograph-client"
     Panograph_twine_editor,
     Pandom_interactive,
     Pandom_style,
+    Pandom_weakchan,
     Pandom_weaktbl,
     Panui_basic_selectors,
     Panui_combo_selectors,
@@ -88,6 +89,7 @@ Library "test"
     server/Test_completion,
     server/Test_content_with_edit,
     server/Test_operated,
+    server/Test_weakchan,
     server/Test_weaktbl,
     server/Test_twine_editor
   BuildDepends: eliom.server, panograph-server, prime, prime.unstable
