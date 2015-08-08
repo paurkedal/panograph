@@ -47,7 +47,8 @@ Library "panograph-server"
     Panui_completion,
     Panui_content,
     Panui_content_intf,
-    Panui_content_with_edit
+    Panui_content_with_edit,
+    Panui_scalar
   ByteOpt: -thread
   NativeOpt: -thread
   DataFiles: ../../static/css/*.css ($datadir/panograph/static/css)
@@ -76,7 +77,8 @@ Library "panograph-client"
     Panui_content,
     Panui_content_intf,
     Panui_content_with_edit,
-    Panui_dialogs
+    Panui_dialogs,
+    Panui_scalar
   BuildDepends:
     eliom.client,
     panograph, prime, prime.unstable
@@ -91,9 +93,10 @@ Library "test"
     server/Test_completion,
     server/Test_content_with_edit,
     server/Test_operated,
+    server/Test_scalar,
+    server/Test_twine_editor,
     server/Test_weakchan,
-    server/Test_weaktbl,
-    server/Test_twine_editor
+    server/Test_weaktbl
   BuildDepends: eliom.server, panograph-server, prime, prime.unstable
   ByteOpt: -thread
   NativeOpt: -thread
