@@ -37,6 +37,7 @@ Library "panograph"
 Library "panograph-server"
   Path: lib/server
   BuildDepends: eliom.server, panograph, prime
+  InternalModules: Panograph_prereq
   Modules:
     Panograph_basic_editors,
     Panograph_basic_viewers,
@@ -53,6 +54,7 @@ Library "panograph-server"
 
 Library "panograph-client"
   Path: lib/client
+  InternalModules: Panograph_prereq
   Modules:
     Operated_html5,
     Panograph_basic_editors,

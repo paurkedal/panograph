@@ -16,6 +16,7 @@
 
 {shared{
   open Eliom_content
+  open Panograph_prereq
   open Panograph_types
   open Unprime
   open Unprime_option
@@ -25,14 +26,6 @@
 {client{
   open Pandom_interactive
   open Panograph_common
-
-  let string_of_option f = function
-    | None -> ""
-    | Some x -> f x
-
-  let option_of_string f = function
-    | "" -> None
-    | s -> Some (f s)
 
   let string_of_bool_option = function
     | None -> ""

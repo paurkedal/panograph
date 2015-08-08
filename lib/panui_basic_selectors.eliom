@@ -16,6 +16,7 @@
 
 {shared{
   open Eliom_content.Html5
+  open Panograph_prereq
   open Panograph_types
   open Panui_content
   open Unprime
@@ -25,13 +26,6 @@
 }}
 
 {client{
-  let string_of_option f = function
-    | None -> ""
-    | Some x -> f x
-
-  let option_of_string f = function
-    | "" -> None
-    | s -> Some (f s)
 
   let string_of_string_option = string_of_option ident
   let string_option_of_string = option_of_string ident
