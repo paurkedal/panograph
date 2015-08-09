@@ -24,7 +24,11 @@ class type basicInteractiveElement = object
   method value : Js.js_string Js.t Js.prop
 end
 
-let outfit_interactive ~to_string ~of_string ?value input_dom emit =
+let outfit_interactive ~to_string ~of_string ?error ?value input_dom emit =
+  let set_error, clear_error =
+    match error with
+    | None -> set_error, clear_error
+    | Some f -> (fun msg _ -> f (Some msg)), (fun _ -> f None) in
   Lwt_js_events.async begin fun () ->
     Lwt_js_events.changes input_dom @@ fun _ _ ->
     clear_error input_dom;
@@ -50,14 +54,14 @@ let outfit_interactive ~to_string ~of_string ?value input_dom emit =
   Option.iter absorb value;
   absorb
 
-let outfit_input ~to_string ~of_string ?value input emit =
-  outfit_interactive ~to_string ~of_string ?value
+let outfit_input ~to_string ~of_string ?error ?value input emit =
+  outfit_interactive ~to_string ~of_string ?error ?value
 		     (Eliom_content.Html5.To_dom.of_input input) emit
 
-let outfit_select ~to_string ~of_string ?value select emit =
-  outfit_interactive ~to_string ~of_string ?value
+let outfit_select ~to_string ~of_string ?error ?value select emit =
+  outfit_interactive ~to_string ~of_string ?error ?value
 		     (Eliom_content.Html5.To_dom.of_select select) emit
 
-let outfit_textarea ~to_string ~of_string ?value textarea emit =
-  outfit_interactive ~to_string ~of_string ?value
+let outfit_textarea ~to_string ~of_string ?error ?value textarea emit =
+  outfit_interactive ~to_string ~of_string ?error ?value
 		     (Eliom_content.Html5.To_dom.of_textarea textarea) emit

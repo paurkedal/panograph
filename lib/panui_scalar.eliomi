@@ -38,6 +38,8 @@
   type ('a, 'attrib) t =
 	?to_string: ('a -> string) client_value ->
 	?of_string: (string -> 'a) client_value ->
+	?emit: ('a -> ack Lwt.t) client_value ->
+	?error: (string option -> unit) client_value ->
 	?a: 'attrib attrib list ->
 	'a -> Html5_types.span elt * 'a handle client_value
       constraint 'attrib = [< Html5_types.common]

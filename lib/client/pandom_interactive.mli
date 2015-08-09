@@ -24,6 +24,7 @@ end
 val outfit_interactive :
       to_string: ('a -> string) ->
       of_string: (string -> 'b) ->
+      ?error: (string option -> unit) ->
       ?value: 'a ->
       #basicInteractiveElement Js.t ->
       ('b -> ack Lwt.t) -> ('a -> unit)
@@ -31,6 +32,7 @@ val outfit_interactive :
 val outfit_input :
       to_string: ('a -> string) ->
       of_string: (string -> 'b) ->
+      ?error: (string option -> unit) ->
       ?value: 'a ->
       [< Html5_types.input] Eliom_content.Html5.elt ->
       ('b -> ack Lwt.t) -> ('a -> unit)
@@ -38,6 +40,7 @@ val outfit_input :
 val outfit_select :
       to_string: ('a -> string) ->
       of_string: (string -> 'b) ->
+      ?error: (string option -> unit) ->
       ?value: 'a ->
       [< Html5_types.select] Eliom_content.Html5.elt ->
       ('b -> ack Lwt.t) -> ('a -> unit)
@@ -45,6 +48,7 @@ val outfit_select :
 val outfit_textarea :
       to_string: ('a -> string) ->
       of_string: (string -> 'b) ->
+      ?error: (string option -> unit) ->
       ?value: 'a ->
       [< Html5_types.textarea] Eliom_content.Html5.elt ->
       ('b -> ack Lwt.t) -> ('a -> unit)

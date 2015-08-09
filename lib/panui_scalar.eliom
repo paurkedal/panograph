@@ -26,6 +26,8 @@
 }}
 
 {client{
+  open Pandom_interactive
+
   class type ['a] handle = object
     method show : unit
     method hide : unit
@@ -37,6 +39,8 @@
 
   class ['a] input_handle (to_string : 'a -> string)
 			  (of_string : string -> 'a)
+			  (emit : ('a -> ack Lwt.t) option)
+			  (error : (string option -> unit) option)
 			  (init : 'a) el =
   object (self)
     val mutable value = init
@@ -47,7 +51,7 @@
 
     method edit_on f =
       let inp = D.input ~input_type:`Text () in
-      absorb <- Pandom_interactive.outfit_input ~to_string ~of_string inp f;
+      absorb <- outfit_input ~to_string ~of_string ?error inp f;
       Manip.replaceChildren el [inp]
 
     method edit_off =
@@ -58,7 +62,8 @@
 
     method set x = absorb x
 
-    initializer self#edit_off
+    initializer
+      match emit with None -> self#edit_off | Some f -> self#edit_on f
   end
 }}
 
@@ -66,6 +71,8 @@
   type ('a, 'attrib) t =
 	?to_string: ('a -> string) client_value ->
 	?of_string: (string -> 'a) client_value ->
+	?emit: ('a -> ack Lwt.t) client_value ->
+	?error: (string option -> unit) client_value ->
 	?a: 'attrib attrib list ->
 	'a -> Html5_types.span elt * 'a handle client_value
       constraint 'attrib = [< Html5_types.common]
@@ -73,90 +80,100 @@
   let string : (string, 'attrib) t =
     fun ?(to_string = {{ident}})
 	?(of_string = {{ident}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata init] in
     let h : string handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let int : (int, 'attrib) t =
     fun ?(to_string = {{string_of_int}})
 	?(of_string = {{int_of_string}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_int init)] in
     let h : int handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let int32 : (int32, 'attrib) t =
     fun ?(to_string = {{Int32.to_string}})
 	?(of_string = {{Int32.of_string}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (Int32.to_string init)] in
     let h : int32 handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let int64 : (int64, 'attrib) t =
     fun ?(to_string = {{Int64.to_string}})
 	?(of_string = {{Int64.of_string}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (Int64.to_string init)] in
     let h : int64 handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let float : (float, 'attrib) t =
     fun ?(to_string = {{string_of_float}})
 	?(of_string = {{float_of_string}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_float init)] in
     let h : float handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let string_option : (string option, 'attrib) t =
     fun ?(to_string = {{string_of_option ident}})
 	?(of_string = {{option_of_string ident}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option ident init)] in
     let h : string option handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let int_option : (int option, 'attrib) t =
     fun ?(to_string = {{string_of_option string_of_int}})
 	?(of_string = {{option_of_string int_of_string}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option string_of_int init)] in
     let h : int option handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let int32_option : (int32 option, 'attrib) t =
     fun ?(to_string = {{string_of_option Int32.to_string}})
 	?(of_string = {{option_of_string Int32.of_string}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option Int32.to_string init)] in
     let h : int32 option handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let int64_option : (int64 option, 'attrib) t =
     fun ?(to_string = {{string_of_option Int64.to_string}})
 	?(of_string = {{option_of_string Int64.of_string}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option Int64.to_string init)] in
     let h : int64 option handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let float_option : (float option, 'attrib) t =
     fun ?(to_string = {{string_of_option string_of_float}})
 	?(of_string = {{option_of_string float_of_string}})
+	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option string_of_float init)] in
     let h : float option handle client_value =
-      {{new input_handle %to_string %of_string %init %el}} in
+      {{new input_handle %to_string %of_string %emit %error %init %el}} in
     el, h
 }}
