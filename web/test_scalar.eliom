@@ -44,6 +44,17 @@ let float_out = server_function Json.t<float> @@ fun x ->
   Lwt_unix.sleep 0.3 >>
   (float_out' (Some (1.0 /. x)); Lwt.return Ack_ok)
 
+let bool_option_stream, bool_option_out' = Lwt_stream.create ()
+let bool_option_comet =
+  Eliom_comet.Channel.create ~scope:`Site bool_option_stream
+let bool_option_out = server_function Json.t<bool option> @@ fun x_opt ->
+  begin match x_opt with
+  | None -> Lwt_log.debug_f "Received bool option None."
+  | Some x -> Lwt_log.debug_f "Received bool option %b." x
+  end >>
+  Lwt_unix.sleep 0.3 >>
+  (bool_option_out' (Some (Option.map not x_opt)); Lwt.return Ack_ok)
+
 let int_option_stream, int_option_out' = Lwt_stream.create ()
 let int_option_comet = Eliom_comet.Channel.create ~scope:`Site int_option_stream
 let int_option_out = server_function Json.t<int option> @@ fun x_opt ->
@@ -69,6 +80,12 @@ let render () =
   ignore {unit{ %h#edit_on %float_out;
 		Lwt.async (fun () -> Lwt_stream.iter %h#set %float_comet) }};
 
+  let bool_option_ed, h = Panui_scalar.bool_option None in
+  ignore {unit{
+    %h#edit_on %bool_option_out;
+    Lwt.async (fun () -> Lwt_stream.iter %h#set %bool_option_comet)
+  }};
+
   let int_option_ed, h = Panui_scalar.int_option None in
   ignore {unit{
     %h#edit_on %int_option_out;
@@ -81,6 +98,7 @@ let render () =
       D.li [string_ed];
       D.li [int_ed];
       D.li [float_ed];
+      D.li [bool_option_ed];
       D.li [int_option_ed];
     ]
   ]
