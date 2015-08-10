@@ -51,7 +51,7 @@
 
     method edit_on f =
       let inp = D.input ~input_type:`Text () in
-      absorb <- outfit_input ~to_string ~of_string ?error inp f;
+      absorb <- outfit_input ~to_string ~of_string ?error ~value inp f;
       Manip.replaceChildren el [inp]
 
     method edit_off =
@@ -60,7 +60,7 @@
 
     method get = value
 
-    method set x = absorb x
+    method set x = value <- x; absorb x
 
     initializer
       match emit with None -> self#edit_off | Some f -> self#edit_on f
