@@ -35,42 +35,34 @@
 }}
 
 {shared{
-  type ('a, 'item) item constraint 'item = [< `Item | `Group]
+  type ('a, 'opt) opt constraint 'opt = [< `Opt | `Optgroup]
 
-  val item : ?enabled: bool -> string -> 'a -> ('a, [> `Item]) item
-  val item_group : ?enabled: bool -> string ->
-		   ('a, [`Item]) item list -> ('a, [> `Group]) item
+  val opt : ?enabled: bool -> string -> 'a -> ('a, [> `Opt]) opt
+  val optgroup : ?enabled: bool -> string ->
+		 ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
 
-(*
-  type 'a item
-  type 'a item_group
-
-  val item : ?enabled: bool -> string -> 'a -> 'a item
-  val item_group : ?enabled: bool -> string -> 'a item list -> 'a item_group
-*)
-
-  type ('a, 'attrib, 'item) t =
+  type ('a, 'attrib, 'opt) t =
 	?to_string: ('a -> string) client_value ->
 	?of_string: (string -> 'a) client_value ->
-	?items: ('a, 'item) item list ->
+	?opts: ('a, 'opt) opt list ->
 	?emit: ('a -> ack Lwt.t) client_value ->
 	?error: (string option -> unit) client_value ->
 	?a: 'attrib attrib list ->
 	'a -> Html5_types.span elt * 'a handle client_value
       constraint 'attrib = [< Html5_types.common]
-      constraint 'item = [< `Item | `Group]
+      constraint 'opt = [< `Opt | `Optgroup]
 
-  val bool : (bool, 'attrib, 'item) t
-  val string : (string, 'attrib, 'item) t
-  val int : (int, 'attrib, 'item) t
-  val int32 : (int32, 'attrib, 'item) t
-  val int64 : (int64, 'attrib, 'item) t
-  val float : (float, 'attrib, 'item) t
+  val bool : (bool, 'attrib, 'opt) t
+  val string : (string, 'attrib, 'opt) t
+  val int : (int, 'attrib, 'opt) t
+  val int32 : (int32, 'attrib, 'opt) t
+  val int64 : (int64, 'attrib, 'opt) t
+  val float : (float, 'attrib, 'opt) t
 
-  val bool_option : (bool option, 'attrib, 'item) t
-  val string_option : (string option, 'attrib, 'item) t
-  val int_option : (int option, 'attrib, 'item) t
-  val int32_option : (int32 option, 'attrib, 'item) t
-  val int64_option : (int64 option, 'attrib, 'item) t
-  val float_option : (float option, 'attrib, 'item) t
+  val bool_option : (bool option, 'attrib, 'opt) t
+  val string_option : (string option, 'attrib, 'opt) t
+  val int_option : (int option, 'attrib, 'opt) t
+  val int32_option : (int32 option, 'attrib, 'opt) t
+  val int64_option : (int64 option, 'attrib, 'opt) t
+  val float_option : (float option, 'attrib, 'opt) t
 }}

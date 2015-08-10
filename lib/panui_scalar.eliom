@@ -26,16 +26,13 @@
 }}
 
 {shared{
-  type ('a, 'item) item =
-    | Item of string * bool * 'a
-    | Item_group of string * bool * ('a, [`Item]) item list
-    constraint 'item = [< `Item | `Group]
+  type ('a, 'opt) opt =
+    | Opt of string * bool * 'a
+    | Optgroup of string * bool * ('a, [`Opt]) opt list
+    constraint 'opt = [< `Opt | `Optgroup]
 
-  let item ?(enabled = true) label value =
-    Item (label, enabled, value)
-
-  let item_group ?(enabled = true) label items =
-    Item_group (label, enabled, items)
+  let opt ?(enabled = true) label value = Opt (label, enabled, value)
+  let optgroup ?(enabled = true) label opts = Optgroup (label, enabled, opts)
 }}
 
 {client{
@@ -84,7 +81,7 @@
   end
 
   class ['a] select_handle
-      (items : ('a, 'item) item list)
+      (opts : ('a, 'opt) opt list)
       (to_string : 'a -> string)
       (of_string : string -> 'a)
       (emit : ('a -> ack Lwt.t) option)
@@ -98,14 +95,14 @@
 	let a = if enabled then a else D.a_disabled `Disabled :: a in
 	D.option ~a (D.pcdata label) in
       let mk0 = function
-	| Item (label, enabled, value) -> mk_option label enabled value
-	| Item_group _ -> assert false in
+	| Opt (label, enabled, value) -> mk_option label enabled value
+	| Optgroup _ -> assert false in
       let mk1 = function
-	| Item (label, enabled, value) -> mk_option label enabled value
-	| Item_group (label, enabled, items) ->
+	| Opt (label, enabled, value) -> mk_option label enabled value
+	| Optgroup (label, enabled, opts) ->
 	  let a = if enabled then [] else [D.a_disabled `Disabled] in
-	  D.optgroup ~label ~a (List.map mk0 items) in
-      List.map mk1 items in
+	  D.optgroup ~label ~a (List.map mk0 opts) in
+      List.map mk1 opts in
     let select = D.Raw.select options in
   object (self)
     inherit common_handle el
@@ -133,153 +130,153 @@
 
   let make_handle = function
     | None -> new input_handle
-    | Some items -> new select_handle items
+    | Some opts -> new select_handle opts
 }}
 
 {shared{
-  type ('a, 'attrib, 'item) t =
+  type ('a, 'attrib, 'opt) t =
 	?to_string: ('a -> string) client_value ->
 	?of_string: (string -> 'a) client_value ->
-	?items: ('a, 'item) item list ->
+	?opts: ('a, 'opt) opt list ->
 	?emit: ('a -> ack Lwt.t) client_value ->
 	?error: (string option -> unit) client_value ->
 	?a: 'attrib attrib list ->
 	'a -> Html5_types.span elt * 'a handle client_value
       constraint 'attrib = [< Html5_types.common]
-      constraint 'item = [< `Item | `Group]
+      constraint 'opt = [< `Opt | `Optgroup]
 
-  let bool : (bool, 'attrib, 'item) t =
+  let bool : (bool, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_bool}})
 	?(of_string = {{bool_of_string}})
-	?(items = [item "true" true; item "false" false])
+	?(opts = [opt "true" true; opt "false" false])
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_bool init)] in
     let h : bool handle client_value =
-      {{make_handle (Some %items)
+      {{make_handle (Some %opts)
 		    %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let string : (string, 'attrib, 'item) t =
+  let string : (string, 'attrib, 'opt) t =
     fun ?(to_string = {{ident}})
 	?(of_string = {{ident}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata init] in
     let h : string handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int : (int, 'attrib, 'item) t =
+  let int : (int, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_int}})
 	?(of_string = {{int_of_string}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_int init)] in
     let h : int handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int32 : (int32, 'attrib, 'item) t =
+  let int32 : (int32, 'attrib, 'opt) t =
     fun ?(to_string = {{Int32.to_string}})
 	?(of_string = {{Int32.of_string}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (Int32.to_string init)] in
     let h : int32 handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int64 : (int64, 'attrib, 'item) t =
+  let int64 : (int64, 'attrib, 'opt) t =
     fun ?(to_string = {{Int64.to_string}})
 	?(of_string = {{Int64.of_string}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (Int64.to_string init)] in
     let h : int64 handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let float : (float, 'attrib, 'item) t =
+  let float : (float, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_float}})
 	?(of_string = {{float_of_string}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_float init)] in
     let h : float handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let bool_option : (bool option, 'attrib, 'item) t =
+  let bool_option : (bool option, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_option string_of_bool}})
 	?(of_string = {{option_of_string bool_of_string}})
-	?(items = [item "" None; item "true" (Some true);
-				 item "false" (Some false)])
+	?(opts = [opt "" None; opt "true" (Some true);
+			       opt "false" (Some false)])
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option string_of_bool init)] in
     let h : bool option handle client_value =
-      {{make_handle (Some %items)
+      {{make_handle (Some %opts)
 		    %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let string_option : (string option, 'attrib, 'item) t =
+  let string_option : (string option, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_option ident}})
 	?(of_string = {{option_of_string ident}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option ident init)] in
     let h : string option handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int_option : (int option, 'attrib, 'item) t =
+  let int_option : (int option, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_option string_of_int}})
 	?(of_string = {{option_of_string int_of_string}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option string_of_int init)] in
     let h : int option handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int32_option : (int32 option, 'attrib, 'item) t =
+  let int32_option : (int32 option, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_option Int32.to_string}})
 	?(of_string = {{option_of_string Int32.of_string}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option Int32.to_string init)] in
     let h : int32 option handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int64_option : (int64 option, 'attrib, 'item) t =
+  let int64_option : (int64 option, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_option Int64.to_string}})
 	?(of_string = {{option_of_string Int64.of_string}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option Int64.to_string init)] in
     let h : int64 option handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let float_option : (float option, 'attrib, 'item) t =
+  let float_option : (float option, 'attrib, 'opt) t =
     fun ?(to_string = {{string_of_option string_of_float}})
 	?(of_string = {{option_of_string float_of_string}})
-	?items
+	?opts
 	?emit ?error
 	?a init ->
     let el = D.span ?a [D.pcdata (string_of_option string_of_float init)] in
     let h : float option handle client_value =
-      {{make_handle %items %to_string %of_string %emit %error %init %el}} in
+      {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 }}
