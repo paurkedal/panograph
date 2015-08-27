@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -65,6 +65,18 @@ module Modal_dialog = struct
 
   let () = close_all_r := close_all
 end
+
+let acknowledge_lwt ?(ok = ok_label) content =
+  let ok_button = D.button ~button_type:`Button ok in
+  let close_waiter, close_wakener = Lwt.wait () in
+  let dialog =
+    Modal_dialog.open_std ~on_cancel:(fun () -> Lwt.wakeup close_wakener ())
+			  content [ok_button] in
+  Lwt.choose [
+    ( Lwt_js_events.click (To_dom.of_button ok_button) >|= fun _ ->
+      Modal_dialog.close dialog );
+    ( close_waiter >|= fun _ -> () );
+  ]
 
 let confirm_lwt ?(ok = ok_label) ?(cancel = cancel_label) content =
   let ok_button = D.button ~button_type:`Button ok in

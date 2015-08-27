@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -35,6 +35,10 @@ module Modal_dialog : sig
   val close_all : unit -> unit
 
 end
+
+val acknowledge_lwt :
+      ?ok: button_content_fun elt list ->
+      [< div_content_fun] elt list -> unit Lwt.t
 
 val confirm_lwt :
       ?ok: button_content_fun elt list ->
