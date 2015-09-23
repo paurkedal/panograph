@@ -66,29 +66,21 @@ module Modal_dialog = struct
   let () = close_all_r := close_all
 end
 
-let acknowledge_lwt ?(ok = ok_label) content =
-  let ok_button = D.button ~button_type:`Button ok in
+let dialog_lwt mapping default content =
+  let make_button (label, _) = D.button ~button_type:`Button label in
+  let buttons = List.map make_button mapping in
   let close_waiter, close_wakener = Lwt.wait () in
   let dialog =
     Modal_dialog.open_std ~on_cancel:(fun () -> Lwt.wakeup close_wakener ())
-			  content [ok_button] in
-  Lwt.choose [
-    ( Lwt_js_events.click (To_dom.of_button ok_button) >|= fun _ ->
-      Modal_dialog.close dialog );
-    ( close_waiter >|= fun _ -> () );
-  ]
+			  content buttons in
+  let make_action button (_, value) =
+    Lwt_js_events.click (To_dom.of_button button) >|= fun _ ->
+    Modal_dialog.close dialog; value in
+  let actions = List.map2 make_action buttons mapping in
+  Lwt.choose ((close_waiter >|= konst default) :: actions)
+
+let acknowledge_lwt ?(ok = ok_label) content =
+  dialog_lwt [ok, ()] () content
 
 let confirm_lwt ?(ok = ok_label) ?(cancel = cancel_label) content =
-  let ok_button = D.button ~button_type:`Button ok in
-  let cancel_button = D.button ~button_type:`Button cancel in
-  let close_waiter, close_wakener = Lwt.wait () in
-  let dialog =
-    Modal_dialog.open_std ~on_cancel:(fun () -> Lwt.wakeup close_wakener false)
-			  content [ok_button; cancel_button] in
-  Lwt.choose [
-    ( Lwt_js_events.click (To_dom.of_button ok_button) >|= fun _ ->
-      Modal_dialog.close dialog; true );
-    ( Lwt_js_events.click (To_dom.of_button cancel_button) >|= fun _ ->
-      Modal_dialog.close dialog; false );
-    ( close_waiter >|= fun _ -> false );
-  ]
+  dialog_lwt [ok, true; cancel, false] false content

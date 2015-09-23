@@ -36,6 +36,15 @@ module Modal_dialog : sig
 
 end
 
+val dialog_lwt :
+      (button_content_fun elt list * 'a) list -> 'a ->
+      [< div_content_fun] elt list -> 'a Lwt.t
+(** [dialog_lwt [l1, v1; ...; lN, vN] v0 content] creates a dialog displaying
+    [content] with [N] buttons labeled [l1, ..., lN] with associated values
+    [v1, ..., vN], respectively, and waits for user input.  Pressing a button
+    causes the associated value to be return, and pressing outside the dialog
+    causes [v0] to be returned. *)
+
 val acknowledge_lwt :
       ?ok: button_content_fun elt list ->
       [< div_content_fun] elt list -> unit Lwt.t
