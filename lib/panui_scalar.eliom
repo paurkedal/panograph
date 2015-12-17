@@ -139,18 +139,19 @@
 }}
 
 {shared{
-  type ('a, 'attrib, 'opt) t =
+  type ('a, 'attrib, 'opt, 'el) t =
 	?to_string: ('a -> string) client_value ->
 	?of_string: (string -> 'a) client_value ->
 	?opts: ('a, 'opt) opt list ->
 	?emit: ('a -> ack Lwt.t) client_value ->
 	?error: (string option -> unit) client_value ->
 	?a: 'attrib attrib list ->
-	'a -> Html5_types.span elt * 'a handle client_value
+	'a -> 'el elt * 'a handle client_value
       constraint 'attrib = [< Html5_types.common > `Class]
       constraint 'opt = [< `Opt | `Optgroup]
+      constraint 'el = [> `Span]
 
-  let bool : (bool, 'attrib, 'opt) t =
+  let bool : (bool, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_bool}})
 	?(of_string = {{bool_of_string}})
 	?(opts = [opt "true" true; opt "false" false])
@@ -162,7 +163,7 @@
 		    %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let string : (string, 'attrib, 'opt) t =
+  let string : (string, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{ident}})
 	?(of_string = {{ident}})
 	?opts
@@ -173,7 +174,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int : (int, 'attrib, 'opt) t =
+  let int : (int, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_int}})
 	?(of_string = {{int_of_string}})
 	?opts
@@ -184,7 +185,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int32 : (int32, 'attrib, 'opt) t =
+  let int32 : (int32, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{Int32.to_string}})
 	?(of_string = {{Int32.of_string}})
 	?opts
@@ -195,7 +196,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int64 : (int64, 'attrib, 'opt) t =
+  let int64 : (int64, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{Int64.to_string}})
 	?(of_string = {{Int64.of_string}})
 	?opts
@@ -206,7 +207,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let float : (float, 'attrib, 'opt) t =
+  let float : (float, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_float}})
 	?(of_string = {{float_of_string}})
 	?opts
@@ -217,7 +218,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let bool_option : (bool option, 'attrib, 'opt) t =
+  let bool_option : (bool option, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_option string_of_bool}})
 	?(of_string = {{option_of_string bool_of_string}})
 	?(opts = [opt "" None; opt "true" (Some true);
@@ -230,7 +231,7 @@
 		    %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let string_option : (string option, 'attrib, 'opt) t =
+  let string_option : (string option, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_option ident}})
 	?(of_string = {{option_of_string ident}})
 	?opts
@@ -241,7 +242,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int_option : (int option, 'attrib, 'opt) t =
+  let int_option : (int option, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_option string_of_int}})
 	?(of_string = {{option_of_string int_of_string}})
 	?opts
@@ -252,7 +253,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int32_option : (int32 option, 'attrib, 'opt) t =
+  let int32_option : (int32 option, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_option Int32.to_string}})
 	?(of_string = {{option_of_string Int32.of_string}})
 	?opts
@@ -263,7 +264,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let int64_option : (int64 option, 'attrib, 'opt) t =
+  let int64_option : (int64 option, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_option Int64.to_string}})
 	?(of_string = {{option_of_string Int64.of_string}})
 	?opts
@@ -274,7 +275,7 @@
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
 
-  let float_option : (float option, 'attrib, 'opt) t =
+  let float_option : (float option, 'attrib, 'opt, 'el) t =
     fun ?(to_string = {{string_of_option string_of_float}})
 	?(of_string = {{option_of_string float_of_string}})
 	?opts
