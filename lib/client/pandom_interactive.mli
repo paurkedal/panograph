@@ -52,3 +52,9 @@ val outfit_textarea :
       ?value: 'a ->
       [< Html5_types.textarea] Eliom_content.Html5.elt ->
       ('b -> ack Lwt.t) -> ('a -> unit)
+
+val outfit_checkbox :
+      ?error: (string option -> unit) ->
+      ?value: bool ->
+      [< Html5_types.input] Eliom_content.Html5.elt ->
+      (bool -> ack Lwt.t) -> (bool -> unit)
