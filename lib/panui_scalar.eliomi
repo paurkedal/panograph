@@ -50,29 +50,29 @@
   val optgroup : ?enabled: bool -> string ->
 		 ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
 
-  type ('a, 'attrib, 'opt, 'el) t =
+  type ('a, 'opt, 'attrib, 'elt) t =
 	?to_string: ('a -> string) client_value ->
 	?of_string: (string -> 'a) client_value ->
 	?opts: ('a, 'opt) opt list ->
 	?emit: ('a -> ack Lwt.t) client_value ->
 	?error: (string option -> unit) client_value ->
 	?a: 'attrib attrib list ->
-	'a -> 'el elt * 'a handle client_value
+	'a -> 'elt elt * 'a handle client_value
       constraint 'attrib = [< Html5_types.common > `Class]
       constraint 'opt = [< `Opt | `Optgroup]
-      constraint 'el = [> `Span]
+      constraint 'elt = [> `Span]
 
-  val bool : (bool, 'attrib, 'opt, 'el) t
-  val string : (string, 'attrib, 'opt, 'el) t
-  val int : (int, 'attrib, 'opt, 'el) t
-  val int32 : (int32, 'attrib, 'opt, 'el) t
-  val int64 : (int64, 'attrib, 'opt, 'el) t
-  val float : (float, 'attrib, 'opt, 'el) t
+  val bool : (bool, 'opt, 'attrib, 'elt) t
+  val string : (string, 'opt, 'attrib, 'elt) t
+  val int : (int, 'opt, 'attrib, 'elt) t
+  val int32 : (int32, 'opt, 'attrib, 'elt) t
+  val int64 : (int64, 'opt, 'attrib, 'elt) t
+  val float : (float, 'opt, 'attrib, 'elt) t
 
-  val bool_option : (bool option, 'attrib, 'opt, 'el) t
-  val string_option : (string option, 'attrib, 'opt, 'el) t
-  val int_option : (int option, 'attrib, 'opt, 'el) t
-  val int32_option : (int32 option, 'attrib, 'opt, 'el) t
-  val int64_option : (int64 option, 'attrib, 'opt, 'el) t
-  val float_option : (float option, 'attrib, 'opt, 'el) t
+  val bool_option : (bool option, 'opt, 'attrib, 'elt) t
+  val string_option : (string option, 'opt, 'attrib, 'elt) t
+  val int_option : (int option, 'opt, 'attrib, 'elt) t
+  val int32_option : (int32 option, 'opt, 'attrib, 'elt) t
+  val int64_option : (int64 option, 'opt, 'attrib, 'elt) t
+  val float_option : (float option, 'opt, 'attrib, 'elt) t
 }}
