@@ -46,6 +46,7 @@
 
 {shared{
   val opt : ?enabled: bool -> string -> 'a -> ('a, [> `Opt]) opt
+  val optv : ?enabled: bool -> 'a -> ('a, [> `Opt]) opt
   val optgroup : ?enabled: bool -> string ->
 		 ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
 

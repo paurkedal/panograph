@@ -27,11 +27,12 @@
 
 {shared{
   type ('a, 'opt) opt =
-    | Opt of string * bool * 'a
+    | Opt of string option * bool * 'a
     | Optgroup of string * bool * ('a, [`Opt]) opt list
     constraint 'opt = [< `Opt | `Optgroup]
 
-  let opt ?(enabled = true) label value = Opt (label, enabled, value)
+  let opt ?(enabled = true) label value = Opt (Some label, enabled, value)
+  let optv ?(enabled = true) value = Opt (None, enabled, value)
   let optgroup ?(enabled = true) label opts = Optgroup (label, enabled, opts)
 }}
 
@@ -90,6 +91,7 @@
     let label_by_value = Hashtbl.create 11 in
     let options =
       let mk_option label enabled value =
+	let label = match label with Some s -> s | None -> to_string value in
 	Hashtbl.add label_by_value value label;
 	let a = [D.a_value (to_string value)] in
 	let a = if enabled then a else D.a_disabled `Disabled :: a in
