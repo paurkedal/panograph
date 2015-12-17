@@ -17,6 +17,8 @@
 {shared{
   open Eliom_content.Html5
   open Panograph_types
+
+  type ('a, 'opt) opt constraint 'opt = [< `Opt | `Optgroup]
 }}
 
 {server{
@@ -32,11 +34,17 @@
     method get : 'a
     method set : 'a -> unit
   end
+
+  val add_input_with_handle :
+	to_string: ('a -> string) ->
+	of_string: (string -> 'a) ->
+	?opts: ('a, 'opt) opt list ->
+	?emit: ('a -> ack Lwt.t) ->
+	?error: (string option -> unit) ->
+	'a -> [< `Span | `Div | `Td] elt -> 'a handle
 }}
 
 {shared{
-  type ('a, 'opt) opt constraint 'opt = [< `Opt | `Optgroup]
-
   val opt : ?enabled: bool -> string -> 'a -> ('a, [> `Opt]) opt
   val optgroup : ?enabled: bool -> string ->
 		 ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt

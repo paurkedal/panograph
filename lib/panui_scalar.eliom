@@ -131,6 +131,9 @@
   let make_handle = function
     | None -> new input_handle
     | Some opts -> new select_handle opts
+
+  let add_input_with_handle ~to_string ~of_string ?opts ?emit ?error init el =
+    make_handle opts to_string of_string emit error init el
 }}
 
 {shared{
