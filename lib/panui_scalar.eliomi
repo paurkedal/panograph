@@ -58,7 +58,7 @@
 	?error: (string option -> unit) client_value ->
 	?a: 'attrib attrib list ->
 	'a -> Html5_types.span elt * 'a handle client_value
-      constraint 'attrib = [< Html5_types.common]
+      constraint 'attrib = [< Html5_types.common > `Class]
       constraint 'opt = [< `Opt | `Optgroup]
 
   val bool : (bool, 'attrib, 'opt) t

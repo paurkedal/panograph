@@ -147,7 +147,7 @@
 	?error: (string option -> unit) client_value ->
 	?a: 'attrib attrib list ->
 	'a -> Html5_types.span elt * 'a handle client_value
-      constraint 'attrib = [< Html5_types.common]
+      constraint 'attrib = [< Html5_types.common > `Class]
       constraint 'opt = [< `Opt | `Optgroup]
 
   let bool : (bool, 'attrib, 'opt) t =
@@ -155,8 +155,8 @@
 	?(of_string = {{bool_of_string}})
 	?(opts = [opt "true" true; opt "false" false])
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_bool init)] in
+	?(a = [D.a_class ["pan-scalar"; "bool"]]) init ->
+    let el = D.span ~a [D.pcdata (string_of_bool init)] in
     let h : bool handle client_value =
       {{make_handle (Some %opts)
 		    %to_string %of_string %emit %error %init %el}} in
@@ -167,8 +167,8 @@
 	?(of_string = {{ident}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata init] in
+	?(a = [D.a_class ["pan-scalar"; "string"]]) init ->
+    let el = D.span ~a [D.pcdata init] in
     let h : string handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -178,8 +178,8 @@
 	?(of_string = {{int_of_string}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_int init)] in
+	?(a = [D.a_class ["pan-scalar"; "int"]]) init ->
+    let el = D.span ~a [D.pcdata (string_of_int init)] in
     let h : int handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -189,8 +189,8 @@
 	?(of_string = {{Int32.of_string}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (Int32.to_string init)] in
+	?(a = [D.a_class ["pan-scalar"; "int32"]]) init ->
+    let el = D.span ~a [D.pcdata (Int32.to_string init)] in
     let h : int32 handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -200,8 +200,8 @@
 	?(of_string = {{Int64.of_string}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (Int64.to_string init)] in
+	?(a = [D.a_class ["pan-scalar"; "int64"]]) init ->
+    let el = D.span ~a [D.pcdata (Int64.to_string init)] in
     let h : int64 handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -211,8 +211,8 @@
 	?(of_string = {{float_of_string}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_float init)] in
+	?(a = [D.a_class ["pan-scalar"; "float"]]) init ->
+    let el = D.span ~a [D.pcdata (string_of_float init)] in
     let h : float handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -223,8 +223,8 @@
 	?(opts = [opt "" None; opt "true" (Some true);
 			       opt "false" (Some false)])
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_option string_of_bool init)] in
+	?(a = [D.a_class ["pan-scalar"; "bool"; "option"]]) init ->
+    let el = D.span ~a [D.pcdata (string_of_option string_of_bool init)] in
     let h : bool option handle client_value =
       {{make_handle (Some %opts)
 		    %to_string %of_string %emit %error %init %el}} in
@@ -235,8 +235,8 @@
 	?(of_string = {{option_of_string ident}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_option ident init)] in
+	?(a = [D.a_class ["pan-scalar"; "string"; "option"]])  init ->
+    let el = D.span ~a [D.pcdata (string_of_option ident init)] in
     let h : string option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -246,8 +246,8 @@
 	?(of_string = {{option_of_string int_of_string}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_option string_of_int init)] in
+	?(a = [D.a_class ["pan-scalar"; "int"; "option"]]) init ->
+    let el = D.span ~a [D.pcdata (string_of_option string_of_int init)] in
     let h : int option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -257,8 +257,8 @@
 	?(of_string = {{option_of_string Int32.of_string}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_option Int32.to_string init)] in
+	?(a = [D.a_class ["pan-scalar"; "int32"; "option"]]) init ->
+    let el = D.span ~a [D.pcdata (string_of_option Int32.to_string init)] in
     let h : int32 option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -268,8 +268,8 @@
 	?(of_string = {{option_of_string Int64.of_string}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_option Int64.to_string init)] in
+	?(a = [D.a_class ["pan-scalar"; "int64"; "option"]]) init ->
+    let el = D.span ~a [D.pcdata (string_of_option Int64.to_string init)] in
     let h : int64 option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
@@ -279,8 +279,8 @@
 	?(of_string = {{option_of_string float_of_string}})
 	?opts
 	?emit ?error
-	?a init ->
-    let el = D.span ?a [D.pcdata (string_of_option string_of_float init)] in
+	?(a = [D.a_class ["pan-scalar"; "float"; "option"]]) init ->
+    let el = D.span ~a [D.pcdata (string_of_option string_of_float init)] in
     let h : float option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
     el, h
