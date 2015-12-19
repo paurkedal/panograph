@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -19,11 +19,26 @@
 module type S = sig
   type key
   type 'a t
+
   val create : int -> 'a t
+  (** [create size] creates a weak event hash table with initial size [size].
+      For best performance, use round the size to the nearest prime. *)
+
   val event : 'a t -> key -> 'a React.E.t
+  (** [event wt k] returns an event which will receive [x] whenever [emit k x]
+      is called.  A new event will be added to the table at [k] if not
+      present. *)
+
   val event_opt : 'a t -> key -> 'a React.E.t option
+  (** [event_opt wt k] is [Some (event wt k)] if [k] is already associated
+      with an event, otherwise [None]. *)
+
   val emit : 'a t -> key -> 'a -> unit
+  (** [emit wt k x] sends [x] to the event at [k] in [wt] if present,
+      otherwise does nothing. *)
+
   val size : 'a t -> int
+  (** [size wt] is the current size of the hash table. *)
 end
 
 module Make (Key : Hashtbl.HashedType) : S with type key = Key.t
