@@ -284,6 +284,7 @@
     let a = if value then D.a_checked `Checked :: a else a in
     let input = D.input ~input_type:`Checkbox ~a () in
     let patch_in = {bool -> unit{
+      (* TODO: Use Pandom_interactive.outfit_checkbox if this is kept. *)
       let open Html5 in
       let input_dom = To_dom.of_input %input in
       Lwt_js_events.(async @@ fun () ->

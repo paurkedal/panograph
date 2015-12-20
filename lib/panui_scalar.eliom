@@ -19,6 +19,7 @@
   open Panograph_prereq
   open Panograph_types
   open Unprime
+  open Unprime_option
 }}
 
 {server{
@@ -70,6 +71,37 @@
       Manip.replaceChildren el [inp]
 
     method edit_off =
+      absorb <- (fun x -> Manip.replaceChildren el [D.pcdata (to_string x)]);
+      absorb value
+
+    method get = value
+
+    method set x = value <- x; absorb x
+
+    initializer
+      match emit with None -> self#edit_off | Some f -> self#edit_on f
+  end
+
+  class checkbox_handle
+      (emit : (bool -> ack Lwt.t) option)
+      (error : (string option -> unit) option)
+      (init : bool) el =
+  object (self)
+    inherit common_handle el
+
+    val mutable value = init
+    val mutable absorb = fun _ -> ()
+
+    method edit_on f =
+      let a = if init then [D.a_checked `Checked] else [] in
+      let inp = D.input ~input_type:`Checkbox ~a () in
+      absorb <- outfit_checkbox ?error ~value inp f;
+      Manip.replaceChildren el [inp]
+
+    method edit_off =
+      (* TODO: May want to revise how to indicate checked values i read-only
+       * mode, one option being to use a disabled checkbox. *)
+      let to_string = function false -> "✗" | true -> "✓" in
       absorb <- (fun x -> Manip.replaceChildren el [D.pcdata (to_string x)]);
       absorb value
 
@@ -152,15 +184,19 @@
       constraint 'elt = [> `Span]
 
   let bool : (bool, 'opt, 'attrib, 'elt) t =
-    fun ?(to_string = {{string_of_bool}})
-	?(of_string = {{bool_of_string}})
-	?(opts = [opt "true" true; opt "false" false])
-	?emit ?error
+    fun ?to_string ?of_string ?opts ?emit ?error
 	?(a = [D.a_class ["pan-scalar"; "bool"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_bool init)] in
     let h : bool handle client_value =
-      {{make_handle (Some %opts)
-		    %to_string %of_string %emit %error %init %el}} in
+      match to_string, of_string, opts with
+      | None, None, None ->
+	{{new checkbox_handle %emit %error %init %el}}
+      | _ ->
+	let to_string = Option.get_or {{string_of_bool}} to_string in
+	let of_string = Option.get_or {{bool_of_string}} of_string in
+	let opts = Option.get_or [opt "true" true; opt "false" false] opts in
+	{{make_handle (Some %opts)
+		      %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let string : (string, 'opt, 'attrib, 'elt) t =

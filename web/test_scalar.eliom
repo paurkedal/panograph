@@ -44,6 +44,13 @@ let float_out = server_function Json.t<float> @@ fun x ->
   Lwt_unix.sleep 0.3 >>
   (float_out' (Some (1.0 /. x)); Lwt.return Ack_ok)
 
+let bool_stream, bool_out' = Lwt_stream.create ()
+let bool_comet = Eliom_comet.Channel.create ~scope:`Site bool_stream
+let bool_out = server_function Json.t<bool> @@ fun x ->
+  Lwt_log.debug_f "Received bool %b." x >>
+  Lwt_unix.sleep 0.3 >>
+  (bool_out' (Some x); Lwt.return Ack_ok)
+
 let bool_option_stream, bool_option_out' = Lwt_stream.create ()
 let bool_option_comet =
   Eliom_comet.Channel.create ~scope:`Site bool_option_stream
@@ -80,6 +87,15 @@ let render () =
   ignore {unit{ %h#edit_on %float_out;
 		Lwt.async (fun () -> Lwt_stream.iter %h#set %float_comet) }};
 
+  let bool1_ed, h = Panui_scalar.bool false in
+  ignore {unit{ %h#edit_on %bool_out;
+		Lwt.async (fun () -> Lwt_stream.iter %h#set %bool_comet) }};
+
+  let bool2_ed, h =
+    Panui_scalar.(bool ~opts:[opt "yes" true; opt "no" false] false) in
+  ignore {unit{ %h#edit_on %bool_out;
+		Lwt.async (fun () -> Lwt_stream.iter %h#set %bool_comet) }};
+
   let bool_option_ed, h = Panui_scalar.bool_option None in
   ignore {unit{
     %h#edit_on %bool_option_out;
@@ -95,10 +111,12 @@ let render () =
   D.div [
     D.h2 [D.pcdata "Server Side Inputs"];
     D.ul [
-      D.li [string_ed];
-      D.li [int_ed];
-      D.li [float_ed];
-      D.li [bool_option_ed];
-      D.li [int_option_ed];
+      D.li [D.pcdata "string: "; string_ed];
+      D.li [D.pcdata "int: "; int_ed];
+      D.li [D.pcdata "float: "; float_ed];
+      D.li [D.pcdata "bool: "; bool1_ed];
+      D.li [D.pcdata "bool: "; bool2_ed];
+      D.li [D.pcdata "bool option: "; bool_option_ed];
+      D.li [D.pcdata "int option: "; int_option_ed];
     ]
   ]
