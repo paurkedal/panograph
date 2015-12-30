@@ -121,6 +121,9 @@
       (error : (string option -> unit) option)
       (init : 'a) el =
     let label_by_value = Hashtbl.create 11 in
+    let unknown_option =
+      D.option ~a:[D.a_value "__pan_unknown__"; D.a_class ["pan-error"]]
+	       (D.pcdata "unknown") in
     let options =
       let mk_option label enabled value =
 	let label = match label with Some s -> s | None -> to_string value in
@@ -144,19 +147,45 @@
     val mutable value = init
     val mutable absorb = fun _ -> ()
 
+    method private set_unknown =
+      Manip.appendChildFirst select unknown_option;
+      Pandom_style.set_error
+	"The currently selected option is no longer available."
+	(To_dom.of_select select);
+      (To_dom.of_select select)##value <- Js.string "__pan_unknown__"
+
+    method private clear_unknown =
+      Pandom_style.clear_error (To_dom.of_select select);
+      Manip.removeChild select unknown_option
+
     method edit_on f =
       absorb <- outfit_select ~to_string ~of_string ?error ~value select f;
+      if not (Hashtbl.mem label_by_value value) then self#set_unknown;
       Manip.replaceChildren el [select]
 
     method edit_off =
       absorb <- begin fun x ->
-	let label = Hashtbl.find label_by_value value in
-	Manip.replaceChildren el [D.pcdata label]
+	try
+	  let label = Hashtbl.find label_by_value value in
+	  Manip.replaceChildren el [D.pcdata label]
+	with Not_found ->
+	  Manip.replaceChildren el
+	    [D.span ~a:[F.a_class ["pan-error"]] [D.pcdata "unknown"]]
       end;
       absorb value
 
     method get = value
-    method set x = value <- x; absorb x
+
+    method set x =
+      if Hashtbl.mem label_by_value x then
+	begin
+	  if not (Hashtbl.mem label_by_value value) then
+	    self#clear_unknown;
+	  absorb x
+	end
+      else
+	self#set_unknown;
+      value <- x;
 
     initializer
       match emit with None -> self#edit_off | Some f -> self#edit_on f

@@ -83,6 +83,13 @@ let render () =
   ignore {unit{ %h#edit_on %int_out;
 		Lwt.async (fun () -> Lwt_stream.iter %h#set %int_comet) }};
 
+  let int_select_ed, h =
+    let opts = Panui_scalar.[opt "Zero" 0; opt "One" 1;
+			     opt "Two" 2; opt "Three" 3] in
+    Panui_scalar.int ~opts 0 in
+  ignore {unit{ %h#edit_on %int_out;
+		Lwt.async (fun () -> Lwt_stream.iter %h#set %int_comet) }};
+
   let float_ed, h = Panui_scalar.float 0.0 in
   ignore {unit{ %h#edit_on %float_out;
 		Lwt.async (fun () -> Lwt_stream.iter %h#set %float_comet) }};
@@ -113,6 +120,7 @@ let render () =
     D.ul [
       D.li [D.pcdata "string: "; string_ed];
       D.li [D.pcdata "int: "; int_ed];
+      D.li [D.pcdata "int select: "; int_select_ed];
       D.li [D.pcdata "float: "; float_ed];
       D.li [D.pcdata "bool: "; bool1_ed];
       D.li [D.pcdata "bool: "; bool2_ed];
