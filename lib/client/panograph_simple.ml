@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Eliom_content
+open Eliom_content.Html5
 open Panograph_common
 open Panograph_i18n
 open Panograph_intf
@@ -31,30 +31,29 @@ module type SIMPLE_SNAPSHOT_VIEWER = sig
   include BASIC_SHAPE_TYPE
   include SNAPSHOT_VIEWER
     with type shape := shape
-     and type ui = Html5_types.flow5 Html5.elt
+     and type ui = Html5_types.flow5 elt
 end
 
 module Simple_SV (Value : SIMPLE_VALUE) = struct
   include Basic_shape
 
   type value = Value.t
-  type ui = Html5_types.flow5 Html5.elt
+  type ui = Html5_types.flow5 elt
   type t = ui * ui
 
   let default_shape = make_default_shape ("SV" :: Value.css_classes)
 
   let create ?(shape = default_shape) v =
-    let c = Html5.D.pcdata (Value.to_string v) in
-    let p = Html5.D.span ~a:(attribs_of_shape shape) [c] in
+    let c = D.pcdata (Value.to_string v) in
+    let p = D.span ~a:(attribs_of_shape shape) [c] in
     (p, c), p
 
-  let set (p, c) v =
-    Html5.Manip.replaceChildren p [Html5.D.pcdata (Value.to_string v)]
+  let set (p, c) v = Manip.replaceChildren p [D.pcdata (Value.to_string v)]
 end
 
 module Simple_shape = struct
   type t = {
-    input_a : Html5_types.input_attrib Html5.attrib list;
+    input_a : Html5_types.input_attrib attrib list;
   }
   let make ?(a = []) () = {input_a = a}
 end
@@ -68,14 +67,14 @@ module type SIMPLE_PATCH_EDITOR = sig
       and type patch_out = [`Change of value * value]
       and type patch_in = [`Change of value * value]
       and type shape := shape
-      and type ui = Html5_types.flow5 Html5.elt
+      and type ui = Html5_types.flow5 elt
 end
 
 module type SIMPLE_SNAPSHOT_EDITOR = sig
   include BASIC_SHAPE_TYPE
   include SNAPSHOT_EDITOR
     with type shape := shape
-     and type ui = Html5_types.flow5 Html5.elt
+     and type ui = Html5_types.flow5 elt
 end
 
 module Simple_PE (Value : SIMPLE_VALUE) = struct
@@ -85,7 +84,7 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
   type patch_out = [`Change of value * value]
   type patch_in = patch_out
 
-  type ui = Html5_types.flow5 Html5.elt
+  type ui = Html5_types.flow5 elt
   type t = {
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;
@@ -122,9 +121,9 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
   let get {w_dom} = Value.of_string (Js.to_string w_dom##value)
 
   let create ?(shape = default_shape) ?on_patch init =
-    let inp = Html5.D.input ~input_type:`Text
-			    ~a:(attribs_of_shape shape) () in
-    let w_dom = Html5.To_dom.of_input inp in
+    let inp =
+      D.Raw.input ~a:(D.a_input_type `Text :: attribs_of_shape shape) () in
+    let w_dom = To_dom.of_input inp in
     let w = {w_dom; w_saved_title = Js.to_string w_dom##title;
 	     w_value = init} in
     w_dom##value <- Js.string (Value.to_string init);
@@ -156,7 +155,7 @@ module Simple_SE (Value : SIMPLE_VALUE) = struct
   include Basic_shape
 
   type value = Value.t
-  type ui = Html5_types.flow5 Html5.elt
+  type ui = Html5_types.flow5 elt
   type t = {
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;
@@ -175,8 +174,8 @@ module Simple_SE (Value : SIMPLE_VALUE) = struct
 
   let create ?(shape = default_shape) ?init () =
     let inp =
-      Html5.D.input ~input_type:`Text ~a:(attribs_of_shape shape) () in
-    let w_dom = Html5.To_dom.of_input inp in
+      D.Raw.input ~a:(D.a_input_type `Text :: attribs_of_shape shape) () in
+    let w_dom = To_dom.of_input inp in
     let w = {w_dom; w_saved_title = Js.to_string w_dom##title} in
     Option.iter (fun x -> w_dom##value <- Js.string (Value.to_string x)) init;
     let on_change _ _ =

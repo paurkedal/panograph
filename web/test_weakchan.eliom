@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -24,14 +24,15 @@
   let chan = Pandom_weakchan.create classify
 
   let rec make ks =
-    let add_input = D.input ~input_type:`Text () in
+    let add_input = D.Raw.input ~a:[D.a_input_type `Text] () in
     let add_input_dom = To_dom.of_input add_input in
     let on_add _ =
       let k = Js.to_string add_input_dom##value in
       add_input_dom##value <- Js.string "";
       Pandom_weakchan.send chan ks (`Add k) in
-    let add_button = D.button ~button_type:`Button ~a:[D.a_onclick on_add]
-			      [D.pcdata "add"] in
+    let add_button =
+      D.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
+	       [D.pcdata "add"] in
     let ul = D.ul [D.li [add_input; add_button]] in
     let on_msg = function
       | `Add k ->

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -66,7 +66,7 @@ let render () =
   Tabular.draw_td tab rs3 csT1 [D.pcdata "c₁"];
 
   let mk_remove_rs rs cs =
-    let button = D.button ~button_type:`Button [F.pcdata "-"] in
+    let button = D.Raw.button ~a:[D.a_button_type `Button] [F.pcdata "-"] in
     Tabular.draw_td tab rs cs [button];
     Lwt_js_events.(async @@ fun () ->
       clicks (To_dom.of_button button)
@@ -84,7 +84,7 @@ let render () =
   mk_remove_rs rs_foot cs_ctrl1;
 
   let mk_remove_cs rs cs =
-    let button = D.button ~button_type:`Button [F.pcdata "-"] in
+    let button = D.Raw.button ~a:[D.a_button_type `Button] [F.pcdata "-"] in
     Tabular.draw_td tab rs cs [button];
     Lwt_js_events.(async @@ fun () ->
       clicks (To_dom.of_button button)

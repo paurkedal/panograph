@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +33,8 @@
     Pandom_weaktbl.add wt (To_dom.of_element item1) 12;
     Pandom_weaktbl.add wt (To_dom.of_element item2) 13;
     let iter_button =
-      D.button ~button_type:`Button ~a:[D.a_onclick do_iter] [D.pcdata "iter"] in
+      D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick do_iter]
+		   [D.pcdata "iter"] in
     D.div [D.ul [item0; item2]; iter_button]
 }}
 

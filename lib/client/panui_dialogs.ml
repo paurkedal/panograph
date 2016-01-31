@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -67,7 +67,8 @@ module Modal_dialog = struct
 end
 
 let dialog_lwt mapping default content =
-  let make_button (label, _) = D.button ~button_type:`Button label in
+  let make_button (label, _) =
+    D.Raw.button ~a:[D.a_button_type `Button] label in
   let buttons = List.map make_button mapping in
   let close_waiter, close_wakener = Lwt.wait () in
   let dialog =

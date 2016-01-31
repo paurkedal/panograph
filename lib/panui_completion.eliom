@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -99,7 +99,7 @@
 	(fetch : (string -> string list Lwt.t) client_value)
 	(commit : (string -> ack Lwt.t) client_value) =
 
-    let input_elem = D.input ~input_type:`Text () in
+    let input_elem = D.Raw.input ~a:[D.a_input_type `Text] () in
     let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in
 
     let absorb = {string -> unit{

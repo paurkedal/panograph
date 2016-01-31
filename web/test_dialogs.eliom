@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -23,9 +23,9 @@
 
 let render () =
   let open_acknowledge =
-    D.button ~button_type:`Button [D.pcdata "Acknowledge"] in
+    D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Acknowledge"] in
   let open_confirm =
-    D.button ~button_type:`Button [D.pcdata "Confirm"] in
+    D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Confirm"] in
   ignore {unit{
     Lwt.async begin fun () ->
       Lwt_js_events.clicks (To_dom.of_button %open_acknowledge) @@ fun _ _ ->

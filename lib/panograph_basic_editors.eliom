@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -51,60 +51,60 @@
 
   let string_ident_cv = {string -> string{ident}}
 
-  let string_editor ?a
+  let string_editor ?(a = [])
 		    ?(to_string = string_ident_cv)
 		    ?(of_string = string_ident_cv)
 		    ?(value : string option)
 		    (patch_out : (string -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {string -> unit{
       outfit_input ~to_string:%to_string ~of_string:%of_string
 		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
-  let int_editor ?a
+  let int_editor ?(a = [])
 		 ?(to_string = {int -> string{string_of_int}})
 		 ?(of_string = {string -> int{int_of_string}})
 		 ?(value : int option)
 		 (patch_out : (int -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {int -> unit{
       outfit_input ~to_string:%to_string ~of_string:%of_string
 		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
-  let int32_editor ?a
+  let int32_editor ?(a = [])
 		   ?(to_string = {int32 -> string{Int32.to_string}})
 		   ?(of_string = {string -> int32{Int32.of_string}})
 		   ?(value : int32 option)
 		 (patch_out : (int32 -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {int32 -> unit{
       outfit_input ~to_string:%to_string ~of_string:%of_string
 		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
-  let int64_editor ?a
+  let int64_editor ?(a = [])
 		   ?(to_string = {int64 -> string{Int64.to_string}})
 		   ?(of_string = {string -> int64{Int64.of_string}})
 		   ?(value : int64 option)
 		 (patch_out : (int64 -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {int64 -> unit{
       outfit_input ~to_string:%to_string ~of_string:%of_string
 		   ?value:%value %input %patch_out
     }} in
     input, patch_in
 
-  let float_editor ?a
+  let float_editor ?(a = [])
 		   ?(to_string = {float -> string{string_of_float}})
 		   ?(of_string = {string -> float{float_of_string}})
 		   ?(value : float option)
 		   (patch_out : (float -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {float -> unit{
       outfit_input ~to_string:%to_string ~of_string:%of_string
 		   ?value:%value %input %patch_out
@@ -112,12 +112,12 @@
     input, patch_in
 
   let string_option_editor
-	?a
+	?(a = [])
 	?(to_string = string_ident_cv)
 	?(of_string = string_ident_cv)
 	?(value : string option option)
 	(patch_out : (string option -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {string option -> unit{
       let to_string = string_of_option %to_string in
       let of_string = option_of_string %of_string in
@@ -140,12 +140,12 @@
     input, patch_in
 
   let int_option_editor
-	?a
+	?(a = [])
 	?(to_string = {int -> string{string_of_int}})
 	?(of_string = {string -> int{int_of_string}})
 	?(value : int option option)
 	(patch_out : (int option -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {int option -> unit{
       let to_string = string_of_option %to_string in
       let of_string = option_of_string %of_string in
@@ -154,12 +154,12 @@
     input, patch_in
 
   let int32_option_editor
-	?a
+	?(a = [])
 	?(to_string = {int32 -> string{Int32.to_string}})
 	?(of_string = {string -> int32{Int32.of_string}})
 	?(value : int32 option option)
 	(patch_out : (int32 option -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {int32 option -> unit{
       let to_string = string_of_option %to_string in
       let of_string = option_of_string %of_string in
@@ -168,12 +168,12 @@
     input, patch_in
 
   let int64_option_editor
-	?a
+	?(a = [])
 	?(to_string = {int64 -> string{Int64.to_string}})
 	?(of_string = {string -> int64{Int64.of_string}})
 	?(value : int64 option option)
 	(patch_out : (int64 option -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {int64 option -> unit{
       let to_string = string_of_option %to_string in
       let of_string = option_of_string %of_string in
@@ -182,12 +182,12 @@
     input, patch_in
 
   let float_option_editor
-	?a
+	?(a = [])
 	?(to_string = {float -> string{string_of_float}})
 	?(of_string = {string -> float{float_of_string}})
 	?(value : float option option)
 	(patch_out : (float option -> ack Lwt.t) client_value) =
-    let input = D.input ~input_type:`Text ?a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = {float option -> unit{
       let to_string = string_of_option %to_string in
       let of_string = option_of_string %of_string in
@@ -282,7 +282,7 @@
 		    (patch_out : (bool -> ack Lwt.t) client_value) =
     let open Html5 in
     let a = if value then D.a_checked `Checked :: a else a in
-    let input = D.input ~input_type:`Checkbox ~a () in
+    let input = D.Raw.input ~a:(D.a_input_type `Checkbox :: a) () in
     let patch_in = {bool -> unit{
       (* TODO: Use Pandom_interactive.outfit_checkbox if this is kept. *)
       let open Html5 in

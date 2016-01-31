@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +25,7 @@ exception Invalid_input of string
 
 let make_button f content =
   let open Html5 in
-  let button = D.button ~button_type:`Button content in
+  let button = D.Raw.button ~a:[D.a_button_type `Button] content in
   let button_dom = To_dom.of_button button in
   let on_click _ _ =
     match_lwt f () with

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -30,6 +30,18 @@
   module Dep_sca = Test_scalar
   module Dep_twc = Test_weakchan
   module Dep_twt = Test_weaktbl
+}}
+
+{server{
+  let lwt_log_rules =
+    try Some (Sys.getenv "LWT_LOG_JS") with Not_found ->
+    try Some (Sys.getenv "LWT_LOG") with Not_found ->
+    None
+}}
+{client{
+  let () =
+    Lwt_log_js.(Section.set_level (Section.make "eliom:client") Warning);
+    Option.iter Lwt_log_js.load_rules %lwt_log_rules
 }}
 
 module App = Eliom_registration.App (struct let application_name = "test" end)

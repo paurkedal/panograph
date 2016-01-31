@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -66,9 +66,10 @@
       inp_dom##classList##remove(Js.string "dirty");
       inp_dom##value <- Js.string msg
     with Not_found ->
-      let inp = D.input ~input_type:`Text ~value:msg () in
+      let inp = D.Raw.input ~a:[D.a_input_type `Text; D.a_value msg] () in
       let inp_dom = To_dom.of_input inp in
-      let remove_button = D.button ~button_type:`Button [D.pcdata "−"] in
+      let remove_button =
+	D.Raw.button ~a:[D.a_button_type `Button] [D.pcdata "−"] in
       let remove_dom = To_dom.of_button remove_button in
       let item = D.span [D.span [D.pcdata (Lang.to_string lang)];
 			 inp; remove_button] in
@@ -99,9 +100,9 @@
 		   (patch_out : (twine_editor_out -> ack Lwt.t) client_value) =
     let open Html5 in
     let add_input =
-      D.input ~input_type:`Text
-	      ~a:[D.a_class ["lang"]; D.a_size 2; D.a_maxlength 2] () in
-    let add_button = D.button ~button_type:`Button [D.pcdata "+"] in
+      D.Raw.input ~a:[D.a_input_type `Text; D.a_class ["lang"];
+		      D.a_size 2; D.a_maxlength 2] () in
+    let add_button = D.Raw.button ~a:[D.a_button_type `Button] [D.pcdata "+"] in
     let add_span = D.span ~a:[D.a_class ["ui"]] [add_input; add_button] in
     let trans_span = D.span ~a:[D.a_class ["main"]] [] in
     let error_span = D.span ~a:[D.a_class ["error"]] [] in

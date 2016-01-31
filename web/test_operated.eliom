@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -67,32 +67,35 @@ let patch_c =
 
   let make_item (k, p) =
     let intro =
-      let input = D.input ~input_type:`Text () in
+      let input = D.Raw.input ~a:[D.a_input_type `Text] () in
       let input_dom = Html5.To_dom.of_input input in
       let on_add _ =
 	let s = Js.to_string (input_dom##value) in
 	Lwt.async (fun () -> %patch_c (Map_at (k, Set_add s))) in
-      let add_button = D.button ~button_type:`Button ~a:[D.a_onclick on_add]
-				[D.pcdata "+"] in
+      let add_button =
+	D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
+		     [D.pcdata "+"] in
       [D.li [input; D.pcdata " "; add_button]] in
     let make_li x =
       let delete _ =
 	Lwt.async (fun () -> %patch_c (Map_at (k, Set_remove x))) in
-      let delete_button = D.button ~button_type:`Button ~a:[D.a_onclick delete]
-				   [D.pcdata "−"] in
+      let delete_button =
+	D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick delete]
+		     [D.pcdata "−"] in
       absurd, [D.li [D.pcdata x; D.pcdata " "; delete_button]] in
     let patch_ul, ul = O.ul ~intro make_li p in
     patch_ul, [D.dt [D.pcdata k]; D.dd [ul]]
 
   let make_dl p =
     let intro =
-      let input = D.input ~input_type:`Text () in
+      let input = D.Raw.input ~a:[D.a_input_type `Text] () in
       let input_dom = Html5.To_dom.of_input input in
       let on_add _ =
 	let k = Js.to_string (input_dom##value) in
 	Lwt.async (fun () -> %patch_c (Map_add (k, String_set.empty))) in
-      let add_button = D.button ~button_type:`Button ~a:[D.a_onclick on_add]
-				[D.pcdata "+"] in
+      let add_button =
+	D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
+		     [D.pcdata "+"] in
       [D.dt [input]; D.dd [add_button]] in
     O.dl ~intro make_item p
 }}

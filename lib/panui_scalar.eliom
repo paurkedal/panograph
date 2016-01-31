@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -66,7 +66,7 @@
     val mutable absorb = fun _ -> ()
 
     method edit_on f =
-      let inp = D.input ~input_type:`Text () in
+      let inp = D.Raw.input ~a:[F.a_input_type `Text] () in
       absorb <- outfit_input ~to_string ~of_string ?error ~value inp f;
       Manip.replaceChildren el [inp]
 
@@ -94,7 +94,7 @@
 
     method edit_on f =
       let a = if init then [D.a_checked `Checked] else [] in
-      let inp = D.input ~input_type:`Checkbox ~a () in
+      let inp = D.Raw.input ~a:(D.a_input_type `Checkbox :: a) () in
       absorb <- outfit_checkbox ?error ~value inp f;
       Manip.replaceChildren el [inp]
 
@@ -148,7 +148,7 @@
     val mutable absorb = fun _ -> ()
 
     method private set_unknown =
-      Manip.appendChildFirst select unknown_option;
+      Manip.insertFirstChild select unknown_option;
       Pandom_style.set_error
 	"The currently selected option is no longer available."
 	(To_dom.of_select select);
