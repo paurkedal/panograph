@@ -1,3 +1,5 @@
+"client/pandom_finalizer.ml": syntax(camlp4o), \
+    package(js_of_ocaml.syntax)
 "client/pandom_interactive.ml": syntax(camlp4o), \
     package(lwt.syntax), package(js_of_ocaml.syntax)
 "client/pandom_style.ml": syntax(camlp4o), \

@@ -16,3 +16,6 @@ td.rbody-r.cbody-lc { border-right: solid thin #333; }
 .rhead.cbody-lc { border-right: solid thin #07f; }
 .rbody.chead { border: solid thin #f70; }
 .rfoot.cbody { border: solid thin #3a3; }
+
+.nesting:before { content: "("; }
+.nesting:after { content: ")"; }
