@@ -3,21 +3,21 @@
 .pan-error { background-color: #c00; color: #fff; }
 
 div.pan-dialog-veil {
-        z-index: 98;
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        opacity: 0.5;
-        background-color: #777;
+	z-index: 98;
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	opacity: 0.5;
+	background-color: #777;
 }
 div.pan-dialog-box {
-        z-index: 99;
-        position: fixed;
-        top: 8.3%; left: 12.5%; right: 12.5%;
-        border: solid thin #000;
-        border-left: solid 2mm #000;
-        border-right: solid 2mm #000;
-        background-color: #fff;
-        padding: 1mm 2mm;
+	z-index: 99;
+	position: fixed;
+	top: 8.3%; left: 12.5%; right: 12.5%;
+	border: solid thin #000;
+	border-left: solid 2mm #000;
+	border-right: solid 2mm #000;
+	background-color: #fff;
+	padding: 1mm 2mm;
 	outline: solid thin #fff;
 }
 div.pan-dialog-buttons { text-align: left; }
