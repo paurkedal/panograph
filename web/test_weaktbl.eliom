@@ -34,7 +34,7 @@
     Pandom_weaktbl.add wt (To_dom.of_element item2) 13;
     let iter_button =
       D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick do_iter]
-		   [D.pcdata "iter"] in
+                   [D.pcdata "iter"] in
     D.div [D.ul [item0; item2]; iter_button]
 }}
 

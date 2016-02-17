@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,8 @@
   open Panograph_types
 
   val string_completion_input :
-	?value: string ->
-	(string -> string list Lwt.t) client_value ->
-	(string -> ack Lwt.t) client_value ->
-	[> Html5_types.span] Html5.elt * (string -> unit) client_value
+        ?value: string ->
+        (string -> string list Lwt.t) client_value ->
+        (string -> ack Lwt.t) client_value ->
+        [> Html5_types.span] Html5.elt * (string -> unit) client_value
 }}

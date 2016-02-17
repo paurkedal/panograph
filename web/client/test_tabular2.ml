@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -25,21 +25,21 @@ let tile ns ms =
   let rs = Tabular.root_rowspan tab in
   let cs = Tabular.root_colspan tab in
   Eliom_lib.debug "** Tiling [%s], [%s]"
-		  (String.concat ", " (List.map string_of_int ns))
-		  (String.concat ", " (List.map string_of_int ms));
+                  (String.concat ", " (List.map string_of_int ns))
+                  (String.concat ", " (List.map string_of_int ms));
   let rec add_rows rs = function
     | [] -> ()
     | n :: ns ->
       for i = 0 to n - 1 do
-	let rs' = Tabular.Rowspan.add_last tab rs in
-	add_rows rs' ns
+        let rs' = Tabular.Rowspan.add_last tab rs in
+        add_rows rs' ns
       done in
   let rec add_cols cs = function
     | [] -> ()
     | m :: ms ->
       for j = 0 to m - 1 do
-	let cs' = Tabular.Colspan.add_last tab cs in
-	add_cols cs' ms
+        let cs' = Tabular.Colspan.add_last tab cs in
+        add_cols cs' ms
       done in
   Eliom_lib.debug "** Adding rows and columns.";
   add_rows rs ns;
@@ -50,13 +50,13 @@ let tile ns ms =
   Tabular.Rowspan.iterp ~depth:(List.length ns)
     (fun pr rs ->
       Tabular.Colspan.iterp ~depth:(List.length ms)
-	(fun pc cs ->
-	  let open Html5 in
-	  let sr = String.concat "." (List.map string_of_int pr) in
-	  let sc = String.concat "." (List.map string_of_int pc) in
-	  let label = [F.pcdata sr; F.pcdata ", "; F.pcdata sc] in
-	  Tabular.draw_td tab rs cs label)
-	cs)
+        (fun pc cs ->
+          let open Html5 in
+          let sr = String.concat "." (List.map string_of_int pr) in
+          let sc = String.concat "." (List.map string_of_int pc) in
+          let label = [F.pcdata sr; F.pcdata ", "; F.pcdata sc] in
+          Tabular.draw_td tab rs cs label)
+        cs)
     rs;
   Tabular.ui tab
 
@@ -71,10 +71,10 @@ let render () =
   Tabular.Rowspan.iteri
     (fun n rs ->
       Tabular.Colspan.iteri
-	(fun m cs ->
-	  if n <> 0 || m <> 0 then
-	    Tabular.draw_td tab rs cs
-	      [tile (List.sample (konst 2) n) (List.sample (konst 2) m)])
-	cs)
+        (fun m cs ->
+          if n <> 0 || m <> 0 then
+            Tabular.draw_td tab rs cs
+              [tile (List.sample (konst 2) n) (List.sample (konst 2) m)])
+        cs)
     rs;
   Tabular.ui tab

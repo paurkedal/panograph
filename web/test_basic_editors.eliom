@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -80,7 +80,7 @@ let string_option_menu_stream, string_option_menu_out' = Lwt_stream.create ()
 let string_option_menu_comet =
   Eliom_comet.Channel.create ~scope:`Site string_option_menu_stream
 let string_option_menu_out =
-	server_function Json.t<string option> @@ fun x_opt ->
+        server_function Json.t<string option> @@ fun x_opt ->
   begin match x_opt with
   | None -> Lwt_log.debug "Selected string option None."
   | Some x -> Lwt_log.debug_f "Selected string option Some %s." x
@@ -93,7 +93,7 @@ let string_option_textarea_stream, string_option_textarea_out' = Lwt_stream.crea
 let string_option_textarea_comet =
   Eliom_comet.Channel.create ~scope:`Site string_option_textarea_stream
 let string_option_textarea_out =
-	server_function Json.t<string option> @@ fun x_opt ->
+        server_function Json.t<string option> @@ fun x_opt ->
   begin match x_opt with
   | None -> Lwt_log.debug "Selected string option None."
   | Some x -> Lwt_log.debug_f "Selected string option Some %s." x
@@ -120,20 +120,20 @@ let render () =
 
   let bool_option_ed, bool_option_in =
     bool_option_selector ~false_label:"false" ~true_label:"true"
-			 {{ %bool_option_out }} in
+                         {{ %bool_option_out }} in
   ignore {unit{Lwt.async @@ fun () ->
     Lwt_stream.iter %bool_option_in %bool_option_comet}};
 
   let int_option_ed, int_option_in =
     int_option_selector ~items:[None, [0, "zero", true; 1, "one", true];
-				Some "g", [2, "two", true; 3, "three", false]]
-			{{ %int_option_out }} in
+                                Some "g", [2, "two", true; 3, "three", false]]
+                        {{ %int_option_out }} in
   ignore {unit{Lwt.async @@ fun () ->
     Lwt_stream.iter %int_option_in %int_option_comet}};
 
   let string_option_menu, string_option_menu_in =
     string_option_menu ~values:["Earth"; "Sun"; "The Milky Way"]
-			   {{ %string_option_menu_out }} in
+                           {{ %string_option_menu_out }} in
   ignore {unit{Lwt.async @@ fun () ->
     Lwt_stream.iter %string_option_menu_in %string_option_menu_comet}};
 

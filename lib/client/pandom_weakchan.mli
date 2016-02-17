@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -28,7 +28,7 @@ val create : ('k -> string) -> ('k, 'a) t
     [classify]. *)
 
 val subscribe_class : ('k, 'a) t -> #Dom_html.element Js.t ->
-		      'k -> ('a -> unit) -> subscription
+                      'k -> ('a -> unit) -> subscription
 (** [subscribe_class chan el k f] adds [f] as a listener for messages on
     [chan] classified by [k] and returns a handle to use for unsubscribing.
     This function adds a CSS class to [el] to identify the listener, and the
@@ -36,7 +36,7 @@ val subscribe_class : ('k, 'a) t -> #Dom_html.element Js.t ->
     document. *)
 
 val subscribe_id : ('k, 'a) t -> #Dom_html.element Js.t ->
-		   'k -> ('a -> unit) -> subscription
+                   'k -> ('a -> unit) -> subscription
 (** [subscribe_class chan el k f] adds [f] as a listener for messages on
     [chan] classified by [k] and returns a handle to use for unsubscribing.
     This function sets the [id] attribute of [el], and the listener will only

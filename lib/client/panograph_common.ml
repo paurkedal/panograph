@@ -56,8 +56,8 @@ module Basic_shape = struct
   let attribs_of_shape s =
     [] |> Option.fold (fun id -> List.push (Html5.F.a_id id)) s.a_id
        |> begin match s.a_class with
-	  | [] -> ident
-	  | cls -> List.push (Html5.F.a_class cls)
-	  end
+          | [] -> ident
+          | cls -> List.push (Html5.F.a_class cls)
+          end
        |> Option.fold (fun s -> List.push (Html5.F.a_title s)) s.a_title
 end

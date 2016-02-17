@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -36,28 +36,28 @@
   end
 
   val add_input_with_handle :
-	to_string: ('a -> string) ->
-	of_string: (string -> 'a) ->
-	?opts: ('a, 'opt) opt list ->
-	?emit: ('a -> ack Lwt.t) ->
-	?error: (string option -> unit) ->
-	'a -> [< `Span | `Div | `Td] elt -> 'a handle
+        to_string: ('a -> string) ->
+        of_string: (string -> 'a) ->
+        ?opts: ('a, 'opt) opt list ->
+        ?emit: ('a -> ack Lwt.t) ->
+        ?error: (string option -> unit) ->
+        'a -> [< `Span | `Div | `Td] elt -> 'a handle
 }}
 
 {shared{
   val opt : ?enabled: bool -> string -> 'a -> ('a, [> `Opt]) opt
   val optv : ?enabled: bool -> 'a -> ('a, [> `Opt]) opt
   val optgroup : ?enabled: bool -> string ->
-		 ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
+                 ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
 
   type ('a, 'opt, 'attrib, 'elt) t =
-	?to_string: ('a -> string) client_value ->
-	?of_string: (string -> 'a) client_value ->
-	?opts: ('a, 'opt) opt list ->
-	?emit: ('a -> ack Lwt.t) client_value ->
-	?error: (string option -> unit) client_value ->
-	?a: 'attrib attrib list ->
-	'a -> 'elt elt * 'a handle client_value
+        ?to_string: ('a -> string) client_value ->
+        ?of_string: (string -> 'a) client_value ->
+        ?opts: ('a, 'opt) opt list ->
+        ?emit: ('a -> ack Lwt.t) client_value ->
+        ?error: (string option -> unit) client_value ->
+        ?a: 'attrib attrib list ->
+        'a -> 'elt elt * 'a handle client_value
       constraint 'attrib = [< Html5_types.common > `Class]
       constraint 'opt = [< `Opt | `Optgroup]
       constraint 'elt = [> `Span]

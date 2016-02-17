@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -77,31 +77,31 @@ let render () =
 
   let string_ed, h = Panui_scalar.string "" in
   ignore {unit{ %h#edit_on %string_out;
-		Lwt.async (fun () -> Lwt_stream.iter %h#set %string_comet) }};
+                Lwt.async (fun () -> Lwt_stream.iter %h#set %string_comet) }};
 
   let int_ed, h = Panui_scalar.int 0 in
   ignore {unit{ %h#edit_on %int_out;
-		Lwt.async (fun () -> Lwt_stream.iter %h#set %int_comet) }};
+                Lwt.async (fun () -> Lwt_stream.iter %h#set %int_comet) }};
 
   let int_select_ed, h =
     let opts = Panui_scalar.[opt "Zero" 0; opt "One" 1;
-			     opt "Two" 2; opt "Three" 3] in
+                             opt "Two" 2; opt "Three" 3] in
     Panui_scalar.int ~opts 0 in
   ignore {unit{ %h#edit_on %int_out;
-		Lwt.async (fun () -> Lwt_stream.iter %h#set %int_comet) }};
+                Lwt.async (fun () -> Lwt_stream.iter %h#set %int_comet) }};
 
   let float_ed, h = Panui_scalar.float 0.0 in
   ignore {unit{ %h#edit_on %float_out;
-		Lwt.async (fun () -> Lwt_stream.iter %h#set %float_comet) }};
+                Lwt.async (fun () -> Lwt_stream.iter %h#set %float_comet) }};
 
   let bool1_ed, h = Panui_scalar.bool false in
   ignore {unit{ %h#edit_on %bool_out;
-		Lwt.async (fun () -> Lwt_stream.iter %h#set %bool_comet) }};
+                Lwt.async (fun () -> Lwt_stream.iter %h#set %bool_comet) }};
 
   let bool2_ed, h =
     Panui_scalar.(bool ~opts:[opt "yes" true; opt "no" false] false) in
   ignore {unit{ %h#edit_on %bool_out;
-		Lwt.async (fun () -> Lwt_stream.iter %h#set %bool_comet) }};
+                Lwt.async (fun () -> Lwt_stream.iter %h#set %bool_comet) }};
 
   let bool_option_ed, h = Panui_scalar.bool_option None in
   ignore {unit{

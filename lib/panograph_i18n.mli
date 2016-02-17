@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -39,7 +39,7 @@ module Twine : sig
   val to_string : langs: lang list -> t -> string
 
   type sym_patch = string Lang_map.t * string Lang_map.t
-		 * (string * string) Lang_map.t
+                 * (string * string) Lang_map.t
   val sym_diff : t -> t -> sym_patch
   val sym_patch : ?strategy: [`Theirs | `Ours] -> sym_patch -> t -> t
 end

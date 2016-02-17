@@ -39,9 +39,9 @@
     let n = Manip.childLength node in
     if c < n then
       if d >= 8 || Random.bool () then
-	Manip.removeChild node (Option.get (Manip.nth node c))
+        Manip.removeChild node (Option.get (Manip.nth node c))
       else
-	mutate (succ d) (Option.get (Manip.nth node c))
+        mutate (succ d) (Option.get (Manip.nth node c))
     else
       Manip.appendChild node (create ())
 
@@ -50,7 +50,7 @@
     mutate 0 node;
     let reachable_count =
       Dom_html.document##getElementsByClassName(Js.string "-pan-finalized-")
-		       ##length in
+                       ##length in
     Manip.replaceChildren stat [
       D.pcdata "Created ";
       D.pcdata (string_of_int !created_count);

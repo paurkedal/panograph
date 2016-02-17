@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -19,10 +19,10 @@ open Panograph_common
 open Panograph_intf
 
 module Collection_PE
-	(Elt_PE : RETRACTABLE_PATCH_EDITOR)
-	(Elt_SE : SNAPSHOT_EDITOR with type value = Elt_PE.value)
-	(Container : CONTAINER with type item_ui = Elt_PE.ui * controls_ui
-				and type static_ui = Elt_SE.ui * controls_ui) :
+        (Elt_PE : RETRACTABLE_PATCH_EDITOR)
+        (Elt_SE : SNAPSHOT_EDITOR with type value = Elt_PE.value)
+        (Container : CONTAINER with type item_ui = Elt_PE.ui * controls_ui
+                                and type static_ui = Elt_SE.ui * controls_ui) :
 sig
   type shape = {
     elt_pe_shape : Elt_PE.shape;
@@ -34,9 +34,9 @@ sig
      and type ui = Container.ui
      and type value = Elt_PE.value list
      and type patch_out = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
-			  | `Patch of Elt_PE.patch_out ]
+                          | `Patch of Elt_PE.patch_out ]
      and type patch_in = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
-			 | `Patch of Elt_PE.patch_in ]
+                         | `Patch of Elt_PE.patch_in ]
 end
 
 module Ul_collection_container : sig

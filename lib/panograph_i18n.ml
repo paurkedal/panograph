@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -38,14 +38,14 @@ module Lang = struct
       invalid_arg_f "lang_of_string: %s is not an ISO 639 language code." s;
     let _, lang =
       String.fold (fun c (k, lang) -> (k - 6, lang lor int_of_letter c lsl k))
-		  s (18, 0) in
+                  s (18, 0) in
     lang
 
   let to_string lang =
     let letter_of_int i = Char.chr (i + 0x60) in
     let len =
       if lang land 0xfff = 0 then if lang land 0x03ffff = 0 then 1 else 2
-			     else if lang land 0x00003f = 0 then 3 else 4 in
+                             else if lang land 0x00003f = 0 then 3 else 4 in
     String.sample (fun i -> letter_of_int (lang lsr (18 - 6 * i) land 0x3f)) len
 
   let equal = (=)
@@ -70,10 +70,10 @@ module Twine = struct
     match langs with
     | [] -> raise Not_found
     | lang :: langs -> try Lang_map.find lang tw
-		       with Not_found -> to_string ~langs tw
+                       with Not_found -> to_string ~langs tw
 
   type sym_patch = string Lang_map.t * string Lang_map.t
-		 * (string * string) Lang_map.t
+                 * (string * string) Lang_map.t
 
   let sym_diff = Lang_map.split_union (fun _ a b -> a, b)
 

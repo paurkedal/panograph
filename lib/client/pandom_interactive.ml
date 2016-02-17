@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -37,7 +37,7 @@ let outfit_interactive ~to_string ~of_string ?error ?value input_dom emit =
       try emit (of_string (Js.to_string input_dom##value)) with
       | Invalid_input msg -> Lwt.return (Ack_error msg)
       | Invalid_argument _ | Failure _ ->
-	Lwt.return (Ack_error "Invalid input.")
+        Lwt.return (Ack_error "Invalid input.")
     with
     | Ack_ok ->
       clear_error input_dom;
@@ -56,15 +56,15 @@ let outfit_interactive ~to_string ~of_string ?error ?value input_dom emit =
 
 let outfit_input ~to_string ~of_string ?error ?value input emit =
   outfit_interactive ~to_string ~of_string ?error ?value
-		     (Eliom_content.Html5.To_dom.of_input input) emit
+                     (Eliom_content.Html5.To_dom.of_input input) emit
 
 let outfit_select ~to_string ~of_string ?error ?value select emit =
   outfit_interactive ~to_string ~of_string ?error ?value
-		     (Eliom_content.Html5.To_dom.of_select select) emit
+                     (Eliom_content.Html5.To_dom.of_select select) emit
 
 let outfit_textarea ~to_string ~of_string ?error ?value textarea emit =
   outfit_interactive ~to_string ~of_string ?error ?value
-		     (Eliom_content.Html5.To_dom.of_textarea textarea) emit
+                     (Eliom_content.Html5.To_dom.of_textarea textarea) emit
 
 let outfit_checkbox ?error ?value checkbox emit =
   let set_error, clear_error =

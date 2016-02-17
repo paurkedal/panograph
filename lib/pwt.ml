@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -32,7 +32,7 @@ let async_updater f =
     match !state with
     | None ->
       if !is_finalised then Lwt.return_unit
-		       else Lwt_condition.wait cond >> loop ()
+                       else Lwt_condition.wait cond >> loop ()
     | Some x ->
       state := None;
       f x >> loop () in

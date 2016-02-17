@@ -47,16 +47,16 @@ let run () =
   let rec finalize_unmarked slot n =
     if slot.next == chain then n else begin
       if not slot.next.mark then begin
-	slot.next.finalize ();
-	slot.next <- slot.next.next;
-	finalize_unmarked slot (succ n)
+        slot.next.finalize ();
+        slot.next <- slot.next.next;
+        finalize_unmarked slot (succ n)
       end else
-	finalize_unmarked slot.next n
+        finalize_unmarked slot.next n
     end in
   let finalized_count = finalize_unmarked chain 0 in
 
   Lwt_log_js.ign_info_f ~section "Ran %d of %d finalizers."
-			finalized_count finalizer_count
+                        finalized_count finalizer_count
 
 let triggered = ref false
 

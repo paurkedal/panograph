@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -61,7 +61,7 @@ module Tabular : sig
   module Colspan : SPAN_TREE with type tabular := t
 
   val create : ?a: [< Html5_types.table_attrib] Html5.attrib list ->
-	       ?root_css_class: string -> unit -> t
+               ?root_css_class: string -> unit -> t
   val validate : t -> unit
   val ui : t -> [> `Table] Html5.elt
   val root_rowspan : t -> Rowspan.t
@@ -70,11 +70,11 @@ module Tabular : sig
   val state : t -> Rowspan.t -> Colspan.t -> state
   val refine : t -> int -> int -> Rowspan.t -> Colspan.t -> unit
   val draw : t -> Rowspan.t -> Colspan.t ->
-	     [< Html5_types.tr_content] Html5.elt -> unit
+             [< Html5_types.tr_content] Html5.elt -> unit
   val draw_th : t -> Rowspan.t -> Colspan.t ->
-		?a: [< Html5_types.th_attrib] Html5.attrib list ->
-		[< Html5_types.th_content] Html5.elt list -> unit
+                ?a: [< Html5_types.th_attrib] Html5.attrib list ->
+                [< Html5_types.th_content] Html5.elt list -> unit
   val draw_td : t -> Rowspan.t -> Colspan.t ->
-		?a: [< Html5_types.td_attrib] Html5.attrib list ->
-		[< Html5_types.td_content] Html5.elt list -> unit
+                ?a: [< Html5_types.td_attrib] Html5.attrib list ->
+                [< Html5_types.td_content] Html5.elt list -> unit
 end

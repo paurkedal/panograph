@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -25,13 +25,13 @@ val remove : ('e, 'a) t -> 'e -> unit
 val find : ('e, 'a) t -> 'e -> 'a option
 
 val iter : ?top: #Dom_html.element Js.t ->
-	   ('e -> 'a -> unit) -> ('e, 'a) t -> unit
+           ('e -> 'a -> unit) -> ('e, 'a) t -> unit
 
 val fold : ?top: #Dom_html.element Js.t ->
-	   ('e -> 'a -> 'b -> 'b) -> ('e, 'a) t -> 'b -> 'b
+           ('e -> 'a -> 'b -> 'b) -> ('e, 'a) t -> 'b -> 'b
 
 val for_all : ?top: #Dom_html.element Js.t ->
-	      ('e -> 'a -> bool) -> ('e, 'a) t -> bool
+              ('e -> 'a -> bool) -> ('e, 'a) t -> bool
 
 val exists : ?top: #Dom_html.element Js.t ->
-	     ('e -> 'a -> bool) -> ('e, 'a) t -> bool
+             ('e -> 'a -> bool) -> ('e, 'a) t -> bool

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -24,10 +24,10 @@ open Unprime_list
 open Unprime_option
 
 module Mapped_PE
-	(Key : Map.OrderedType)
-	(Key_SV : SNAPSHOT_VIEWER with type value = Key.t)
-	(Elt_PE : RETRACTABLE_PATCH_EDITOR)
-	(Container : CONTAINER with type item_ui = Key_SV.ui * Elt_PE.ui) =
+        (Key : Map.OrderedType)
+        (Key_SV : SNAPSHOT_VIEWER with type value = Key.t)
+        (Elt_PE : RETRACTABLE_PATCH_EDITOR)
+        (Container : CONTAINER with type item_ui = Key_SV.ui * Elt_PE.ui) =
 struct
   type shape = {
     key_sv_shape : Key_SV.shape;
@@ -38,9 +38,9 @@ struct
   type value = (Key_SV.value * Elt_PE.value) list
   type patch_out = [`Patch of Key_SV.value * Elt_PE.patch_out]
   type patch_in = [ `Add of Key_SV.value * Elt_PE.value
-		  | `Remove of Key_SV.value
-		  | `Patch of Key_SV.value * Key_SV.value option
-			    * Elt_PE.patch_in ]
+                  | `Remove of Key_SV.value
+                  | `Patch of Key_SV.value * Key_SV.value option
+                            * Elt_PE.patch_in ]
 
   module Map = Prime_enummap.Make (Key)
 
@@ -77,12 +77,12 @@ struct
       let e_key = ref k in
       let on_elt_patch on_patch p = on_patch (`Patch (!e_key, p)) in
       let key_sv, key_ui =
-	Key_SV.create ~shape:w.w_shape.key_sv_shape k in
+        Key_SV.create ~shape:w.w_shape.key_sv_shape k in
       let elt_pe, elt_ui =
-	Elt_PE.create ~shape:w.w_shape.elt_pe_shape
-		      ?on_patch:(Option.map on_elt_patch w.w_on_patch) v in
+        Elt_PE.create ~shape:w.w_shape.elt_pe_shape
+                      ?on_patch:(Option.map on_elt_patch w.w_on_patch) v in
       let item = Container.create_item ~shape:w.w_shape.container_shape
-				       (key_ui, elt_ui) in
+                                       (key_ui, elt_ui) in
       add_elt w k {e_key; e_key_sv = key_sv; e_elt_pe = elt_pe; e_item = item}
     end
 
@@ -99,17 +99,17 @@ struct
       match k' with
       | None -> Elt_PE.patch (Map.find k w.w_map).e_elt_pe p
       | Some k' ->
-	let elt = Map.find k w.w_map in
-	if Map.contains k' w.w_map then
-	  error "Conflict for incomping patch to mapped collection."
-	else begin
-	  Container.remove w.w_container elt.e_item;
-	  w.w_map <- Map.remove k w.w_map;
-	  Elt_PE.patch elt.e_elt_pe p;
-	  Key_SV.set elt.e_key_sv k';
-	  elt.e_key := k';
-	  add_elt w k' elt
-	end
+        let elt = Map.find k w.w_map in
+        if Map.contains k' w.w_map then
+          error "Conflict for incomping patch to mapped collection."
+        else begin
+          Container.remove w.w_container elt.e_item;
+          w.w_map <- Map.remove k w.w_map;
+          Elt_PE.patch elt.e_elt_pe p;
+          Key_SV.set elt.e_key_sv k';
+          elt.e_key := k';
+          add_elt w k' elt
+        end
     with Not_found ->
       error "Cannot find element to patch in mapped collection."
 
@@ -123,9 +123,9 @@ struct
       Container.create ~shape:shape.container_shape () in
     let w =
       { w_shape = shape;
-	w_container = container;
-	w_map = Map.empty;
-	w_on_patch = on_patch; } in
+        w_container = container;
+        w_map = Map.empty;
+        w_on_patch = on_patch; } in
     List.iter (add_binding w) init;
     w, container_ui
 end
@@ -157,7 +157,7 @@ module Table_mapped_container = struct
   type ui = Html5_types.flow5 Html5.elt
   type t = ui
   type item_ui = Html5_types.flow5 Html5.elt list
-	       * Html5_types.flow5 Html5.elt list
+               * Html5_types.flow5 Html5.elt list
   type item = Html5_types.table_content Html5.elt
   type static_ui = Prime.counit
 

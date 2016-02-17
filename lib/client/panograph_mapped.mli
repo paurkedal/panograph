@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -19,10 +19,10 @@ open Panograph_common
 open Panograph_intf
 
 module Mapped_PE
-	(Key : Map.OrderedType)
-	(Key_SV : SNAPSHOT_VIEWER with type value = Key.t)
-	(Elt_PE : RETRACTABLE_PATCH_EDITOR)
-	(Container : CONTAINER with type item_ui = Key_SV.ui * Elt_PE.ui) :
+        (Key : Map.OrderedType)
+        (Key_SV : SNAPSHOT_VIEWER with type value = Key.t)
+        (Elt_PE : RETRACTABLE_PATCH_EDITOR)
+        (Container : CONTAINER with type item_ui = Key_SV.ui * Elt_PE.ui) :
 sig
   type shape = {
     key_sv_shape : Key_SV.shape;
@@ -35,9 +35,9 @@ sig
      and type value = (Key_SV.value * Elt_PE.value) list
      and type patch_out = [ `Patch of Key_SV.value * Elt_PE.patch_out ]
      and type patch_in = [ `Add of Key_SV.value * Elt_PE.value
-			 | `Remove of Key_SV.value
-			 | `Patch of Key_SV.value * Key_SV.value option
-				   * Elt_PE.patch_in ]
+                         | `Remove of Key_SV.value
+                         | `Patch of Key_SV.value * Key_SV.value option
+                                   * Elt_PE.patch_in ]
 end
 
 module Ul_mapped_container : sig
@@ -45,7 +45,7 @@ module Ul_mapped_container : sig
   include CONTAINER
     with type shape := shape
      and type item_ui = Html5_types.flow5 Html5.elt
-		      * Html5_types.flow5 Html5.elt
+                      * Html5_types.flow5 Html5.elt
      and type ui = Html5_types.flow5 Html5.elt
 end
 
@@ -54,6 +54,6 @@ module Table_mapped_container : sig
   include CONTAINER
     with type shape := shape
      and type item_ui = Html5_types.flow5 Html5.elt list
-		      * Html5_types.flow5 Html5.elt list
+                      * Html5_types.flow5 Html5.elt list
      and type ui = Html5_types.flow5 Html5.elt
 end

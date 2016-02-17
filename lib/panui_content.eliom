@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -23,20 +23,20 @@
 
     module Svg :
       Svg_sigs.T
-	with module Xml := Eliom_content.Xml
-	with type +'a elt = 'a Eliom_content.Svg.elt
-	 and type 'a wrap = 'a
-	 and type 'a list_wrap = 'a list
-	 and type +'a attrib = 'a Eliom_content.Svg.attrib
+        with module Xml := Eliom_content.Xml
+        with type +'a elt = 'a Eliom_content.Svg.elt
+         and type 'a wrap = 'a
+         and type 'a list_wrap = 'a list
+         and type +'a attrib = 'a Eliom_content.Svg.attrib
 
     module Html5 :
       Html5_sigs.T
-	with module Xml := Eliom_content.Xml
-	with module Svg := Svg
-	 and type +'a elt = 'a Eliom_content.Html5.elt
-	 and type 'a wrap = 'a
-	 and type 'a list_wrap = 'a list
-	 and type +'a attrib = 'a Eliom_content.Html5.attrib
+        with module Xml := Eliom_content.Xml
+        with module Svg := Svg
+         and type +'a elt = 'a Eliom_content.Html5.elt
+         and type 'a wrap = 'a
+         and type 'a list_wrap = 'a list
+         and type +'a attrib = 'a Eliom_content.Html5.attrib
   end
 
   module Make_selection (Content : Make_selection_param) = struct
@@ -72,13 +72,13 @@
     type 'a t = ('a, Html5_types.select_content_fun) elt list
     module F =
       Make_selection (struct
-	module Svg = Eliom_content.Svg.F
-	module Html5 = Eliom_content.Html5.F.Raw
+        module Svg = Eliom_content.Svg.F
+        module Html5 = Eliom_content.Html5.F.Raw
       end)
     module D =
       Make_selection (struct
-	module Svg = Eliom_content.Svg.D
-	module Html5 = Eliom_content.Html5.D.Raw
+        module Svg = Eliom_content.Svg.D
+        module Html5 = Eliom_content.Html5.D.Raw
       end)
   end
 

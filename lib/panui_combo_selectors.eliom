@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -37,14 +37,14 @@
 
 {shared{
   let int_string_option_combo_selector
-	?(a = [])
-	?inl_a
-	?inr_a
-	~inl_selection
-	?inr_to_string
-	?inr_of_string
-	?(value : (int, string) either option = None)
-	(emit : ((int, string) either option -> ack Lwt.t) client_value) =
+        ?(a = [])
+        ?inl_a
+        ?inr_a
+        ~inl_selection
+        ?inr_to_string
+        ?inr_of_string
+        ?(value : (int, string) either option = None)
+        (emit : ((int, string) either option -> ack Lwt.t) client_value) =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
     let inl_emit =
@@ -53,27 +53,27 @@
       {{function None -> %emit None | Some x -> %emit (Some (Inr x))}} in
     let inl_elem, inl_absorb =
       int_option_selector ?a:inl_a ~selection:inl_selection
-			    ~value:inl_value inl_emit in
+                            ~value:inl_value inl_emit in
     let inr_elem, inr_absorb =
       string_option_editor ?a:inr_a
-			   ?to_string:inr_to_string ?of_string:inr_of_string
-			   ~value:inr_value inr_emit in
+                           ?to_string:inr_to_string ?of_string:inr_of_string
+                           ~value:inr_value inr_emit in
     let cls_other = if inl_value = None then ["other"] else [] in
     let a = D.a_class ("pan-comboselect" :: cls_other) :: a in
     let elem = D.span ~a [inl_elem; inr_elem] in
     let absorb = {(int, string) either option -> unit{
-		    combo_absorb %elem %inl_absorb %inr_absorb}} in
+                    combo_absorb %elem %inl_absorb %inr_absorb}} in
     elem, absorb
 
   let int32_string_option_combo_selector
-	?(a = [])
-	?inl_a
-	?inr_a
-	~inl_selection
-	?inr_to_string
-	?inr_of_string
-	?(value : (int32, string) either option = None)
-	(emit : ((int32, string) either option -> ack Lwt.t) client_value) =
+        ?(a = [])
+        ?inl_a
+        ?inr_a
+        ~inl_selection
+        ?inr_to_string
+        ?inr_of_string
+        ?(value : (int32, string) either option = None)
+        (emit : ((int32, string) either option -> ack Lwt.t) client_value) =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
     let inl_emit =
@@ -82,27 +82,27 @@
       {{function None -> %emit None | Some x -> %emit (Some (Inr x))}} in
     let inl_elem, inl_absorb =
       int32_option_selector ?a:inl_a ~selection:inl_selection
-			    ~value:inl_value inl_emit in
+                            ~value:inl_value inl_emit in
     let inr_elem, inr_absorb =
       string_option_editor ?a:inr_a
-			   ?to_string:inr_to_string ?of_string:inr_of_string
-			   ~value:inr_value inr_emit in
+                           ?to_string:inr_to_string ?of_string:inr_of_string
+                           ~value:inr_value inr_emit in
     let cls_other = if inl_value = None then ["other"] else [] in
     let a = D.a_class ("pan-comboselect" :: cls_other) :: a in
     let elem = D.span ~a [inl_elem; inr_elem] in
     let absorb = {(int32, string) either option -> unit{
-		    combo_absorb %elem %inl_absorb %inr_absorb}} in
+                    combo_absorb %elem %inl_absorb %inr_absorb}} in
     elem, absorb
 
   let int64_string_option_combo_selector
-	?(a = [])
-	?inl_a
-	?inr_a
-	~inl_selection
-	?inr_to_string
-	?inr_of_string
-	?(value : (int64, string) either option = None)
-	(emit : ((int64, string) either option -> ack Lwt.t) client_value) =
+        ?(a = [])
+        ?inl_a
+        ?inr_a
+        ~inl_selection
+        ?inr_to_string
+        ?inr_of_string
+        ?(value : (int64, string) either option = None)
+        (emit : ((int64, string) either option -> ack Lwt.t) client_value) =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
     let inl_emit =
@@ -111,15 +111,15 @@
       {{function None -> %emit None | Some x -> %emit (Some (Inr x))}} in
     let inl_elem, inl_absorb =
       int64_option_selector ?a:inl_a ~selection:inl_selection
-			    ~value:inl_value inl_emit in
+                            ~value:inl_value inl_emit in
     let inr_elem, inr_absorb =
       string_option_editor ?a:inr_a
-			   ?to_string:inr_to_string ?of_string:inr_of_string
-			   ~value:inr_value inr_emit in
+                           ?to_string:inr_to_string ?of_string:inr_of_string
+                           ~value:inr_value inr_emit in
     let cls_other = if inl_value = None then ["other"] else [] in
     let a = D.a_class ("pan-comboselect" :: cls_other) :: a in
     let elem = D.span ~a [inl_elem; inr_elem] in
     let absorb = {(int64, string) either option -> unit{
-		    combo_absorb %elem %inl_absorb %inr_absorb}} in
+                    combo_absorb %elem %inl_absorb %inr_absorb}} in
     elem, absorb
 }}

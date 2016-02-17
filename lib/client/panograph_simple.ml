@@ -125,20 +125,20 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
       D.Raw.input ~a:(D.a_input_type `Text :: attribs_of_shape shape) () in
     let w_dom = To_dom.of_input inp in
     let w = {w_dom; w_saved_title = Js.to_string w_dom##title;
-	     w_value = init} in
+             w_value = init} in
     w_dom##value <- Js.string (Value.to_string init);
     Option.iter (fun on_patch ->
       let on_change _ _ =
-	try
-	  set_dirty w;
-	  match_lwt on_patch (`Change (w.w_value, get w)) with
-	  | Ack_ok -> Lwt.return_unit
-	  | Ack_error msg -> set_error w msg; Lwt.return_unit
-	with
-	| Invalid_input msg ->
-	  clear_dirty w; set_error w msg; Lwt.return_unit
-	| Failure _ | Invalid_argument _ ->
-	  clear_dirty w; set_error w "Invalid input."; Lwt.return_unit in
+        try
+          set_dirty w;
+          match_lwt on_patch (`Change (w.w_value, get w)) with
+          | Ack_ok -> Lwt.return_unit
+          | Ack_error msg -> set_error w msg; Lwt.return_unit
+        with
+        | Invalid_input msg ->
+          clear_dirty w; set_error w msg; Lwt.return_unit
+        | Failure _ | Invalid_argument _ ->
+          clear_dirty w; set_error w "Invalid input."; Lwt.return_unit in
       Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change)) on_patch;
     w, (inp :> ui)
 
@@ -180,11 +180,11 @@ module Simple_SE (Value : SIMPLE_VALUE) = struct
     Option.iter (fun x -> w_dom##value <- Js.string (Value.to_string x)) init;
     let on_change _ _ =
       Lwt.wrap begin fun () ->
-	try clear_error w;
-	    ignore (Value.of_string (Js.to_string w_dom##value))
-	with
-	| Invalid_input msg -> set_error w msg
-	| Failure _ | Invalid_argument _ -> set_error w "Invalid input."
+        try clear_error w;
+            ignore (Value.of_string (Js.to_string w_dom##value))
+        with
+        | Invalid_input msg -> set_error w msg
+        | Failure _ | Invalid_argument _ -> set_error w "Invalid input."
       end in
     Lwt_js_events.(async @@ fun () -> changes w.w_dom on_change);
     w, (inp :> ui)

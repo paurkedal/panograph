@@ -41,18 +41,18 @@
     let on_commit v =
       Pandom_style.set_hidden choices_dom;
       if v = !stored_value then begin
-	input_dom##value <- Js.string v;
-	Lwt.return_unit
+        input_dom##value <- Js.string v;
+        Lwt.return_unit
       end else begin
-	Pandom_style.set_dirty input_dom;
-	match_lwt commit v with
-	| Ack_ok ->
-	  Pandom_style.clear_error input_dom;
-	  Lwt.return_unit
-	| Ack_error msg ->
-	  Pandom_style.clear_dirty input_dom;
-	  Pandom_style.set_error msg input_dom;
-	  Lwt.return_unit
+        Pandom_style.set_dirty input_dom;
+        match_lwt commit v with
+        | Ack_ok ->
+          Pandom_style.clear_error input_dom;
+          Lwt.return_unit
+        | Ack_error msg ->
+          Pandom_style.clear_dirty input_dom;
+          Pandom_style.set_error msg input_dom;
+          Lwt.return_unit
       end in
 
     let make_choice v =
@@ -64,23 +64,23 @@
 
     let update_choices = Pwt.async_updater @@ fun () ->
       try_lwt
-	lwt completions = fetch (Js.to_string input_dom##value) in
-	Pandom_style.clear_hidden choices_dom;
-	Pandom_style.clear_error input_dom;
-	let choices = List.map make_choice completions in
-	Manip.replaceChildren choices_elem choices;
-	Lwt.return_unit
+        lwt completions = fetch (Js.to_string input_dom##value) in
+        Pandom_style.clear_hidden choices_dom;
+        Pandom_style.clear_error input_dom;
+        let choices = List.map make_choice completions in
+        Manip.replaceChildren choices_elem choices;
+        Lwt.return_unit
       with Eliom_lib.Exception_on_server _ ->
-	Pandom_style.set_error "Cannot provide completions for this input."
-			       input_dom;
-	Lwt.return_unit in
+        Pandom_style.set_error "Cannot provide completions for this input."
+                               input_dom;
+        Lwt.return_unit in
 
     let on_input_input _ _ = update_choices (); Lwt.return_unit in
 
     let on_input_change _ _ =
       if !committing_choice then Lwt.return_unit else begin
-	Pandom_style.clear_error input_dom;
-	on_commit (Js.to_string input_dom##value)
+        Pandom_style.clear_error input_dom;
+        on_commit (Js.to_string input_dom##value)
       end in
 
     Lwt_js_events.(async @@ fun () -> inputs input_dom on_input_input);
@@ -95,9 +95,9 @@
 
 {shared{
   let string_completion_input
-	?(value : string option)
-	(fetch : (string -> string list Lwt.t) client_value)
-	(commit : (string -> ack Lwt.t) client_value) =
+        ?(value : string option)
+        (fetch : (string -> string list Lwt.t) client_value)
+        (commit : (string -> ack Lwt.t) client_value) =
 
     let input_elem = D.Raw.input ~a:[D.a_input_type `Text] () in
     let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in

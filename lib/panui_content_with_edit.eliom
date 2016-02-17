@@ -65,12 +65,12 @@ let add_edit outer pcdata input_dom emit x =
     Lwt.async begin fun () ->
       match_lwt emit (Js.to_string input_dom##value) with
       | Ack_ok ->
-	on_cancel ev;
-	Lwt.return_unit
+        on_cancel ev;
+        Lwt.return_unit
       | Ack_error msg ->
-	input_dom##classList##add(error_cls);
-	input_dom##title <- Js.string msg;
-	Lwt.return_unit
+        input_dom##classList##add(error_cls);
+        input_dom##title <- Js.string msg;
+        Lwt.return_unit
     end in
 
   add_edit_button ();

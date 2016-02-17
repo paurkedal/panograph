@@ -87,8 +87,8 @@ let main_handler () () =
     Eliom_tools.D.html
       ~title:"Panograph Test" ~css
       (F.body [
-	F.h1 [F.pcdata "Panograph Test"];
-	F.ul (List.map test_service_item test_services);
+        F.h1 [F.pcdata "Panograph Test"];
+        F.ul (List.map test_service_item test_services);
       ])
 
 let main_service =

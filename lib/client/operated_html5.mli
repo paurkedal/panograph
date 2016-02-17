@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -27,32 +27,32 @@ module O : sig
     'cv -> ('cp -> unit) * 'cu Html5.elt
 
   val p : ([< p_attrib],
-	   'ev, 'ep, [< p_content_fun],
-	   'ev list, ('ev, 'ep) grid1_op, [> p]) star
+           'ev, 'ep, [< p_content_fun],
+           'ev list, ('ev, 'ep) grid1_op, [> p]) star
 
   val pre : ([< pre_attrib],
-	     'ev, 'ep, [< pre_content_fun],
-	     'ev list, ('ev, 'ep) grid1_op, [> pre]) star
+             'ev, 'ep, [< pre_content_fun],
+             'ev list, ('ev, 'ep) grid1_op, [> pre]) star
 
   val div : ([< div_attrib],
-	     'ev, 'ep, [< div_content_fun],
-	     'ev list, ('ev, 'ep) grid1_op, [> div]) star
+             'ev, 'ep, [< div_content_fun],
+             'ev list, ('ev, 'ep) grid1_op, [> div]) star
 
   val span : ([< span_attrib],
-	      'ev, 'ep, [< span_content_fun],
-	      'ev list, ('ev, 'ep) grid1_op, [> span]) star
+              'ev, 'ep, [< span_content_fun],
+              'ev list, ('ev, 'ep) grid1_op, [> span]) star
 
   val ul : ([< ul_attrib],
-	    'ev, 'ep, [< ul_content_fun],
-	    'ev list, ('ev, 'ep) grid1_op, [> ul]) star
+            'ev, 'ep, [< ul_content_fun],
+            'ev list, ('ev, 'ep) grid1_op, [> ul]) star
 
   val ol : ([< ol_attrib],
-	    'ev, 'ep, [< ol_content_fun],
-	    'ev list, ('ev, 'ep) grid1_op, [> ol]) star
+            'ev, 'ep, [< ol_content_fun],
+            'ev list, ('ev, 'ep) grid1_op, [> ol]) star
 
   val dl : ([< dl_attrib],
-	    'ev, 'ep, [< dl_content_fun],
-	    'ev list, ('ev, 'ep) grid1_op, [> dl]) star
+            'ev, 'ep, [< dl_content_fun],
+            'ev list, ('ev, 'ep) grid1_op, [> dl]) star
 
   val table :
     ?caption: [< caption] Html5.elt ->
@@ -64,15 +64,15 @@ module O : sig
      'ev list, ('ev, 'ep) grid1_op, [> table]) star
 
   val tr : ([< tr_attrib],
-	    'ev, 'ep, [< tr_content_fun],
-	    'ev list, ('ev, 'ep) grid1_op, [> tr]) star
+            'ev, 'ep, [< tr_content_fun],
+            'ev list, ('ev, 'ep) grid1_op, [> tr]) star
 
   val select : ([< select_attrib],
-		'ev, 'ep, [< select_content_fun],
-		'ev list, ('ev, 'ep) grid1_op, [> select]) star
+                'ev, 'ep, [< select_content_fun],
+                'ev list, ('ev, 'ep) grid1_op, [> select]) star
 
   val optgroup : label: string ->
-		 ([< optgroup_attrib],
-		  'ev, 'ep, [< optgroup_content_fun],
-		  'ev list, ('ev, 'ep) grid1_op, [> optgroup]) star
+                 ([< optgroup_attrib],
+                  'ev, 'ep, [< optgroup_content_fun],
+                  'ev list, ('ev, 'ep) grid1_op, [> optgroup]) star
 end

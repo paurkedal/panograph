@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -53,12 +53,12 @@ module Make (Key : Hashtbl.HashedType) = struct
   let signal (wt : 'a t) key x : 'a React.S.t =
     let (_, Ex_spair (signal, _)) =
       try
-	Wt.find wt (key, dummy)
+        Wt.find wt (key, dummy)
       with Not_found ->
-	let signal, set = React.S.create x in
-	let node = (key, Ex_spair (signal, set)) in
-	let `R _ = React.S.retain signal (enclose node) in
-	Wt.add wt node; node in
+        let signal, set = React.S.create x in
+        let node = (key, Ex_spair (signal, set)) in
+        let `R _ = React.S.retain signal (enclose node) in
+        Wt.add wt node; node in
     Obj.magic signal
 
   let signal_opt (wt : 'a t) key : 'a React.S.t option =

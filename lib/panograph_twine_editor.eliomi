@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -20,12 +20,12 @@
   open Panograph_types
 
   type twine_editor_out = [`Add of lang * string | `Remove of lang]
-			  deriving (Json)
+                          deriving (Json)
 
   type twine_editor_in = twine_editor_out
 
   val twine_editor : ?value: twine ->
-		     (twine_editor_out -> ack Lwt.t) client_value ->
-		     [> Html5_types.span] Html5.elt *
-		     (twine_editor_in -> unit) client_value
+                     (twine_editor_out -> ack Lwt.t) client_value ->
+                     [> Html5_types.span] Html5.elt *
+                     (twine_editor_in -> unit) client_value
 }}

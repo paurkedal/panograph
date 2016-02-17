@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -59,7 +59,7 @@ module type PATCH_EDITOR = sig
   type patch_in
 
   val create : ?shape: shape -> ?on_patch: (patch_out -> ack Lwt.t) ->
-	       value -> t * ui
+               value -> t * ui
   val patch : t -> patch_in -> unit
 end
 

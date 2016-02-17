@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -50,12 +50,12 @@ module Make (Key : Hashtbl.HashedType) = struct
   let event (wt : 'a t) key : 'a React.E.t =
     let (_, Ex_epair (event, _)) =
       try
-	Wt.find wt (key, ex_epair_dummy)
+        Wt.find wt (key, ex_epair_dummy)
       with Not_found ->
-	let event, emit = React.E.create () in
-	let node = (key, Ex_epair (event, emit)) in
-	let `R _ = React.E.retain event (enclose node) in
-	Wt.add wt node; node in
+        let event, emit = React.E.create () in
+        let node = (key, Ex_epair (event, emit)) in
+        let `R _ = React.E.retain event (enclose node) in
+        Wt.add wt node; node in
     Obj.magic event (*[1]*)
 
   let event_opt (wt : 'a t) key : 'a React.E.t option =

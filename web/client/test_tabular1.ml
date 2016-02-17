@@ -20,7 +20,7 @@ open Panograph_tabular
 let render () =
   let open Html5 in
   let tab = Tabular.create ~a:[F.a_class ["tabular1"]]
-			   ~root_css_class:"root" () in
+                           ~root_css_class:"root" () in
   let rs_root = Tabular.root_rowspan tab in
   let   rs_head = Tabular.Rowspan.add_first tab ~css_class:"rhead" rs_root in
   let   rs_body = Tabular.Rowspan.add_last tab ~css_class:"rbody" rs_root in
@@ -70,7 +70,7 @@ let render () =
     Tabular.draw_td tab rs cs [button];
     Lwt_js_events.(async @@ fun () ->
       clicks (To_dom.of_button button)
-	     (fun _ _ -> Tabular.Rowspan.delete tab rs; Lwt.return_unit)) in
+             (fun _ _ -> Tabular.Rowspan.delete tab rs; Lwt.return_unit)) in
 
   let cs_ctrl2 = Tabular.Colspan.add_last tab cs_root in
   Tabular.refine tab 1 0 rs_body cs_ctrl2;
@@ -88,7 +88,7 @@ let render () =
     Tabular.draw_td tab rs cs [button];
     Lwt_js_events.(async @@ fun () ->
       clicks (To_dom.of_button button)
-	     (fun _ _ -> Tabular.Colspan.delete tab cs; Lwt.return_unit)) in
+             (fun _ _ -> Tabular.Colspan.delete tab cs; Lwt.return_unit)) in
 
   let rs_ctrl2 = Tabular.Rowspan.add_last tab rs_root in
   Tabular.refine tab 0 1 rs_ctrl2 cs_body;

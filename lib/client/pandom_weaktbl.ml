@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -66,7 +66,7 @@ let for_all ?top f wt =
   let rec loop i =
     i < es##length
       && Js.Opt.case (es##item(i)) (konst true)
-		     (fun e -> f e (unsafe_find wt e))
+                     (fun e -> f e (unsafe_find wt e))
       && loop (succ i) in
   loop 0
 
@@ -75,6 +75,6 @@ let exists ?top f wt =
   let rec loop i =
     i = es##length
       || Js.Opt.case (es##item(i)) (konst false)
-		     (fun e -> f e (unsafe_find wt e))
+                     (fun e -> f e (unsafe_find wt e))
       || loop (succ i) in
   loop 0

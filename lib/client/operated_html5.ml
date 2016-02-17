@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -112,6 +112,6 @@ module O = struct
   let optgroup ~label ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let elem = Html5.D.Raw.optgroup ~label ?a
-				    (intro @ List.flatten (List.map snd ys)) in
+                                    (intro @ List.flatten (List.map snd ys)) in
     (list_op f (Html5.To_dom.of_element elem) ys, elem)
 end

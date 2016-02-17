@@ -32,12 +32,12 @@
       Pandom_weakchan.send chan ks (`Add k) in
     let add_button =
       D.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
-	       [D.pcdata "add"] in
+               [D.pcdata "add"] in
     let ul = D.ul [D.li [add_input; add_button]] in
     let on_msg = function
       | `Add k ->
-	let ul' = make (k :: ks) in
-	Manip.appendChild ul (D.li [D.b [D.pcdata k]; ul']) in
+        let ul' = make (k :: ks) in
+        Manip.appendChild ul (D.li [D.b [D.pcdata k]; ul']) in
     ignore (Pandom_weakchan.subscribe_class chan (To_dom.of_ul ul) ks on_msg);
     ul
 }}

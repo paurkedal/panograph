@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -39,7 +39,7 @@ let test_int_editor () =
   let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
   let w, ui =
     Int_PE.create ~shape:Int_PE.({default_shape with a_title = Some "test"})
-		  ~on_patch 19 in
+                  ~on_patch 19 in
   Lwt_react.E.keep (Lwt_react.E.map (Int_PE.patch w) ev);
   ui
 
@@ -63,7 +63,7 @@ let test_int_ul () =
     Lwt.return Ack_ok in
   let mapped_pe, mapped_ui =
     Int_ul_MPE.create ~on_patch:on_mapped_patch
-		      (List.map (fun k -> k, -k) init) in
+                      (List.map (fun k -> k, -k) init) in
   let update p =
     Int_ul_CPE.patch coll_pe p;
     let p' =
@@ -71,8 +71,8 @@ let test_int_ul () =
       | `Add v -> `Add (v, -v)
       | `Remove v -> `Remove v
       | `Patch (`Change (v, v')) ->
-	if v = v' then `Patch (v, None, `Change (-v, -v'))
-		  else `Patch (v, Some v', `Change (-v, -v')) in
+        if v = v' then `Patch (v, None, `Change (-v, -v'))
+                  else `Patch (v, Some v', `Change (-v, -v')) in
     Int_ul_MPE.patch mapped_pe p' in
   Lwt_react.E.keep (Lwt_react.E.map update ev);
   Html5.D.div [coll_ui; mapped_ui]

@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -20,4 +20,4 @@ val iter_s : ('a -> 'b -> unit Lwt.t) -> ('a, 'b) Hashtbl.t -> unit Lwt.t
 val iter_p : ('a -> 'b -> unit Lwt.t) -> ('a, 'b) Hashtbl.t -> unit Lwt.t
 
 val fold_s : ('a -> 'b -> 'c -> 'c Lwt.t) ->
-	     ('a, 'b) Hashtbl.t -> 'c -> 'c Lwt.t
+             ('a, 'b) Hashtbl.t -> 'c -> 'c Lwt.t

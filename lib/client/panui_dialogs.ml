@@ -24,7 +24,7 @@ let cancel_label = [D.pcdata "Cancel"]
 
 let close_all_r = ref (fun () -> ())
 let modal_veil = D.div ~a:[D.a_class ["pan-dialog-veil"];
-			   D.a_onclick (fun _ -> !close_all_r ())] []
+                           D.a_onclick (fun _ -> !close_all_r ())] []
 let modal_dialogs = ref []
 
 module Modal_dialog = struct
@@ -59,7 +59,7 @@ module Modal_dialog = struct
 
   let close_all () =
     List.iter (fun (elem, on_cancel) -> Manip.removeSelf elem; on_cancel ())
-	      !modal_dialogs;
+              !modal_dialogs;
     modal_dialogs := [];
     close_veil ()
 
@@ -73,7 +73,7 @@ let dialog_lwt mapping default content =
   let close_waiter, close_wakener = Lwt.wait () in
   let dialog =
     Modal_dialog.open_std ~on_cancel:(fun () -> Lwt.wakeup close_wakener ())
-			  content buttons in
+                          content buttons in
   let make_action button (_, value) =
     Lwt_js_events.click (To_dom.of_button button) >|= fun _ ->
     Modal_dialog.close dialog; value in

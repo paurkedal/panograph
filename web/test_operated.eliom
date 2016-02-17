@@ -27,12 +27,12 @@
     include Prime_enumset.Make (String)
     module Json_t =
       Deriving_Json.Convert (struct
-	type a = string list
-	type b = t
-	module T = Deriving_Json.Json_list (Deriving_Json.Json_string)
-	let t = T.t
-	let to_ = elements
-	let from_ = of_ordered_elements
+        type a = string list
+        type b = t
+        module T = Deriving_Json.Json_list (Deriving_Json.Json_string)
+        let t = T.t
+        let to_ = elements
+        let from_ = of_ordered_elements
       end)
   end
   module String_set_p = Presenting_set.Make (String_set)
@@ -59,7 +59,7 @@ let patch ds =
 
 let patch_c =
   server_function Json.t<(string, String_set.t, string set_patch) map_patch>
-		  patch
+                  patch
 
 {client{
   open Html5
@@ -70,18 +70,18 @@ let patch_c =
       let input = D.Raw.input ~a:[D.a_input_type `Text] () in
       let input_dom = Html5.To_dom.of_input input in
       let on_add _ =
-	let s = Js.to_string (input_dom##value) in
-	Lwt.async (fun () -> %patch_c (Map_at (k, Set_add s))) in
+        let s = Js.to_string (input_dom##value) in
+        Lwt.async (fun () -> %patch_c (Map_at (k, Set_add s))) in
       let add_button =
-	D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
-		     [D.pcdata "+"] in
+        D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
+                     [D.pcdata "+"] in
       [D.li [input; D.pcdata " "; add_button]] in
     let make_li x =
       let delete _ =
-	Lwt.async (fun () -> %patch_c (Map_at (k, Set_remove x))) in
+        Lwt.async (fun () -> %patch_c (Map_at (k, Set_remove x))) in
       let delete_button =
-	D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick delete]
-		     [D.pcdata "−"] in
+        D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick delete]
+                     [D.pcdata "−"] in
       absurd, [D.li [D.pcdata x; D.pcdata " "; delete_button]] in
     let patch_ul, ul = O.ul ~intro make_li p in
     patch_ul, [D.dt [D.pcdata k]; D.dd [ul]]
@@ -91,11 +91,11 @@ let patch_c =
       let input = D.Raw.input ~a:[D.a_input_type `Text] () in
       let input_dom = Html5.To_dom.of_input input in
       let on_add _ =
-	let k = Js.to_string (input_dom##value) in
-	Lwt.async (fun () -> %patch_c (Map_add (k, String_set.empty))) in
+        let k = Js.to_string (input_dom##value) in
+        Lwt.async (fun () -> %patch_c (Map_add (k, String_set.empty))) in
       let add_button =
-	D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
-		     [D.pcdata "+"] in
+        D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
+                     [D.pcdata "+"] in
       [D.dt [input]; D.dd [add_button]] in
     O.dl ~intro make_item p
 }}

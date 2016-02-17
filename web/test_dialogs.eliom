@@ -37,7 +37,7 @@ let render () =
       Lwt_js_events.clicks (To_dom.of_button %open_confirm) @@ fun _ _ ->
       lwt ans = confirm_lwt [D.p [D.pcdata "Do it?"]] in
       if ans then Manip.appendToBody (D.div [D.pcdata "It's done."])
-	     else Manip.appendToBody (D.div [D.pcdata "It's not done."]);
+             else Manip.appendToBody (D.div [D.pcdata "It's not done."]);
       Lwt.return_unit
     end;
   }};

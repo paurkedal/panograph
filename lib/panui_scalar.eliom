@@ -55,10 +55,10 @@
   end
 
   class ['a] input_handle (to_string : 'a -> string)
-			  (of_string : string -> 'a)
-			  (emit : ('a -> ack Lwt.t) option)
-			  (error : (string option -> unit) option)
-			  (init : 'a) el =
+                          (of_string : string -> 'a)
+                          (emit : ('a -> ack Lwt.t) option)
+                          (error : (string option -> unit) option)
+                          (init : 'a) el =
   object (self)
     inherit common_handle el
 
@@ -123,22 +123,22 @@
     let label_by_value = Hashtbl.create 11 in
     let unknown_option =
       D.option ~a:[D.a_value "__pan_unknown__"; D.a_class ["pan-error"]]
-	       (D.pcdata "unknown") in
+               (D.pcdata "unknown") in
     let options =
       let mk_option label enabled value =
-	let label = match label with Some s -> s | None -> to_string value in
-	Hashtbl.add label_by_value value label;
-	let a = [D.a_value (to_string value)] in
-	let a = if enabled then a else D.a_disabled `Disabled :: a in
-	D.option ~a (D.pcdata label) in
+        let label = match label with Some s -> s | None -> to_string value in
+        Hashtbl.add label_by_value value label;
+        let a = [D.a_value (to_string value)] in
+        let a = if enabled then a else D.a_disabled `Disabled :: a in
+        D.option ~a (D.pcdata label) in
       let mk0 = function
-	| Opt (label, enabled, value) -> mk_option label enabled value
-	| Optgroup _ -> assert false in
+        | Opt (label, enabled, value) -> mk_option label enabled value
+        | Optgroup _ -> assert false in
       let mk1 = function
-	| Opt (label, enabled, value) -> mk_option label enabled value
-	| Optgroup (label, enabled, opts) ->
-	  let a = if enabled then [] else [D.a_disabled `Disabled] in
-	  D.optgroup ~label ~a (List.map mk0 opts) in
+        | Opt (label, enabled, value) -> mk_option label enabled value
+        | Optgroup (label, enabled, opts) ->
+          let a = if enabled then [] else [D.a_disabled `Disabled] in
+          D.optgroup ~label ~a (List.map mk0 opts) in
       List.map mk1 opts in
     let select = D.Raw.select options in
   object (self)
@@ -150,8 +150,8 @@
     method private set_unknown =
       Manip.insertFirstChild select unknown_option;
       Pandom_style.set_error
-	"The currently selected option is no longer available."
-	(To_dom.of_select select);
+        "The currently selected option is no longer available."
+        (To_dom.of_select select);
       (To_dom.of_select select)##value <- Js.string "__pan_unknown__"
 
     method private clear_unknown =
@@ -165,12 +165,12 @@
 
     method edit_off =
       absorb <- begin fun x ->
-	try
-	  let label = Hashtbl.find label_by_value value in
-	  Manip.replaceChildren el [D.pcdata label]
-	with Not_found ->
-	  Manip.replaceChildren el
-	    [D.span ~a:[F.a_class ["pan-error"]] [D.pcdata "unknown"]]
+        try
+          let label = Hashtbl.find label_by_value value in
+          Manip.replaceChildren el [D.pcdata label]
+        with Not_found ->
+          Manip.replaceChildren el
+            [D.span ~a:[F.a_class ["pan-error"]] [D.pcdata "unknown"]]
       end;
       absorb value
 
@@ -178,13 +178,13 @@
 
     method set x =
       if Hashtbl.mem label_by_value x then
-	begin
-	  if not (Hashtbl.mem label_by_value value) then
-	    self#clear_unknown;
-	  absorb x
-	end
+        begin
+          if not (Hashtbl.mem label_by_value value) then
+            self#clear_unknown;
+          absorb x
+        end
       else
-	self#set_unknown;
+        self#set_unknown;
       value <- x;
 
     initializer
@@ -201,39 +201,39 @@
 
 {shared{
   type ('a, 'opt, 'attrib, 'elt) t =
-	?to_string: ('a -> string) client_value ->
-	?of_string: (string -> 'a) client_value ->
-	?opts: ('a, 'opt) opt list ->
-	?emit: ('a -> ack Lwt.t) client_value ->
-	?error: (string option -> unit) client_value ->
-	?a: 'attrib attrib list ->
-	'a -> 'elt elt * 'a handle client_value
+        ?to_string: ('a -> string) client_value ->
+        ?of_string: (string -> 'a) client_value ->
+        ?opts: ('a, 'opt) opt list ->
+        ?emit: ('a -> ack Lwt.t) client_value ->
+        ?error: (string option -> unit) client_value ->
+        ?a: 'attrib attrib list ->
+        'a -> 'elt elt * 'a handle client_value
       constraint 'attrib = [< Html5_types.common > `Class]
       constraint 'opt = [< `Opt | `Optgroup]
       constraint 'elt = [> `Span]
 
   let bool : (bool, 'opt, 'attrib, 'elt) t =
     fun ?to_string ?of_string ?opts ?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "bool"]]) init ->
+        ?(a = [D.a_class ["pan-scalar"; "bool"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_bool init)] in
     let h : bool handle client_value =
       match to_string, of_string, opts with
       | None, None, None ->
-	{{new checkbox_handle %emit %error %init %el}}
+        {{new checkbox_handle %emit %error %init %el}}
       | _ ->
-	let to_string = Option.get_or {{string_of_bool}} to_string in
-	let of_string = Option.get_or {{bool_of_string}} of_string in
-	let opts = Option.get_or [opt "true" true; opt "false" false] opts in
-	{{make_handle (Some %opts)
-		      %to_string %of_string %emit %error %init %el}} in
+        let to_string = Option.get_or {{string_of_bool}} to_string in
+        let of_string = Option.get_or {{bool_of_string}} of_string in
+        let opts = Option.get_or [opt "true" true; opt "false" false] opts in
+        {{make_handle (Some %opts)
+                      %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let string : (string, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{ident}})
-	?(of_string = {{ident}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "string"]]) init ->
+        ?(of_string = {{ident}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "string"]]) init ->
     let el = D.span ~a [D.pcdata init] in
     let h : string handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -241,10 +241,10 @@
 
   let int : (int, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{string_of_int}})
-	?(of_string = {{int_of_string}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "int"]]) init ->
+        ?(of_string = {{int_of_string}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_int init)] in
     let h : int handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -252,10 +252,10 @@
 
   let int32 : (int32, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{Int32.to_string}})
-	?(of_string = {{Int32.of_string}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "int32"]]) init ->
+        ?(of_string = {{Int32.of_string}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int32"]]) init ->
     let el = D.span ~a [D.pcdata (Int32.to_string init)] in
     let h : int32 handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -263,10 +263,10 @@
 
   let int64 : (int64, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{Int64.to_string}})
-	?(of_string = {{Int64.of_string}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "int64"]]) init ->
+        ?(of_string = {{Int64.of_string}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int64"]]) init ->
     let el = D.span ~a [D.pcdata (Int64.to_string init)] in
     let h : int64 handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -274,10 +274,10 @@
 
   let float : (float, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{string_of_float}})
-	?(of_string = {{float_of_string}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "float"]]) init ->
+        ?(of_string = {{float_of_string}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "float"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_float init)] in
     let h : float handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -285,23 +285,23 @@
 
   let bool_option : (bool option, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{string_of_option string_of_bool}})
-	?(of_string = {{option_of_string bool_of_string}})
-	?(opts = [opt "" None; opt "true" (Some true);
-			       opt "false" (Some false)])
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "bool"; "option"]]) init ->
+        ?(of_string = {{option_of_string bool_of_string}})
+        ?(opts = [opt "" None; opt "true" (Some true);
+                               opt "false" (Some false)])
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "bool"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_bool init)] in
     let h : bool option handle client_value =
       {{make_handle (Some %opts)
-		    %to_string %of_string %emit %error %init %el}} in
+                    %to_string %of_string %emit %error %init %el}} in
     el, h
 
   let string_option : (string option, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{string_of_option ident}})
-	?(of_string = {{option_of_string ident}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "string"; "option"]])  init ->
+        ?(of_string = {{option_of_string ident}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "string"; "option"]])  init ->
     let el = D.span ~a [D.pcdata (string_of_option ident init)] in
     let h : string option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -309,10 +309,10 @@
 
   let int_option : (int option, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{string_of_option string_of_int}})
-	?(of_string = {{option_of_string int_of_string}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "int"; "option"]]) init ->
+        ?(of_string = {{option_of_string int_of_string}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_int init)] in
     let h : int option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -320,10 +320,10 @@
 
   let int32_option : (int32 option, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{string_of_option Int32.to_string}})
-	?(of_string = {{option_of_string Int32.of_string}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "int32"; "option"]]) init ->
+        ?(of_string = {{option_of_string Int32.of_string}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int32"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option Int32.to_string init)] in
     let h : int32 option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -331,10 +331,10 @@
 
   let int64_option : (int64 option, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{string_of_option Int64.to_string}})
-	?(of_string = {{option_of_string Int64.of_string}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "int64"; "option"]]) init ->
+        ?(of_string = {{option_of_string Int64.of_string}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int64"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option Int64.to_string init)] in
     let h : int64 option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in
@@ -342,10 +342,10 @@
 
   let float_option : (float option, 'opt, 'attrib, 'elt) t =
     fun ?(to_string = {{string_of_option string_of_float}})
-	?(of_string = {{option_of_string float_of_string}})
-	?opts
-	?emit ?error
-	?(a = [D.a_class ["pan-scalar"; "float"; "option"]]) init ->
+        ?(of_string = {{option_of_string float_of_string}})
+        ?opts
+        ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "float"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_float init)] in
     let h : float option handle client_value =
       {{make_handle %opts %to_string %of_string %emit %error %init %el}} in

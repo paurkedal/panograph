@@ -1,4 +1,4 @@
-(* Copyright (C) 2014  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -39,7 +39,7 @@ module Dltree = struct
 
   let make x =
     let rec r = {up = r; down = r; prev = r; next = r; value = x;
-		 level = 0; ord = 0} in
+                 level = 0; ord = 0} in
     r
 
   let get c = c.value
@@ -89,8 +89,8 @@ module Dltree = struct
     let rec loop i = function
       | None -> ()
       | Some c ->
-	iterp' ~depth:(depth - 1) ~path:(i :: path) f c;
-	loop (i + 1) (next c) in
+        iterp' ~depth:(depth - 1) ~path:(i :: path) f c;
+        loop (i + 1) (next c) in
     loop 0 (first u)
   let iterp ~depth f u = iterp' ~depth ~path:[] f u
 
@@ -125,14 +125,14 @@ module Dltree = struct
   let add_last value u =
     if u.down == u then begin
       let rec c = {up = u; down = c; prev = c; next = c; value;
-		   level = u.level + 1; ord = 0} in
+                   level = u.level + 1; ord = 0} in
       u.down <- c;
       c
     end else begin
       let n = u.down in
       let p = n.prev in
       let rec c = {up = u; down = c; prev = p; next = n; value;
-		   level = n.level; ord = n.prev.ord + ord_step} in
+                   level = n.level; ord = n.prev.ord + ord_step} in
       n.prev.next <- c;
       n.prev <- c;
       c
@@ -149,14 +149,14 @@ module Dltree = struct
     if p.ord + 1 = n.ord then begin
       let h = u.down in
       let rec reorder ord c =
-	c.ord <- ord;
-	if c.next != h then reorder (ord + ord_step) c.next in
+        c.ord <- ord;
+        if c.next != h then reorder (ord + ord_step) c.next in
       reorder 0 h
     end;
     let ord = (p.ord + n.ord) asr 1 in
     assert (p.ord < ord && ord < n.ord);
     let rec c = {up = u; down = c; prev = p; next = n; value;
-		 level = p.level; ord} in
+                 level = p.level; ord} in
     p.next <- c;
     n.prev <- c;
     c
