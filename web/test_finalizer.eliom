@@ -62,7 +62,7 @@
     Lwt_js.sleep 0.01 >> update stat node
 
   let render () =
-    Pandom_finalizer.enable 1000;
+    Pandom_finalizer.enable 100;
     let stat = D.p [] in
     let node = create () in
     let tree = D.p [node] in
