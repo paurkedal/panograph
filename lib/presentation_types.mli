@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,12 +17,12 @@
 type 'e set_patch =
   | Set_add of 'e
   | Set_remove of 'e
-  deriving (Json)
+  [@@deriving json]
 
 type ('k, 'e, 'de) map_patch =
   | Map_add of 'k * 'e
   | Map_remove of 'k
   | Map_at of 'k * 'de
-  deriving (Json)
+  [@@deriving json]
 
 exception Conflict of string

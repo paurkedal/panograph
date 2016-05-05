@@ -14,12 +14,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content.Html5
   open Printf
-}}
+]
 
-{client{
+[%%client
   let classify ks = String.concat "_" (List.rev ks)
   let chan = Pandom_weakchan.create classify
 
@@ -27,8 +27,8 @@
     let add_input = D.Raw.input ~a:[D.a_input_type `Text] () in
     let add_input_dom = To_dom.of_input add_input in
     let on_add _ =
-      let k = Js.to_string add_input_dom##value in
-      add_input_dom##value <- Js.string "";
+      let k = Js.to_string add_input_dom##.value in
+      add_input_dom##.value := Js.string "";
       Pandom_weakchan.send chan ks (`Add k) in
     let add_button =
       D.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
@@ -40,6 +40,6 @@
         Manip.appendChild ul (D.li [D.b [D.pcdata k]; ul']) in
     ignore (Pandom_weakchan.subscribe_class chan (To_dom.of_ul ul) ks on_msg);
     ul
-}}
+]
 
-let render () = C.node {{make []}}
+let render () = C.node [%client make []]

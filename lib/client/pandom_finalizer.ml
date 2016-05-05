@@ -40,8 +40,8 @@ let run () =
   let finalizer_count = clear_marks chain.next 0 in
 
   let es = Dom_html.document##getElementsByClassName(Js.string magic) in
-  for i = 0 to es##length - 1 do
-    (Js.Unsafe.get es##item(i) magic).mark <- true
+  for i = 0 to es##.length - 1 do
+    (Js.Unsafe.get (es##item i) magic).mark <- true
   done;
 
   let rec finalize_unmarked slot n =
@@ -80,11 +80,11 @@ let add f (e : #Dom_html.element Js.t) =
   if !autotrigger_count > 0 && !add_count mod !autotrigger_count = 0 then
     trigger ();
   let finalize =
-    if Js.to_bool (e##classList##contains(magic_js)) then
+    if Js.to_bool (e##.classList##contains magic_js) then
       let g : unit -> unit = Js.Unsafe.get e magic in
       (fun () -> g (); f ())
     else
-      (e##classList##add(magic_js); f) in
+      (e##.classList##add magic_js; f) in
   let d = {finalize; mark = true; next = chain.next} in
   chain.next <- d;
   Js.Unsafe.set e magic d

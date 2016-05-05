@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-type ('a, 'b) either = Inl of 'a | Inr of 'b deriving (Json)
+type ('a, 'b) either = Inl of 'a | Inr of 'b [@@deriving json]
 
 type ack =
   | Ack_ok

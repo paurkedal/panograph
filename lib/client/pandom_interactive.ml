@@ -33,8 +33,8 @@ let outfit_interactive ~to_string ~of_string ?error ?value input_dom emit =
     Lwt_js_events.changes input_dom @@ fun _ _ ->
     clear_error input_dom;
     set_dirty input_dom;
-    match_lwt
-      try emit (of_string (Js.to_string input_dom##value)) with
+    match%lwt
+      try emit (of_string (Js.to_string input_dom##.value)) with
       | Invalid_input msg -> Lwt.return (Ack_error msg)
       | Invalid_argument _ | Failure _ ->
         Lwt.return (Ack_error "Invalid input.")
@@ -50,7 +50,7 @@ let outfit_interactive ~to_string ~of_string ?error ?value input_dom emit =
   let absorb v =
     clear_dirty input_dom;
     clear_error input_dom;
-    input_dom##value <- Js.string (to_string v) in
+    input_dom##.value := Js.string (to_string v) in
   Option.iter absorb value;
   absorb
 
@@ -76,7 +76,7 @@ let outfit_checkbox ?error ?value checkbox emit =
     Lwt_js_events.changes input_dom @@ fun _ _ ->
     clear_error input_dom;
     set_dirty input_dom;
-    match_lwt emit (Js.to_bool input_dom##checked) with
+    match%lwt emit (Js.to_bool input_dom##.checked) with
     | Ack_ok ->
       clear_error input_dom;
       Lwt.return_unit
@@ -88,6 +88,6 @@ let outfit_checkbox ?error ?value checkbox emit =
   let absorb v =
     clear_dirty input_dom;
     clear_error input_dom;
-    input_dom##checked <- Js.bool v in
+    input_dom##.checked := Js.bool v in
   Option.iter absorb value;
   absorb

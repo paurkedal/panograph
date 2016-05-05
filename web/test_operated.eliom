@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content
   open Operated_types
   open Presentation_sigs
@@ -25,21 +25,15 @@
 
   module String_set = struct
     include Prime_enumset.Make (String)
-    module Json_t =
-      Deriving_Json.Convert (struct
-        type a = string list
-        type b = t
-        module T = Deriving_Json.Json_list (Deriving_Json.Json_string)
-        let t = T.t
-        let to_ = elements
-        let from_ = of_ordered_elements
-      end)
+    type rep = string list [@@deriving json]
+    let to_json buf xs = rep_to_json buf (elements xs)
+    let of_json json = of_ordered_elements (rep_of_json json)
   end
   module String_set_p = Presenting_set.Make (String_set)
 
   module String_map = Prime_enummap.Make (String)
   module Main_p = Presenting_map.Make (String_map) (String_set_p)
-}}
+]
 
 let s_r = Eliom_reference.Volatile.eref ~scope:`Site @@
   List.fold
@@ -58,10 +52,10 @@ let patch ds =
   Lwt.return_unit
 
 let patch_c =
-  server_function Json.t<(string, String_set.t, string set_patch) map_patch>
+  server_function [%json: (string, String_set.t, string set_patch) map_patch]
                   patch
 
-{client{
+[%%client
   open Html5
   open Operated_html5
 
@@ -70,15 +64,15 @@ let patch_c =
       let input = D.Raw.input ~a:[D.a_input_type `Text] () in
       let input_dom = Html5.To_dom.of_input input in
       let on_add _ =
-        let s = Js.to_string (input_dom##value) in
-        Lwt.async (fun () -> %patch_c (Map_at (k, Set_add s))) in
+        let s = Js.to_string (input_dom##.value) in
+        Lwt.async (fun () -> ~%patch_c (Map_at (k, Set_add s))) in
       let add_button =
         D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
                      [D.pcdata "+"] in
       [D.li [input; D.pcdata " "; add_button]] in
     let make_li x =
       let delete _ =
-        Lwt.async (fun () -> %patch_c (Map_at (k, Set_remove x))) in
+        Lwt.async (fun () -> ~%patch_c (Map_at (k, Set_remove x))) in
       let delete_button =
         D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick delete]
                      [D.pcdata "−"] in
@@ -91,22 +85,22 @@ let patch_c =
       let input = D.Raw.input ~a:[D.a_input_type `Text] () in
       let input_dom = Html5.To_dom.of_input input in
       let on_add _ =
-        let k = Js.to_string (input_dom##value) in
-        Lwt.async (fun () -> %patch_c (Map_add (k, String_set.empty))) in
+        let k = Js.to_string (input_dom##.value) in
+        Lwt.async (fun () -> ~%patch_c (Map_add (k, String_set.empty))) in
       let add_button =
         D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
                      [D.pcdata "+"] in
       [D.dt [input]; D.dd [add_button]] in
     O.dl ~intro make_item p
-}}
+]
 
 let render () =
   let open Html5 in
   let p = Main_p.present (Eliom_reference.Volatile.get s_r) in
   let ev_c = Eliom_react.Down.of_react ev in
-  let dl = {{
-    let patch, dl = make_dl %p in
-    Lwt_react.E.keep (React.E.trace patch %ev_c);
+  let dl = [%client
+    let patch, dl = make_dl ~%p in
+    Lwt_react.E.keep (React.E.trace patch ~%ev_c);
     dl
-  }} in
+  ] in
   C.node dl

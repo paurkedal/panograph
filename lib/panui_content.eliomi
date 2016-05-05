@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,13 +14,13 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
-  open Panui_content_intf
+[%%shared.start]
 
-  module Selection : sig
-    type ('a, +'tag) elt = private 'tag Eliom_content.Html5.elt
-    type 'a t = ('a, Html5_types.select_content_fun) elt list
-    module F : Selection with type ('a, 'tag) elt := ('a, 'tag) elt
-    module D : Selection with type ('a, 'tag) elt := ('a, 'tag) elt
-  end
-}}
+open Panui_content_intf
+
+module Selection : sig
+  type ('a, +'tag) elt = private 'tag Eliom_content.Html5.elt
+  type 'a t = ('a, Html5_types.select_content_fun) elt list
+  module F : Selection with type ('a, 'tag) elt := ('a, 'tag) elt
+  module D : Selection with type ('a, 'tag) elt := ('a, 'tag) elt
+end

@@ -14,14 +14,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content.Html5
   open Eliom_lib
   open Unprime
   open Unprime_option
-}}
+]
 
-{client{
+[%%client
   let with_setter elem (to_string : 'a -> string) (value : 'a option) =
     let set x = Manip.replaceChildren elem [D.pcdata (to_string x)] in
     Option.iter set value; set
@@ -36,71 +36,71 @@
         Manip.Class.remove elem "none";
         Manip.replaceChildren elem [D.pcdata (to_string x)] in
     Option.iter set value; set
-}}
+]
 
-{shared{
-  let string_viewer ?a ?(to_string = {string -> string{ident}})
+[%%shared
+  let string_viewer ?a ?(to_string = [%client ident])
                     ?(value : string option) () =
     let span = D.span ?a [] in
-    let g = {string -> unit{with_setter %span %to_string %value}} in
+    let g = [%client with_setter ~%span ~%to_string ~%value] in
     span, g
 
-  let int_viewer ?a ?(to_string = {int -> string{string_of_int}})
+  let int_viewer ?a ?(to_string = [%client string_of_int])
                  ?(value : int option) () =
     let span = D.span ?a [] in
-    let g = {int -> unit{with_setter %span %to_string %value}} in
+    let g = [%client with_setter ~%span ~%to_string ~%value] in
     span, g
 
-  let int32_viewer ?a ?(to_string = {int32 -> string{Int32.to_string}})
+  let int32_viewer ?a ?(to_string = [%client Int32.to_string])
                    ?(value : int32 option) () =
     let span = D.span ?a [] in
-    let g = {int32 -> unit{with_setter %span %to_string %value}} in
+    let g = [%client with_setter ~%span ~%to_string ~%value] in
     span, g
 
-  let int64_viewer ?a ?(to_string = {int64 -> string{Int64.to_string}})
+  let int64_viewer ?a ?(to_string = [%client Int64.to_string])
                    ?(value : int64 option) () =
     let span = D.span ?a [] in
-    let g = {int64 -> unit{with_setter %span %to_string %value}} in
+    let g = [%client with_setter ~%span ~%to_string ~%value] in
     span, g
 
-  let float_viewer ?a ?(to_string = {float -> string{string_of_float}})
+  let float_viewer ?a ?(to_string = [%client string_of_float])
                    ?(value : float option) () =
     let span = D.span ?a [] in
-    let g = {float -> unit{with_setter %span %to_string %value}} in
+    let g = [%client with_setter ~%span ~%to_string ~%value] in
     span, g
 
   let string_option_viewer
-        ?a ?(to_string = {string -> string{ident}})
+        ?a ?(to_string = [%client ident])
         ?(value : string option option) () =
     let span = D.span ?a [] in
-    let g = {string option -> unit{with_opt_setter %span %to_string %value}} in
+    let g = [%client with_opt_setter ~%span ~%to_string ~%value] in
     span, g
 
   let int_option_viewer
-        ?a ?(to_string = {int -> string{string_of_int}})
+        ?a ?(to_string = [%client string_of_int])
         ?(value : int option option) () =
     let span = D.span ?a [] in
-    let g = {int option -> unit{with_opt_setter %span %to_string %value}} in
+    let g = [%client with_opt_setter ~%span ~%to_string ~%value] in
     span, g
 
   let int32_option_viewer
-        ?a ?(to_string = {int32 -> string{Int32.to_string}})
+        ?a ?(to_string = [%client Int32.to_string])
         ?(value : int32 option option) () =
     let span = D.span ?a [] in
-    let g = {int32 option -> unit{with_opt_setter %span %to_string %value}} in
+    let g = [%client with_opt_setter ~%span ~%to_string ~%value] in
     span, g
 
   let int64_option_viewer
-        ?a ?(to_string = {int64 -> string{Int64.to_string}})
+        ?a ?(to_string = [%client Int64.to_string])
         ?(value : int64 option option) () =
     let span = D.span ?a [] in
-    let g = {int64 option -> unit{with_opt_setter %span %to_string %value}} in
+    let g = [%client with_opt_setter ~%span ~%to_string ~%value] in
     span, g
 
   let float_option_viewer
-        ?a ?(to_string = {float -> string{string_of_float}})
+        ?a ?(to_string = [%client string_of_float])
         ?(value : float option option) () =
     let span = D.span ?a [] in
-    let g = {float option -> unit{with_opt_setter %span %to_string %value}} in
+    let g = [%client with_opt_setter ~%span ~%to_string ~%value] in
     span, g
-}}
+]

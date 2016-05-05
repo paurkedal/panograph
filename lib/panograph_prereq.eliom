@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   let string_of_option f = function
     | None -> ""
     | Some x -> f x
@@ -22,4 +22,4 @@
   let option_of_string f = function
     | "" -> None
     | s -> Some (f s)
-}}
+]

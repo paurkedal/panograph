@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
-  val string_of_option : ('a -> string) -> 'a option -> string
-  val option_of_string : (string -> 'a) -> string -> 'a option
-}}
+[%%shared.start]
+
+val string_of_option : ('a -> string) -> 'a option -> string
+val option_of_string : (string -> 'a) -> string -> 'a option

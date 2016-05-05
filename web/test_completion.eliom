@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,13 +17,13 @@
 open Eliom_content.Html5
 open Panui_completion
 
-{shared{
+[%%shared
   open Panograph_types
   open Unprime_char
   open Unprime_string
-}}
+]
 
-{client{
+[%%client
   module Dep0 = Panui_completion
 
   let rec diff = function
@@ -63,10 +63,11 @@ open Panui_completion
     Lwt_js.sleep 1.0 >>
     Lwt.return
       (List.map (fun zs -> String.concat " " (List.map string_of_int zs)) zss)
-}}
+]
 
 let render () =
   let value = "1 2 4" in
-  let elem, absorb = string_completion_input ~value {{fetch}} {{commit}} in
-  ignore {unit{ Lwt_react.S.keep (React.S.trace %absorb state) }};
+  let elem, absorb =
+    string_completion_input ~value [%client fetch] [%client commit] in
+  ignore [%client  Lwt_react.S.keep (React.S.trace ~%absorb state) ];
   D.p [elem]

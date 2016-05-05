@@ -14,33 +14,33 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content.Html5
-}}
-{client{
+]
+[%%client
   open Panui_dialogs
-}}
+]
 
 let render () =
   let open_acknowledge =
     D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Acknowledge"] in
   let open_confirm =
     D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Confirm"] in
-  ignore {unit{
+  ignore [%client
     Lwt.async begin fun () ->
-      Lwt_js_events.clicks (To_dom.of_button %open_acknowledge) @@ fun _ _ ->
-      lwt () = acknowledge_lwt [D.p [D.pcdata "Seen it?"]] in
+      Lwt_js_events.clicks (To_dom.of_button ~%open_acknowledge) @@ fun _ _ ->
+      let%lwt () = acknowledge_lwt [D.p [D.pcdata "Seen it?"]] in
       Manip.appendToBody (D.div [D.pcdata "It's seen."]);
       Lwt.return_unit
     end;
     Lwt.async begin fun () ->
-      Lwt_js_events.clicks (To_dom.of_button %open_confirm) @@ fun _ _ ->
-      lwt ans = confirm_lwt [D.p [D.pcdata "Do it?"]] in
+      Lwt_js_events.clicks (To_dom.of_button ~%open_confirm) @@ fun _ _ ->
+      let%lwt ans = confirm_lwt [D.p [D.pcdata "Do it?"]] in
       if ans then Manip.appendToBody (D.div [D.pcdata "It's done."])
              else Manip.appendToBody (D.div [D.pcdata "It's not done."]);
       Lwt.return_unit
-    end;
-  }};
+    end
+  ];
   D.div [
     D.p [
       D.pcdata "In user interface design, a modal window is a graphical control element subordinate to an application's main window which creates a mode where the main window can't be used. The modal window is a child window that requires users to interact with it before it can return to operating the parent application, thus preventing the workflow on the application main window. Modal windows are often called heavy windows or modal dialogs because the window is often used to display a dialog box.";

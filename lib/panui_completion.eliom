@@ -14,16 +14,16 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content.Html5
   open Lwt.Infix
   open Panograph_types
   open Printf
   open Unprime
   open Unprime_option
-}}
+]
 
-{client{
+[%%client
   let string_completion_client input_elem choices_elem value commit fetch =
     let stored_value = ref (Option.get_or "" value) in
     let input_dom = To_dom.of_input input_elem in
@@ -41,11 +41,11 @@
     let on_commit v =
       Pandom_style.set_hidden choices_dom;
       if v = !stored_value then begin
-        input_dom##value <- Js.string v;
+        input_dom##.value := Js.string v;
         Lwt.return_unit
       end else begin
         Pandom_style.set_dirty input_dom;
-        match_lwt commit v with
+        match%lwt commit v with
         | Ack_ok ->
           Pandom_style.clear_error input_dom;
           Lwt.return_unit
@@ -63,8 +63,8 @@
       choice_elem in
 
     let update_choices = Pwt.async_updater @@ fun () ->
-      try_lwt
-        lwt completions = fetch (Js.to_string input_dom##value) in
+      try%lwt
+        let%lwt completions = fetch (Js.to_string input_dom##.value) in
         Pandom_style.clear_hidden choices_dom;
         Pandom_style.clear_error input_dom;
         let choices = List.map make_choice completions in
@@ -80,7 +80,7 @@
     let on_input_change _ _ =
       if !committing_choice then Lwt.return_unit else begin
         Pandom_style.clear_error input_dom;
-        on_commit (Js.to_string input_dom##value)
+        on_commit (Js.to_string input_dom##.value)
       end in
 
     Lwt_js_events.(async @@ fun () -> inputs input_dom on_input_input);
@@ -90,10 +90,10 @@
       Pandom_style.clear_dirty input_dom;
       Pandom_style.clear_error input_dom;
       stored_value := v;
-      input_dom##value <- Js.string v
-}}
+      input_dom##.value := Js.string v
+]
 
-{shared{
+[%%shared
   let string_completion_input
         ?(value : string option)
         (fetch : (string -> string list Lwt.t) client_value)
@@ -102,11 +102,12 @@
     let input_elem = D.Raw.input ~a:[D.a_input_type `Text] () in
     let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in
 
-    let absorb = {string -> unit{
-      string_completion_client %input_elem %choices_elem %value %commit %fetch
-    }} in
+    let absorb = [%client
+      string_completion_client ~%input_elem ~%choices_elem
+                               ~%value ~%commit ~%fetch
+    ] in
 
     D.span ~a:[D.a_class ["pan-completion-input"]]
       [input_elem; D.span ~a:[D.a_class ["pan-dropdown"]] [choices_elem]],
     absorb
-}}
+]

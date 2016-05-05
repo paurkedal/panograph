@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-type lang = int deriving (Json)
+type lang = int [@@deriving json]
 
 module Lang : sig
   type t = lang

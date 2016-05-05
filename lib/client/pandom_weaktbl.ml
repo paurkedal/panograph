@@ -34,20 +34,20 @@ let unsafe_find wt e = Js.Unsafe.get e wt
 
 let add wt e x =
   Js.Unsafe.set e wt x;
-  e##classList##add(Js.string wt)
+  e##.classList##add(Js.string wt)
 
 let remove wt e =
-  e##classList##remove(Js.string wt);
+  e##.classList##remove(Js.string wt);
   Js.Unsafe.delete e wt
 
 let find wt e =
-  if Js.to_bool (e##classList##contains(Js.string wt))
+  if Js.to_bool (e##.classList##contains(Js.string wt))
   then Some (unsafe_find wt e)
   else None
 
 let iter ?top f wt =
   let es = elements ?top wt in
-  for i = 0 to es##length - 1 do
+  for i = 0 to es##.length - 1 do
     Js.Opt.iter (es##item(i)) @@ fun e ->
     f e (unsafe_find wt e)
   done
@@ -55,7 +55,7 @@ let iter ?top f wt =
 let fold ?top f wt acc =
   let es = elements ?top wt in
   let acc_r = ref acc in
-  for i = 0 to es##length - 1 do
+  for i = 0 to es##.length - 1 do
     Js.Opt.iter (es##item(i)) @@ fun e ->
     acc_r := f e (unsafe_find wt e) !acc_r
   done;
@@ -64,7 +64,7 @@ let fold ?top f wt acc =
 let for_all ?top f wt =
   let es = elements ?top wt in
   let rec loop i =
-    i < es##length
+    i < es##.length
       && Js.Opt.case (es##item(i)) (konst true)
                      (fun e -> f e (unsafe_find wt e))
       && loop (succ i) in
@@ -73,7 +73,7 @@ let for_all ?top f wt =
 let exists ?top f wt =
   let es = elements ?top wt in
   let rec loop i =
-    i = es##length
+    i = es##.length
       || Js.Opt.case (es##item(i)) (konst false)
                      (fun e -> f e (unsafe_find wt e))
       || loop (succ i) in

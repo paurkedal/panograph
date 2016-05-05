@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -24,18 +24,18 @@ let error_class = Js.string "pan-error"
 let dirty_class = Js.string "pan-dirty"
 
 let set_error msg dom =
-  if not (Js.to_bool (dom##classList##contains(error_class))) then begin
-    dom##classList##add(error_class);
-    let orig_title = Js.to_string dom##title in
-    dom##title <- Js.string (error_prefix ^ msg ^ error_suffix ^ orig_title)
+  if not (Js.to_bool (dom##.classList##contains(error_class))) then begin
+    dom##.classList##add(error_class);
+    let orig_title = Js.to_string dom##.title in
+    dom##.title := Js.string (error_prefix ^ msg ^ error_suffix ^ orig_title)
   end
 
 let clear_error dom =
-  if Js.to_bool (dom##classList##contains(error_class)) then begin
-    dom##classList##remove(error_class);
-    match String.cut_affix error_suffix (Js.to_string dom##title) with
+  if Js.to_bool (dom##.classList##contains(error_class)) then begin
+    dom##.classList##remove(error_class);
+    match String.cut_affix error_suffix (Js.to_string dom##.title) with
     | Some (_ as msg, orig_title) when String.has_prefix error_prefix msg ->
-      dom##title <- Js.string orig_title
+      dom##.title := Js.string orig_title
     | _ -> ()
   end
 
@@ -44,7 +44,7 @@ let flash_error msg dom =
   Lwt_js.sleep 4.0 >|= fun () ->
   clear_error dom
 
-let set_dirty dom = dom##classList##add(dirty_class)
-let clear_dirty dom = dom##classList##remove(dirty_class)
-let set_hidden dom = dom##classList##add(hidden_class)
-let clear_hidden dom = dom##classList##remove(hidden_class)
+let set_dirty dom = dom##.classList##add(dirty_class)
+let clear_dirty dom = dom##.classList##remove(dirty_class)
+let set_hidden dom = dom##.classList##add(hidden_class)
+let clear_hidden dom = dom##.classList##remove(hidden_class)

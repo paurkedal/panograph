@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,9 +14,10 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared.start]
 
 open Eliom_content
+open Eliom_pervasives
 open Html5_types
 open Panograph_types
 
@@ -29,5 +30,3 @@ val p_with_textarea :
   ?a: [< p_attrib] Html5.attrib list ->
   (string -> ack Lwt.t) client_value -> string ->
   (string -> unit) client_value * [> p] Html5.elt
-
-}}

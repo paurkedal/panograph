@@ -28,7 +28,7 @@ let make_button f content =
   let button = D.Raw.button ~a:[D.a_button_type `Button] content in
   let button_dom = To_dom.of_button button in
   let on_click _ _ =
-    match_lwt f () with
+    match%lwt f () with
     | Ack_ok -> Lwt.return_unit
     | Ack_error msg -> Pandom_style.flash_error msg button_dom in
   Lwt.async (fun () -> Lwt_js_events.clicks button_dom on_click);

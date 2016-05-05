@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -34,12 +34,12 @@ let rec search_p f = function
 let rec fmap_s f = function
   | [] -> return []
   | x :: xs ->
-    lwt yo = f x in
-    lwt ys = fmap_s f xs in
+    let%lwt yo = f x in
+    let%lwt ys = fmap_s f xs in
     return (match yo with None -> ys | Some y -> y :: ys)
 
 let rec fmap_p f = function
   | [] -> return []
   | x :: xs ->
-    lwt yo = f x and ys = fmap_p f xs in
+    let%lwt yo = f x and ys = fmap_p f xs in
     return (match yo with None -> ys | Some y -> y :: ys)

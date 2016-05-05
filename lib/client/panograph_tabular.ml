@@ -135,13 +135,13 @@ module Tabular = struct
       let j = ref 0 in
       Cs_map.iter
         (fun cs tc ->
-          assert (tc##cellIndex = !j);
-          for k = 0 to tc##rowSpan - 1 do
-            widths.(!i + k) <- widths.(!i + k) + tc##colSpan
+          assert (tc##.cellIndex = !j);
+          for k = 0 to tc##.rowSpan - 1 do
+            widths.(!i + k) <- widths.(!i + k) + tc##.colSpan
           done;
           incr j)
         tn.tn_tcs;
-      assert (!j = tn.tn_tr##cells##length);
+      assert (!j = tn.tn_tr##.cells##.length);
       incr i in
     Rs_map.iter validate_tn tab.tab_tns;
     if Prime_array.exists ((<>) root_csn.csn_span) widths then begin
@@ -167,8 +167,8 @@ module Tabular = struct
       match blk.blk_state with
       | Single tc ->
         assert (rem_lr = 0 && rem_lc = 0);
-        assert (tc##rowSpan = rsn.rsn_span);
-        assert (tc##colSpan = csn.csn_span);
+        assert (tc##.rowSpan = rsn.rsn_span);
+        assert (tc##.colSpan = csn.csn_span);
         assert_empty_below rs cs
       | Empty (rem_lr', rem_lc', tc) ->
         assert (rem_lr' = rem_lr);
@@ -178,8 +178,8 @@ module Tabular = struct
         assert (rem_lr = 0 && rem_lc = 0);
         assert (lr > 0 || lc > 0);
         assert (not (has_subblock lr lc rs cs));
-        assert (tc##rowSpan = rsn.rsn_span);
-        assert (tc##colSpan = csn.csn_span);
+        assert (tc##.rowSpan = rsn.rsn_span);
+        assert (tc##.colSpan = csn.csn_span);
         assert_empty_below rs cs
       | Refined (lr, lc) ->
         assert (rem_lr = 0 && rem_lc = 0);
@@ -189,20 +189,20 @@ module Tabular = struct
     validate_block 0 0 tab.tab_root_rs tab.tab_root_cs
 
   let switch_class b cls tc =
-    if b then tc##classList##add(Js.string cls)
-         else tc##classList##remove(Js.string cls)
+    if b then tc##.classList##add(Js.string cls)
+         else tc##.classList##remove(Js.string cls)
 
   let update_cell_rs_attribs rs tc =
-    tc##rowSpan <- (Dltree.get rs).rsn_span;
+    tc##.rowSpan := (Dltree.get rs).rsn_span;
     let rec clear sfx rs =
-      Option.iter (fun cls -> tc##classList##remove(Js.string (cls ^ sfx)))
+      Option.iter (fun cls -> tc##.classList##remove(Js.string (cls ^ sfx)))
                   (Dltree.get rs).rsn_css_class;
       Option.iter (clear sfx) (Dltree.up rs) in
     let rec update_fr rs =
       match Dltree.up rs with
       | None -> ()
       | Some up_rs when Dltree.is_first rs ->
-        Option.iter (fun cls -> tc##classList##add(Js.string (cls ^ "-fr")))
+        Option.iter (fun cls -> tc##.classList##add(Js.string (cls ^ "-fr")))
                     (Dltree.get up_rs).rsn_css_class;
         update_fr up_rs
       | Some up_rs -> clear "-fr" up_rs in
@@ -210,7 +210,7 @@ module Tabular = struct
       match Dltree.up rs with
       | None -> ()
       | Some up_rs when Dltree.is_last rs ->
-        Option.iter (fun cls -> tc##classList##add(Js.string (cls ^ "-lr")))
+        Option.iter (fun cls -> tc##.classList##add(Js.string (cls ^ "-lr")))
                     (Dltree.get up_rs).rsn_css_class;
         update_lr up_rs
       | Some up_rs -> clear "-lr" up_rs in
@@ -218,16 +218,16 @@ module Tabular = struct
     update_lr rs
 
   let update_cell_cs_attribs cs tc =
-    tc##colSpan <- (Dltree.get cs).csn_span;
+    tc##.colSpan := (Dltree.get cs).csn_span;
     let rec clear sfx cs =
-      Option.iter (fun cls -> tc##classList##remove(Js.string (cls ^ sfx)))
+      Option.iter (fun cls -> tc##.classList##remove(Js.string (cls ^ sfx)))
                   (Dltree.get cs).csn_css_class;
       Option.iter (clear sfx) (Dltree.up cs) in
     let rec update_fc cs =
       match Dltree.up cs with
       | None -> ()
       | Some up_cs when Dltree.is_first cs ->
-        Option.iter (fun cls -> tc##classList##add(Js.string (cls ^ "-fc")))
+        Option.iter (fun cls -> tc##.classList##add(Js.string (cls ^ "-fc")))
                     (Dltree.get up_cs).csn_css_class;
         update_fc up_cs
       | Some up_cs -> clear "-fc" up_cs in
@@ -235,7 +235,7 @@ module Tabular = struct
       match Dltree.up cs with
       | None -> ()
       | Some up_cs when Dltree.is_last cs ->
-        Option.iter (fun cls -> tc##classList##add(Js.string (cls ^ "-lc")))
+        Option.iter (fun cls -> tc##.classList##add(Js.string (cls ^ "-lc")))
                     (Dltree.get up_cs).csn_css_class;
         update_lc up_cs
       | Some up_cs -> clear "-lc" up_cs in
@@ -243,16 +243,16 @@ module Tabular = struct
     update_lc cs
 
   let init_cell_attribs rs cs tc =
-    Option.iter (fun c -> tc##classList##add(Js.string c))
+    Option.iter (fun c -> tc##.classList##add(Js.string c))
                 (Dltree.get rs).rsn_css_class;
-    Option.iter (fun c -> tc##classList##add(Js.string c))
+    Option.iter (fun c -> tc##.classList##add(Js.string c))
                 (Dltree.get cs).csn_css_class;
     let rec loop_up_rs rs =
       match Dltree.up rs with
       | None -> ()
       | Some up_rs ->
         if not (Dltree.is_root up_rs) then
-          Option.iter (fun c -> tc##classList##add(Js.string (c ^ "-r")))
+          Option.iter (fun c -> tc##.classList##add(Js.string (c ^ "-r")))
                       (Dltree.get up_rs).rsn_css_class;
         loop_up_rs up_rs in
     let rec loop_up_cs cs =
@@ -260,7 +260,7 @@ module Tabular = struct
       | None -> ()
       | Some up_cs ->
         if not (Dltree.is_root up_cs) then
-          Option.iter (fun c -> tc##classList##add(Js.string (c ^ "-c")))
+          Option.iter (fun c -> tc##.classList##add(Js.string (c ^ "-c")))
                       (Dltree.get up_cs).csn_css_class;
         loop_up_cs up_cs in
     loop_up_rs rs;
@@ -282,7 +282,7 @@ module Tabular = struct
     let found, pos = Rs_map.locate rs tab.tab_tns in
     assert found;
     let tn = Rs_map.find rs tab.tab_tns in
-    assert (pos = tn.tn_tr##rowIndex);
+    assert (pos = tn.tn_tr##.rowIndex);
     tab.tab_table##deleteRow(pos);
     tab.tab_tns <- Rs_map.remove rs tab.tab_tns
 
@@ -297,7 +297,7 @@ module Tabular = struct
     let found, pos = Cs_map.locate cs tn.tn_tcs in
     assert found;
     let tc = Cs_map.find cs tn.tn_tcs in
-    assert (pos = tc##cellIndex);
+    assert (pos = tc##.cellIndex);
     tn.tn_tr##deleteCell(pos);
     tn.tn_tcs <- Cs_map.remove cs tn.tn_tcs
 
@@ -333,7 +333,7 @@ module Tabular = struct
 
   let maybe_move_cell tc cs (tn_old, tn_new) =
     let tc_tr =
-      tr_of_node (Js.Opt.get (tc##parentNode) (fun _ -> assert false)) in
+      tr_of_node (Js.Opt.get (tc##.parentNode) (fun _ -> assert false)) in
     if tc_tr == tn_old.tn_tr then
       move_cell' tn_old tn_new cs
 
@@ -858,8 +858,8 @@ module Tabular = struct
       let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
       match blk.blk_state with
       | Single tc ->
-        assert (tc##rowSpan = rsn.rsn_span);
-        assert (tc##colSpan = csn.csn_span);
+        assert (tc##.rowSpan = rsn.rsn_span);
+        assert (tc##.colSpan = csn.csn_span);
         init_cell_attribs rs cs tc';
         let rs_leaf = Dltree.first_leaf rs in
         assert (Rs_map.contains rs_leaf tab.tab_tns);

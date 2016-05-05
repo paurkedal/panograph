@@ -14,12 +14,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content
   open Unprime_list
   open Unprime_option
-}}
-{client{
+]
+[%%client
   module Dep_com = Test_completion
   module Dep_cse = Test_combo_selectors
   module Dep_cwe = Test_content_with_edit
@@ -31,19 +31,19 @@
   module Dep_sca = Test_scalar
   module Dep_twc = Test_weakchan
   module Dep_twt = Test_weaktbl
-}}
+]
 
-{server{
+[%%server
   let lwt_log_rules =
     try Some (Sys.getenv "LWT_LOG_JS") with Not_found ->
     try Some (Sys.getenv "LWT_LOG") with Not_found ->
     None
-}}
-{client{
+]
+[%%client
   let () =
     Lwt_log_js.(Section.set_level (Section.make "eliom:client") Warning);
-    Option.iter Lwt_log_js.load_rules %lwt_log_rules
-}}
+    Option.iter Lwt_log_js.load_rules ~%lwt_log_rules
+]
 
 module App = Eliom_registration.App (struct let application_name = "test" end)
 
@@ -67,10 +67,10 @@ let test_services = List.map make_test_service [
   "content_with_edit", Test_content_with_edit.render;
   "dialogs", Test_dialogs.render;
   "finalizer", Test_finalizer.render;
-  "inputs", (fun () -> Html5.C.node {{Test_inputs.render ()}});
-  "tabular1", (fun () -> Html5.C.node {{Test_tabular1.render ()}});
-  "tabular2", (fun () -> Html5.C.node {{Test_tabular2.render ()}});
-  "tabular3", (fun () -> Html5.C.node {{Test_tabular3.render ()}});
+  "inputs", (fun () -> Html5.C.node [%client Test_inputs.render ()]);
+  "tabular1", (fun () -> Html5.C.node [%client Test_tabular1.render ()]);
+  "tabular2", (fun () -> Html5.C.node [%client Test_tabular2.render ()]);
+  "tabular3", (fun () -> Html5.C.node [%client Test_tabular3.render ()]);
   "basic_editors", Test_basic_editors.render;
   "operated", Test_operated.render;
   "scalar", Test_scalar.render;

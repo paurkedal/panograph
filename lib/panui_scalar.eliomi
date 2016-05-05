@@ -14,65 +14,66 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
-  open Eliom_content.Html5
-  open Panograph_types
+[%%shared.start]
 
-  type ('a, 'opt) opt constraint 'opt = [< `Opt | `Optgroup]
-}}
+open Eliom_content.Html5
+open Eliom_pervasives
+open Panograph_types
 
-{server{
-  type 'a handle
-}}
+type ('a, 'opt) opt constraint 'opt = [< `Opt | `Optgroup]
 
-{client{
-  class type ['a] handle = object
-    method show : unit
-    method hide : unit
-    method edit_on : ('a -> ack Lwt.t) -> unit
-    method edit_off : unit
-    method get : 'a
-    method set : 'a -> unit
-  end
+[%%server.start]
 
-  val add_input_with_handle :
-        to_string: ('a -> string) ->
-        of_string: (string -> 'a) ->
-        ?opts: ('a, 'opt) opt list ->
-        ?emit: ('a -> ack Lwt.t) ->
-        ?error: (string option -> unit) ->
-        'a -> [< `Span | `Div | `Td] elt -> 'a handle
-}}
+type 'a handle
 
-{shared{
-  val opt : ?enabled: bool -> string -> 'a -> ('a, [> `Opt]) opt
-  val optv : ?enabled: bool -> 'a -> ('a, [> `Opt]) opt
-  val optgroup : ?enabled: bool -> string ->
-                 ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
+[%%client.start]
 
-  type ('a, 'opt, 'attrib, 'elt) t =
-        ?to_string: ('a -> string) client_value ->
-        ?of_string: (string -> 'a) client_value ->
-        ?opts: ('a, 'opt) opt list ->
-        ?emit: ('a -> ack Lwt.t) client_value ->
-        ?error: (string option -> unit) client_value ->
-        ?a: 'attrib attrib list ->
-        'a -> 'elt elt * 'a handle client_value
-      constraint 'attrib = [< Html5_types.common > `Class]
-      constraint 'opt = [< `Opt | `Optgroup]
-      constraint 'elt = [> `Span]
+class type ['a] handle = object
+  method show : unit
+  method hide : unit
+  method edit_on : ('a -> ack Lwt.t) -> unit
+  method edit_off : unit
+  method get : 'a
+  method set : 'a -> unit
+end
 
-  val bool : (bool, 'opt, 'attrib, 'elt) t
-  val string : (string, 'opt, 'attrib, 'elt) t
-  val int : (int, 'opt, 'attrib, 'elt) t
-  val int32 : (int32, 'opt, 'attrib, 'elt) t
-  val int64 : (int64, 'opt, 'attrib, 'elt) t
-  val float : (float, 'opt, 'attrib, 'elt) t
+val add_input_with_handle :
+      to_string: ('a -> string) ->
+      of_string: (string -> 'a) ->
+      ?opts: ('a, 'opt) opt list ->
+      ?emit: ('a -> ack Lwt.t) ->
+      ?error: (string option -> unit) ->
+      'a -> [< `Span | `Div | `Td] elt -> 'a handle
 
-  val bool_option : (bool option, 'opt, 'attrib, 'elt) t
-  val string_option : (string option, 'opt, 'attrib, 'elt) t
-  val int_option : (int option, 'opt, 'attrib, 'elt) t
-  val int32_option : (int32 option, 'opt, 'attrib, 'elt) t
-  val int64_option : (int64 option, 'opt, 'attrib, 'elt) t
-  val float_option : (float option, 'opt, 'attrib, 'elt) t
-}}
+[%%shared.start]
+
+val opt : ?enabled: bool -> string -> 'a -> ('a, [> `Opt]) opt
+val optv : ?enabled: bool -> 'a -> ('a, [> `Opt]) opt
+val optgroup : ?enabled: bool -> string ->
+               ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
+
+type ('a, 'opt, 'attrib, 'elt) t =
+      ?to_string: ('a -> string) client_value ->
+      ?of_string: (string -> 'a) client_value ->
+      ?opts: ('a, 'opt) opt list ->
+      ?emit: ('a -> ack Lwt.t) client_value ->
+      ?error: (string option -> unit) client_value ->
+      ?a: 'attrib attrib list ->
+      'a -> 'elt elt * 'a handle client_value
+    constraint 'attrib = [< Html5_types.common > `Class]
+    constraint 'opt = [< `Opt | `Optgroup]
+    constraint 'elt = [> `Span]
+
+val bool : (bool, 'opt, 'attrib, 'elt) t
+val string : (string, 'opt, 'attrib, 'elt) t
+val int : (int, 'opt, 'attrib, 'elt) t
+val int32 : (int32, 'opt, 'attrib, 'elt) t
+val int64 : (int64, 'opt, 'attrib, 'elt) t
+val float : (float, 'opt, 'attrib, 'elt) t
+
+val bool_option : (bool option, 'opt, 'attrib, 'elt) t
+val string_option : (string option, 'opt, 'attrib, 'elt) t
+val int_option : (int option, 'opt, 'attrib, 'elt) t
+val int32_option : (int32 option, 'opt, 'attrib, 'elt) t
+val int64_option : (int64 option, 'opt, 'attrib, 'elt) t
+val float_option : (float option, 'opt, 'attrib, 'elt) t

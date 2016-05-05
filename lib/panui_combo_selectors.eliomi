@@ -14,42 +14,43 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
-  open Eliom_content.Html5
-  open Html5_types
-  open Panograph_types
-  open Panui_content
+[%%shared.start]
 
-  val int_string_option_combo_selector :
-        ?a: span_attrib attrib list ->
-        ?inl_a: select_attrib attrib list ->
-        ?inr_a: input_attrib attrib list ->
-        inl_selection: int option Selection.t ->
-        ?inr_to_string: (string -> string) client_value ->
-        ?inr_of_string: (string -> string) client_value ->
-        ?value: (int, string) either option ->
-        ((int, string) either option -> ack Lwt.t) client_value ->
-        [> span] elt * ((int, string) either option -> unit) client_value
+open Eliom_content.Html5
+open Eliom_pervasives
+open Html5_types
+open Panograph_types
+open Panui_content
 
-  val int32_string_option_combo_selector :
-        ?a: span_attrib attrib list ->
-        ?inl_a: select_attrib attrib list ->
-        ?inr_a: input_attrib attrib list ->
-        inl_selection: int32 option Selection.t ->
-        ?inr_to_string: (string -> string) client_value ->
-        ?inr_of_string: (string -> string) client_value ->
-        ?value: (int32, string) either option ->
-        ((int32, string) either option -> ack Lwt.t) client_value ->
-        [> span] elt * ((int32, string) either option -> unit) client_value
+val int_string_option_combo_selector :
+      ?a: span_attrib attrib list ->
+      ?inl_a: select_attrib attrib list ->
+      ?inr_a: input_attrib attrib list ->
+      inl_selection: int option Selection.t ->
+      ?inr_to_string: (string -> string) client_value ->
+      ?inr_of_string: (string -> string) client_value ->
+      ?value: (int, string) either option ->
+      ((int, string) either option -> ack Lwt.t) client_value ->
+      [> span] elt * ((int, string) either option -> unit) client_value
 
-  val int64_string_option_combo_selector :
-        ?a: span_attrib attrib list ->
-        ?inl_a: select_attrib attrib list ->
-        ?inr_a: input_attrib attrib list ->
-        inl_selection: int64 option Selection.t ->
-        ?inr_to_string: (string -> string) client_value ->
-        ?inr_of_string: (string -> string) client_value ->
-        ?value: (int64, string) either option ->
-        ((int64, string) either option -> ack Lwt.t) client_value ->
-        [> span] elt * ((int64, string) either option -> unit) client_value
-}}
+val int32_string_option_combo_selector :
+      ?a: span_attrib attrib list ->
+      ?inl_a: select_attrib attrib list ->
+      ?inr_a: input_attrib attrib list ->
+      inl_selection: int32 option Selection.t ->
+      ?inr_to_string: (string -> string) client_value ->
+      ?inr_of_string: (string -> string) client_value ->
+      ?value: (int32, string) either option ->
+      ((int32, string) either option -> ack Lwt.t) client_value ->
+      [> span] elt * ((int32, string) either option -> unit) client_value
+
+val int64_string_option_combo_selector :
+      ?a: span_attrib attrib list ->
+      ?inl_a: select_attrib attrib list ->
+      ?inr_a: input_attrib attrib list ->
+      inl_selection: int64 option Selection.t ->
+      ?inr_to_string: (string -> string) client_value ->
+      ?inr_of_string: (string -> string) client_value ->
+      ?value: (int64, string) either option ->
+      ((int64, string) either option -> ack Lwt.t) client_value ->
+      [> span] elt * ((int64, string) either option -> unit) client_value

@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -34,23 +34,23 @@ let classifier chan k = Js.string (chan.prefix ^ chan.classify k)
 
 let subscribe_class chan e k f =
   let cls = classifier chan k in
-  e##classList##add(cls);
+  e##.classList##add(cls);
   Js.Unsafe.set e cls f;
-  (fun () -> e##classList##remove(cls); Js.Unsafe.delete e cls)
+  (fun () -> e##.classList##remove(cls); Js.Unsafe.delete e cls)
 
 let subscribe_id chan e k f =
   let cls = classifier chan k in
-  e##id <- cls;
+  e##.id := cls;
   Js.Unsafe.set e cls f;
-  (fun () -> e##id <- Js.string ""; Js.Unsafe.delete e cls)
+  (fun () -> e##.id := Js.string ""; Js.Unsafe.delete e cls)
 
 let unsubscribe g = g ()
 
 let send (chan : ('k, 'a) t) (k : 'k) (v : 'a) =
   let cls = classifier chan k in
   let send_to e = (Js.Unsafe.get e cls : 'a -> unit) v in
-  Js.Opt.iter (Dom_html.document##getElementById(cls)) send_to;
-  let els = Dom_html.document##getElementsByClassName(cls) in
-  for i = 0 to els##length - 1 do
-    send_to els##item(i)
+  Js.Opt.iter (Dom_html.document##getElementById cls) send_to;
+  let els = Dom_html.document##getElementsByClassName cls in
+  for i = 0 to els##.length - 1 do
+    send_to (els##item i)
   done

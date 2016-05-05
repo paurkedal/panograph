@@ -1,40 +1,27 @@
-"client/pandom_finalizer.ml": syntax(camlp4o), \
-    package(js_of_ocaml.syntax)
-"client/pandom_interactive.ml": syntax(camlp4o), \
-    package(lwt.syntax), package(js_of_ocaml.syntax)
-"client/pandom_style.ml": syntax(camlp4o), \
-    package(js_of_ocaml.syntax)
-"client/pandom_weakchan.ml": syntax(camlp4o), \
-    package(js_of_ocaml.syntax)
-"client/pandom_weaktbl.ml": syntax(camlp4o), \
-    package(js_of_ocaml.syntax)
+true: eliom_ppx
 
-<**/operated_types.mli>: syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"operated_types.ml": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"panograph_i18n.mli": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"panograph_i18n.ml": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"panograph_types.mli": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"panograph_types.ml": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"presentation_types.mli": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"presentation_types.ml": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"panograph_twine_editor.eliomi": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
-"panograph_twine_editor.eliom": syntax(camlp4o), \
-    package(deriving.syntax), package(js_of_ocaml.deriving.syntax)
+"client/pandom_finalizer.ml": package(js_of_ocaml.ppx)
+"client/pandom_interactive.ml": package(lwt.ppx), package(js_of_ocaml.ppx)
+"client/pandom_style.ml": package(js_of_ocaml.ppx)
+"client/pandom_weakchan.ml": package(js_of_ocaml.ppx)
+"client/pandom_weaktbl.ml": package(js_of_ocaml.ppx)
 
-"client/panograph_common.ml": syntax(camlp4o), \
-    package(lwt.syntax)
-"client/panograph_simple.ml": syntax(camlp4o), \
-    package(lwt.syntax), package(js_of_ocaml.syntax)
-"client/panograph_tabular.ml": syntax(camlp4o), \
-    package(js_of_ocaml.syntax)
+<*/operated_types.{ml,mli}>: package(ppx_deriving.std), package(js_of_ocaml.deriving.ppx)
+"panograph_i18n.mli": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"panograph_i18n.ml": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"panograph_types.mli": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"panograph_types.ml": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"presentation_types.mli": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"presentation_types.ml": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+<*/panograph_twine_editor.{ml,mli}>: package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+<*/panograph_basic_editors.{ml,mli}>: package(lwt.ppx), package(js_of_ocaml.ppx)
 
-<pwt*.ml>: syntax(camlp4o), package(lwt.syntax)
+"client/panograph_common.ml": package(lwt.ppx)
+"client/panograph_simple.ml": package(lwt.ppx), package(js_of_ocaml.ppx)
+"client/panograph_tabular.ml": package(js_of_ocaml.ppx)
+<*/panui_completion.{ml,mli}>: package(lwt.ppx)
+<*/panui_content_with_edit.{ml,mli}>: package(lwt.ppx)
+
+<pwt*.ml>: package(lwt.ppx)
+<server/*>: thread
+<client/*.ml{,i}>: package(js_of_ocaml.ppx)

@@ -14,55 +14,55 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
-  open Html5_types
+[%%shared.start]
 
-  module type Selection = sig
+open Html5_types
 
-    type ('a, +'tag) elt
+module type Selection = sig
 
-    val group : ?disabled: bool -> string ->
-                ('a, [< `Option]) elt list -> ('a, [> `Optgroup]) elt
+  type ('a, +'tag) elt
 
-    val (^:) : string ->
-               ('a, [< `Option]) elt list -> ('a, [> `Optgroup]) elt
+  val group : ?disabled: bool -> string ->
+              ('a, [< `Option]) elt list -> ('a, [> `Optgroup]) elt
 
-    val unsafe : ?disabled: bool -> string ->
-                 string -> ('a, [> selectoption]) elt
+  val (^:) : string ->
+             ('a, [< `Option]) elt list -> ('a, [> `Optgroup]) elt
 
-    val conv : ('a -> string) ->
-               ?disabled: bool -> string ->
-               'a -> ('a, [> selectoption]) elt
+  val unsafe : ?disabled: bool -> string ->
+               string -> ('a, [> selectoption]) elt
 
-    val string : ?disabled: bool -> string ->
-                 string -> (string, [> selectoption]) elt
+  val conv : ('a -> string) ->
+             ?disabled: bool -> string ->
+             'a -> ('a, [> selectoption]) elt
 
-    val bool : ?disabled: bool -> string ->
-               bool -> (bool, [> selectoption]) elt
+  val string : ?disabled: bool -> string ->
+               string -> (string, [> selectoption]) elt
 
-    val int : ?disabled: bool -> string ->
-              int -> (int, [> selectoption]) elt
+  val bool : ?disabled: bool -> string ->
+             bool -> (bool, [> selectoption]) elt
 
-    val int32 : ?disabled: bool -> string ->
-                int32 -> (int32, [> selectoption]) elt
+  val int : ?disabled: bool -> string ->
+            int -> (int, [> selectoption]) elt
 
-    val int64 : ?disabled: bool -> string ->
-                int64 -> (int64, [> selectoption]) elt
+  val int32 : ?disabled: bool -> string ->
+              int32 -> (int32, [> selectoption]) elt
 
-    val float : ?disabled: bool -> string ->
-                float -> (float, [> selectoption]) elt
+  val int64 : ?disabled: bool -> string ->
+              int64 -> (int64, [> selectoption]) elt
 
-    val option : (?disabled: bool -> string ->
-                  'a -> ('a, [> selectoption] as 'tag) elt) ->
-                 ?disabled: bool -> string ->
-                 'a option -> ('a option, [> selectoption] as 'tag) elt
+  val float : ?disabled: bool -> string ->
+              float -> (float, [> selectoption]) elt
 
-    val none : ?disabled: bool -> string ->
-               ('a option, [> selectoption]) elt
-
-    val some : (?disabled: bool -> string ->
+  val option : (?disabled: bool -> string ->
                 'a -> ('a, [> selectoption] as 'tag) elt) ->
                ?disabled: bool -> string ->
-               'a -> ('a option, [> selectoption] as 'tag) elt
-  end
-}}
+               'a option -> ('a option, [> selectoption] as 'tag) elt
+
+  val none : ?disabled: bool -> string ->
+             ('a option, [> selectoption]) elt
+
+  val some : (?disabled: bool -> string ->
+              'a -> ('a, [> selectoption] as 'tag) elt) ->
+             ?disabled: bool -> string ->
+             'a -> ('a option, [> selectoption] as 'tag) elt
+end

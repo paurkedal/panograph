@@ -14,11 +14,11 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content
-}}
+]
 
-{client{
+[%%client
   let wt = Pandom_weaktbl.create ()
 
   let do_iter _ =
@@ -36,6 +36,6 @@
       D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick do_iter]
                    [D.pcdata "iter"] in
     D.div [D.ul [item0; item2]; iter_button]
-}}
+]
 
-let render () = Html5.C.node {{render ()}}
+let render () = Html5.C.node [%client render ()]

@@ -14,12 +14,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content.Html5
   open Unprime_option
-}}
+]
 
-{client{
+[%%client
   let created_count = ref 0
   let finalized_count = ref 0
 
@@ -49,8 +49,8 @@
     (* Pandom_finalizer.run (); *)
     mutate 0 node;
     let reachable_count =
-      Dom_html.document##getElementsByClassName(Js.string "-pan-finalized-")
-                       ##length in
+      Dom_html.document##(getElementsByClassName(Js.string "-pan-finalized-"))
+                       ##.length in
     Manip.replaceChildren stat [
       D.pcdata "Created ";
       D.pcdata (string_of_int !created_count);
@@ -68,6 +68,6 @@
     let tree = D.p [node] in
     Lwt.async (fun () -> update stat node);
     D.div [stat; tree]
-}}
+]
 
-let render () = C.node {{render ()}}
+let render () = C.node [%client render ()]

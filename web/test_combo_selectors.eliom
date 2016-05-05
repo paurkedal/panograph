@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -19,18 +19,19 @@ open Panograph_basic_editors
 open Panui_combo_selectors
 open Panui_content
 
-{shared{
+[%%shared
   open Panograph_types
-}}
-{client{
+]
+[%%client
   module Dep = Panui_combo_selectors
 
-  let ev, emit_ev = React.E.create ()
+  let ev, emit_ev =
+    (React.E.create () : (float, float) either option React.event * _)
 
   let emit x =
     Lwt_js.sleep 0.4 >>
     (emit_ev x; Lwt.return Ack_ok)
-}}
+]
 
 let render () =
   let selection = Selection.F.([
@@ -46,18 +47,21 @@ let render () =
     ];
   ]) in
   let elem, absorb =
-    int32_string_option_combo_selector ~inl_selection:selection {{emit}} in
-  let emitI = {{function Some x -> emit (Some (Inl x)) | None -> emit None}} in
-  let emitS = {{function Some x -> emit (Some (Inr x)) | None -> emit None}} in
+    int32_string_option_combo_selector ~inl_selection:selection
+                                       [%client emit] in
+  let emitI =
+    [%client function Some x -> emit (Some (Inl x)) | None -> emit None] in
+  let emitS =
+    [%client function Some x -> emit (Some (Inr x)) | None -> emit None] in
   let elemI, absorbI = int32_option_editor emitI in
   let elemS, absorbS = string_option_editor emitS in
-  let absorbI = {(int32, string) either option -> unit{function
-    | Some (Inl x) -> %absorbI (Some x); %absorbS None
-    | Some (Inr x) -> %absorbS (Some x); %absorbI None
-    | _ -> %absorbI None; %absorbS None
-  }} in
-  ignore {unit{
-    Lwt_react.E.keep (React.E.trace %absorb ev);
-    Lwt_react.E.keep (React.E.trace %absorbI ev)
-  }};
+  let absorbI = [%client function
+    | Some (Inl x) -> ~%absorbI (Some x); ~%absorbS None
+    | Some (Inr x) -> ~%absorbS (Some x); ~%absorbI None
+    | _ -> ~%absorbI None; ~%absorbS None
+  ] in
+  ignore [%client
+    Lwt_react.E.keep (React.E.trace ~%absorb ev);
+    Lwt_react.E.keep (React.E.trace ~%absorbI ev)
+  ];
   D.div [elem; D.pcdata " = "; elemI; D.pcdata " | "; elemS]

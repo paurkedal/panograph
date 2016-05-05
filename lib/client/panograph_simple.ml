@@ -94,44 +94,44 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
   let default_shape = make_default_shape ("PE" :: Value.css_classes)
 
   let has_class w cls =
-    Js.to_bool (w.w_dom##classList##contains(Js.string cls))
+    Js.to_bool (w.w_dom##.classList##contains(Js.string cls))
 
   let set_dirty w =
     if not (has_class w "dirty") then
-      w.w_dom##classList##add(Js.string "dirty")
+      w.w_dom##.classList##add(Js.string "dirty")
 
   let clear_dirty w =
-    w.w_dom##classList##remove(Js.string "dirty")
+    w.w_dom##.classList##remove(Js.string "dirty")
 
   let set_error w msg =
     if not (has_class w "error") then
-      w.w_dom##classList##add(Js.string "error");
-    w.w_dom##title <- Js.string (msg ^ "\n" ^ w.w_saved_title)
+      w.w_dom##.classList##add(Js.string "error");
+    w.w_dom##.title := Js.string (msg ^ "\n" ^ w.w_saved_title)
 
   let clear_error w =
-    w.w_dom##classList##remove(Js.string "error");
-    w.w_dom##title <- Js.string w.w_saved_title
+    w.w_dom##.classList##remove(Js.string "error");
+    w.w_dom##.title := Js.string w.w_saved_title
 
   let patch w (`Change (_, x)) =
     clear_error w;
     w.w_value <- x;
-    w.w_dom##value <- Js.string (Value.to_string x);
+    w.w_dom##.value := Js.string (Value.to_string x);
     clear_dirty w
 
-  let get {w_dom} = Value.of_string (Js.to_string w_dom##value)
+  let get {w_dom} = Value.of_string (Js.to_string w_dom##.value)
 
   let create ?(shape = default_shape) ?on_patch init =
     let inp =
       D.Raw.input ~a:(D.a_input_type `Text :: attribs_of_shape shape) () in
     let w_dom = To_dom.of_input inp in
-    let w = {w_dom; w_saved_title = Js.to_string w_dom##title;
+    let w = {w_dom; w_saved_title = Js.to_string w_dom##.title;
              w_value = init} in
-    w_dom##value <- Js.string (Value.to_string init);
+    w_dom##.value := Js.string (Value.to_string init);
     Option.iter (fun on_patch ->
       let on_change _ _ =
         try
           set_dirty w;
-          match_lwt on_patch (`Change (w.w_value, get w)) with
+          match%lwt on_patch (`Change (w.w_value, get w)) with
           | Ack_ok -> Lwt.return_unit
           | Ack_error msg -> set_error w msg; Lwt.return_unit
         with
@@ -163,25 +163,25 @@ module Simple_SE (Value : SIMPLE_VALUE) = struct
 
   let default_shape = make_default_shape ("SE" :: Value.css_classes)
 
-  let snapshot w = Value.of_string (Js.to_string w.w_dom##value)
+  let snapshot w = Value.of_string (Js.to_string w.w_dom##.value)
 
   let set_error w msg =
-    w.w_dom##classList##add(Js.string "error");
-    w.w_dom##title <- Js.string (msg ^ "\n" ^ w.w_saved_title)
+    w.w_dom##.classList##add(Js.string "error");
+    w.w_dom##.title := Js.string (msg ^ "\n" ^ w.w_saved_title)
   let clear_error w =
-    w.w_dom##classList##remove(Js.string "error");
-    w.w_dom##title <- Js.string w.w_saved_title
+    w.w_dom##.classList##remove(Js.string "error");
+    w.w_dom##.title := Js.string w.w_saved_title
 
   let create ?(shape = default_shape) ?init () =
     let inp =
       D.Raw.input ~a:(D.a_input_type `Text :: attribs_of_shape shape) () in
     let w_dom = To_dom.of_input inp in
-    let w = {w_dom; w_saved_title = Js.to_string w_dom##title} in
-    Option.iter (fun x -> w_dom##value <- Js.string (Value.to_string x)) init;
+    let w = {w_dom; w_saved_title = Js.to_string w_dom##.title} in
+    Option.iter (fun x -> w_dom##.value := Js.string (Value.to_string x)) init;
     let on_change _ _ =
       Lwt.wrap begin fun () ->
         try clear_error w;
-            ignore (Value.of_string (Js.to_string w_dom##value))
+            ignore (Value.of_string (Js.to_string w_dom##.value))
         with
         | Invalid_input msg -> set_error w msg
         | Failure _ | Invalid_argument _ -> set_error w "Invalid input."

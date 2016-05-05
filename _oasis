@@ -7,7 +7,7 @@ License: LGPL-3 with OCaml linking exception
 AlphaFeatures: ocamlbuild_more_args, pure_interface
 Plugins: DevFiles (0.4), META (0.4)
 BuildTools: ocamlbuild
-XOCamlbuildPluginTags: package(eliom.ocamlbuild)
+XOCamlbuildPluginTags: package(ocamlbuild-eliom-dev)
 OCamlVersion: >= 4.01
 
 # Package names should be changed to panograph, panograph.server and
@@ -15,7 +15,12 @@ OCamlVersion: >= 4.01
 
 Library "panograph"
   Path: lib
-  BuildDepends: js_of_ocaml.deriving, lwt, prime, react
+  BuildDepends:
+    lwt,
+    js_of_ocaml.deriving,
+    ppx_deriving.runtime,
+    prime,
+    react
   Modules:
     Operated_types,
     Panograph_dltree,
@@ -107,7 +112,7 @@ Library "test"
 
 Executable "test"
   Path: web/client
-  BuildDepends: eliom.client, panograph-client
+  BuildDepends: eliom.client, panograph-client, ppx_deriving.runtime
   MainIs: test.ml
   ByteOpt: -thread
   Install: false

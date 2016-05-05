@@ -14,18 +14,18 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
   open Eliom_content.Html5
   open Panograph_prereq
   open Panograph_types
   open Panui_content
   open Unprime
-}}
-{client{
+]
+[%%client
   open Pandom_interactive
-}}
+]
 
-{client{
+[%%client
 
   let string_of_string_option = string_of_option ident
   let string_option_of_string = option_of_string ident
@@ -37,66 +37,66 @@
   let int32_option_of_string = option_of_string Int32.of_string
   let string_of_int64_option = string_of_option Int64.to_string
   let int64_option_of_string = option_of_string Int64.of_string
-}}
+]
 
-{shared{
+[%%shared
   let string_option_selector ?a ~selection ?(value : string option option)
                         (emit : (string option -> ack Lwt.t) client_value) =
     let elem =
       D.Raw.select ?a (selection : string option Selection.t :> _ elt list) in
-    let absorb = {string option -> unit{
+    let absorb = [%client
       outfit_select
         ~to_string:string_of_string_option
         ~of_string:string_option_of_string
-        ?value:%value %elem %emit
-    }} in
+        ?value:~%value ~%elem ~%emit
+    ] in
     elem, absorb
 
   let bool_option_selector ?a ~selection ?(value : bool option option)
                            (emit : (bool option -> ack Lwt.t) client_value) =
     let elem =
       D.Raw.select ?a (selection : bool option Selection.t :> _ elt list) in
-    let absorb = {bool option -> unit{
+    let absorb = [%client
       outfit_select
         ~to_string:string_of_bool_option
         ~of_string:bool_option_of_string
-        ?value:%value %elem %emit
-    }} in
+        ?value:~%value ~%elem ~%emit
+    ] in
     elem, absorb
 
   let int_option_selector ?a ~selection ?(value : int option option)
                           (emit : (int option -> ack Lwt.t) client_value) =
     let elem =
       D.Raw.select ?a (selection : int option Selection.t :> _ elt list) in
-    let absorb = {int option -> unit{
+    let absorb = [%client
       outfit_select
         ~to_string:string_of_int_option
         ~of_string:int_option_of_string
-        ?value:%value %elem %emit
-    }} in
+        ?value:~%value ~%elem ~%emit
+    ] in
     elem, absorb
 
   let int32_option_selector ?a ~selection ?(value : int32 option option)
                             (emit : (int32 option -> ack Lwt.t) client_value) =
     let elem =
       D.Raw.select ?a (selection : int32 option Selection.t :> _ elt list) in
-    let absorb = {int32 option -> unit{
+    let absorb = [%client
       outfit_select
         ~to_string:string_of_int32_option
         ~of_string:int32_option_of_string
-        ?value:%value %elem %emit
-    }} in
+        ?value:~%value ~%elem ~%emit
+    ] in
     elem, absorb
 
   let int64_option_selector ?a ~selection ?(value : int64 option option)
                             (emit : (int64 option -> ack Lwt.t) client_value) =
     let elem =
       D.Raw.select ?a (selection : int64 option Selection.t :> _ elt list) in
-    let absorb = {int64 option -> unit{
+    let absorb = [%client
       outfit_select
         ~to_string:string_of_int64_option
         ~of_string:int64_option_of_string
-        ?value:%value %elem %emit
-    }} in
+        ?value:~%value ~%elem ~%emit
+    ] in
     elem, absorb
-}}
+]

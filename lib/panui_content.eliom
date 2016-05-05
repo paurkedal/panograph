@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-{shared{
+[%%shared
 
   open Panui_content_intf
   open Unprime
@@ -82,4 +82,4 @@
       end)
   end
 
-}}
+]

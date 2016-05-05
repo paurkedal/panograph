@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -19,4 +19,4 @@ type ('e, 'de) grid1_op =
   | `Delete of int
   | `Move of int * int
   | `Update of int * 'de ]
-  deriving (Show, Json)
+  [@@deriving show, json]
