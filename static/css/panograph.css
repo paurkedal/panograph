@@ -55,3 +55,18 @@ span.pan-dropdown {
 	background-color: Highlight;
 	color: HighlightText;
 }
+
+table.pan-pinboard { border-collapse: collapse; }
+table.pan-pinboard td { margin: 0; }
+table.pan-pinboard button {
+	border: none; padding: 0; margin: 0;
+	background-color: transparent;
+}
+table.pan-pinboard td:first-child { padding-left: 0.3em; }
+table.pan-pinboard td { border: none; padding: 0 0.2em; }
+table.pan-pinboard td.debug	button { background-color: #0c9; }
+table.pan-pinboard td.info	button { background-color: #0c9; }
+table.pan-pinboard td.notice	button { background-color: #0f0; }
+table.pan-pinboard td.warning	button { background-color: #c60; }
+table.pan-pinboard td.error	button { background-color: #f00; }
+table.pan-pinboard td.fatal	button { background-color: #f05; }

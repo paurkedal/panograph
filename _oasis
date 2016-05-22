@@ -53,6 +53,7 @@ Library "panograph-server"
     Panui_content,
     Panui_content_intf,
     Panui_content_with_edit,
+    Panui_pinboard,
     Panui_scalar
   ByteOpt: -thread
   NativeOpt: -thread
@@ -84,10 +85,12 @@ Library "panograph-client"
     Panui_content_intf,
     Panui_content_with_edit,
     Panui_dialogs,
+    Panui_pinboard,
     Panui_scalar
   BuildDepends:
     eliom.client,
-    panograph, prime, prime.unstable
+    panograph,
+    prime, prime.unstable
 
 Library "test"
   Path: web
@@ -100,6 +103,7 @@ Library "test"
     server/Test_content_with_edit,
     server/Test_finalizer,
     server/Test_operated,
+    server/Test_pinboard,
     server/Test_scalar,
     server/Test_twine_editor,
     server/Test_weakchan,

@@ -1,7 +1,5 @@
-true: eliom_ppx
+true: eliom_ppx, package(lwt.ppx)
 <*/test_{basic_editors,combo_selectors,operated,scalar,twine_editor}.*>: \
-    package(lwt.ppx), \
     package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
-<*/test_{completion,dialogs,finalizer,inputs}.*>: package(lwt.ppx)
 <client/*>: package(js_of_ocaml.ppx)
 <server/*>: thread

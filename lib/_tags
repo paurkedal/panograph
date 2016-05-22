@@ -21,6 +21,8 @@ true: eliom_ppx
 "client/panograph_tabular.ml": package(js_of_ocaml.ppx)
 <*/panui_completion.{ml,mli}>: package(lwt.ppx)
 <*/panui_content_with_edit.{ml,mli}>: package(lwt.ppx)
+<*/panui_pinboard.ml>: package(lwt.ppx)
+"client/panui_pinboard.ml": package(js_of_ocaml.ppx)
 
 <pwt*.ml>: package(lwt.ppx)
 <server/*>: thread

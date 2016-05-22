@@ -28,6 +28,7 @@
   module Dep_tbe = Test_basic_editors
   module Dep_tte = Test_twine_editor
   module Dep_opr = Test_operated
+  module Dep_pin = Test_pinboard
   module Dep_sca = Test_scalar
   module Dep_twc = Test_weakchan
   module Dep_twt = Test_weaktbl
@@ -73,6 +74,7 @@ let test_services = List.map make_test_service [
   "tabular3", (fun () -> Html5.C.node [%client Test_tabular3.render ()]);
   "basic_editors", Test_basic_editors.render;
   "operated", Test_operated.render;
+  "pinboard", Test_pinboard.render;
   "scalar", Test_scalar.render;
   "weakchan", Test_weakchan.render;
   "weaktbl", Test_weaktbl.render;
