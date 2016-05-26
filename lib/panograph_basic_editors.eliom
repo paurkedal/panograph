@@ -278,8 +278,7 @@
     ] in
     select, patch_in
 
-  let bool_checkbox ?(a = []) ?(value = false)
-                    (patch_out : (bool -> ack Lwt.t) client_value) =
+  let bool_checkbox ?(a = []) ?(value = false) patch_out =
     let open Html5 in
     let a = if value then D.a_checked `Checked :: a else a in
     let input = D.Raw.input ~a:(D.a_input_type `Checkbox :: a) () in
@@ -287,10 +286,11 @@
       (* TODO: Use Pandom_interactive.outfit_checkbox if this is kept. *)
       let open Html5 in
       let input_dom = To_dom.of_input ~%input in
+      let patch_out : bool -> ack Lwt.t = ~%patch_out in
       Lwt_js_events.(async @@ fun () ->
         changes input_dom @@ fun _ _ ->
         Pandom_style.set_dirty input_dom;
-        match%lwt ~%patch_out (Js.to_bool input_dom##.checked) with
+        match%lwt patch_out (Js.to_bool input_dom##.checked) with
         | Ack_ok ->
           Pandom_style.clear_error input_dom;
           Lwt.return_unit

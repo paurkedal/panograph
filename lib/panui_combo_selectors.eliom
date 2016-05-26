@@ -44,13 +44,17 @@
         ?inr_to_string
         ?inr_of_string
         ?(value : (int, string) either option = None)
-        (emit : ((int, string) either option -> ack Lwt.t) client_value) =
+        emit =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
-    let inl_emit =
-      [%client function None -> ~%emit None | Some x -> ~%emit (Some (Inl x))] in
-    let inr_emit =
-      [%client function None -> ~%emit None | Some x -> ~%emit (Some (Inr x))] in
+    let inl_emit = [%client
+      let emit : (int, string) either option -> ack Lwt.t = ~%emit in
+      function None -> emit None | Some x -> emit (Some (Inl x))
+    ] in
+    let inr_emit = [%client
+      let emit : (int, string) either option -> ack Lwt.t = ~%emit in
+      function None -> emit None | Some x -> emit (Some (Inr x))
+    ] in
     let inl_elem, inl_absorb =
       int_option_selector ?a:inl_a ~selection:inl_selection
                             ~value:inl_value inl_emit in
@@ -72,13 +76,17 @@
         ?inr_to_string
         ?inr_of_string
         ?(value : (int32, string) either option = None)
-        (emit : ((int32, string) either option -> ack Lwt.t) client_value) =
+        emit =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
-    let inl_emit =
-      [%client function None -> ~%emit None | Some x -> ~%emit (Some (Inl x))] in
-    let inr_emit =
-      [%client function None -> ~%emit None | Some x -> ~%emit (Some (Inr x))] in
+    let inl_emit = [%client
+      let emit : (int32, string) either option -> ack Lwt.t = ~%emit in
+      function None -> emit None | Some x -> emit (Some (Inl x))
+    ] in
+    let inr_emit = [%client
+      let emit : (int32, string) either option -> ack Lwt.t = ~%emit in
+      function None -> emit None | Some x -> emit (Some (Inr x))
+    ] in
     let inl_elem, inl_absorb =
       int32_option_selector ?a:inl_a ~selection:inl_selection
                             ~value:inl_value inl_emit in
@@ -100,13 +108,17 @@
         ?inr_to_string
         ?inr_of_string
         ?(value : (int64, string) either option = None)
-        (emit : ((int64, string) either option -> ack Lwt.t) client_value) =
+        emit =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
-    let inl_emit =
-      [%client function None -> ~%emit None | Some x -> ~%emit (Some (Inl x))] in
-    let inr_emit =
-      [%client function None -> ~%emit None | Some x -> ~%emit (Some (Inr x))] in
+    let inl_emit = [%client
+      let emit : (int64, string) either option -> ack Lwt.t = ~%emit in
+      function None -> emit None | Some x -> emit (Some (Inl x))
+    ] in
+    let inr_emit = [%client
+      let emit : (int64, string) either option -> ack Lwt.t = ~%emit in
+      function None -> emit None | Some x -> emit (Some (Inr x))
+    ] in
     let inl_elem, inl_absorb =
       int64_option_selector ?a:inl_a ~selection:inl_selection
                             ~value:inl_value inl_emit in

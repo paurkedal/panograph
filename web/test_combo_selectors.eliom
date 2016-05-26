@@ -55,10 +55,13 @@ let render () =
     [%client function Some x -> emit (Some (Inr x)) | None -> emit None] in
   let elemI, absorbI = int32_option_editor emitI in
   let elemS, absorbS = string_option_editor emitS in
-  let absorbI = [%client function
-    | Some (Inl x) -> ~%absorbI (Some x); ~%absorbS None
-    | Some (Inr x) -> ~%absorbS (Some x); ~%absorbI None
-    | _ -> ~%absorbI None; ~%absorbS None
+  let absorbI = [%client
+    let absorbI : int32 option -> unit = ~%absorbI in
+    let absorbS : int32 option -> unit = ~%absorbS in
+    function
+    | Some (Inl x) -> absorbI (Some x); absorbS None
+    | Some (Inr x) -> absorbS (Some x); absorbI None
+    | _ -> absorbI None; absorbS None
   ] in
   ignore [%client
     Lwt_react.E.keep (React.E.trace ~%absorb ev);

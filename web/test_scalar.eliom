@@ -77,12 +77,12 @@ let render () =
 
   let string_ed, h = Panui_scalar.string "" in
   ignore [%client
-    ~%h#edit_on ~%string_out;
+    (~%h#edit_on : (string -> unit Lwt.t) -> unit) ~%string_out;
     Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%string_comet) ];
 
   let int_ed, h = Panui_scalar.int 0 in
   ignore [%client
-    ~%h#edit_on ~%int_out;
+    (~%h#edit_on : (int -> unit Lwt.t) -> unit) ~%int_out;
                 Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%int_comet) ];
 
   let int_select_ed, h =
@@ -90,34 +90,34 @@ let render () =
                              opt "Two" 2; opt "Three" 3] in
     Panui_scalar.int ~opts 0 in
   ignore [%client
-    ~%h#edit_on ~%int_out;
+    (~%h#edit_on : (int -> unit Lwt.t) -> unit) ~%int_out;
                 Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%int_comet) ];
 
   let float_ed, h = Panui_scalar.float 0.0 in
   ignore [%client
-    ~%h#edit_on ~%float_out;
+    (~%h#edit_on : (float -> unit Lwt.t) -> unit) ~%float_out;
                 Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%float_comet) ];
 
   let bool1_ed, h = Panui_scalar.bool false in
   ignore [%client
-    ~%h#edit_on ~%bool_out;
+    (~%h#edit_on : (bool -> unit Lwt.t) -> unit) ~%bool_out;
                 Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%bool_comet) ];
 
   let bool2_ed, h =
     Panui_scalar.(bool ~opts:[opt "yes" true; opt "no" false] false) in
   ignore [%client
-    ~%h#edit_on ~%bool_out;
+    (~%h#edit_on : (bool -> unit Lwt.t) -> unit) ~%bool_out;
                 Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%bool_comet) ];
 
   let bool_option_ed, h = Panui_scalar.bool_option None in
   ignore [%client
-    ~%h#edit_on ~%bool_option_out;
+    (~%h#edit_on : (bool option -> unit Lwt.t) -> unit) ~%bool_option_out;
     Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%bool_option_comet)
   ];
 
   let int_option_ed, h = Panui_scalar.int_option None in
   ignore [%client
-    ~%h#edit_on ~%int_option_out;
+    (~%h#edit_on : (int option -> unit Lwt.t) -> unit) ~%int_option_out;
     Lwt.async @@ fun () -> Lwt_stream.iter ~%h#set ~%int_option_comet ];
 
   D.div [
