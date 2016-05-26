@@ -56,7 +56,7 @@
                     ?(of_string = string_ident_cv)
                     ?(value : string option)
                     (patch_out : (string -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       outfit_input ~to_string:~%to_string ~of_string:~%of_string
                    ?value:~%value ~%input ~%patch_out
@@ -68,7 +68,7 @@
                  ?(of_string = [%client int_of_string])
                  ?(value : int option)
                  (patch_out : (int -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       outfit_input ~to_string:~%to_string ~of_string:~%of_string
                    ?value:~%value ~%input ~%patch_out
@@ -80,7 +80,7 @@
                    ?(of_string = [%client Int32.of_string])
                    ?(value : int32 option)
                  (patch_out : (int32 -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       outfit_input ~to_string:~%to_string ~of_string:~%of_string
                    ?value:~%value ~%input ~%patch_out
@@ -92,7 +92,7 @@
                    ?(of_string = [%client Int64.of_string])
                    ?(value : int64 option)
                  (patch_out : (int64 -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       outfit_input ~to_string:~%to_string ~of_string:~%of_string
                    ?value:~%value ~%input ~%patch_out
@@ -104,7 +104,7 @@
                    ?(of_string = [%client float_of_string])
                    ?(value : float option)
                    (patch_out : (float -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       outfit_input ~to_string:~%to_string ~of_string:~%of_string
                    ?value:~%value ~%input ~%patch_out
@@ -117,7 +117,7 @@
         ?(of_string = string_ident_cv)
         ?(value : string option option)
         (patch_out : (string option -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       let to_string = string_of_option ~%to_string in
       let of_string = option_of_string ~%of_string in
@@ -131,7 +131,7 @@
         ?(of_string = string_ident_cv)
         ?(value : string option option)
         (patch_out : (string option -> ack Lwt.t) client_value) =
-    let input = D.Raw.textarea ?a (D.pcdata "") in
+    let input = D.textarea ?a (D.pcdata "") in
     let patch_in = [%client
       let to_string = string_of_option ~%to_string in
       let of_string = option_of_string ~%of_string in
@@ -145,7 +145,7 @@
         ?(of_string = [%client int_of_string])
         ?(value : int option option)
         (patch_out : (int option -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       let to_string = string_of_option ~%to_string in
       let of_string = option_of_string ~%of_string in
@@ -159,7 +159,7 @@
         ?(of_string = [%client Int32.of_string])
         ?(value : int32 option option)
         (patch_out : (int32 option -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       let to_string = string_of_option ~%to_string in
       let of_string = option_of_string ~%of_string in
@@ -173,7 +173,7 @@
         ?(of_string = [%client Int64.of_string])
         ?(value : int64 option option)
         (patch_out : (int64 option -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       let to_string = string_of_option ~%to_string in
       let of_string = option_of_string ~%of_string in
@@ -187,7 +187,7 @@
         ?(of_string = [%client float_of_string])
         ?(value : float option option)
         (patch_out : (float option -> ack Lwt.t) client_value) =
-    let input = D.Raw.input ~a:(D.a_input_type `Text :: a) () in
+    let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in = [%client
       let to_string = string_of_option ~%to_string in
       let of_string = option_of_string ~%of_string in
@@ -202,10 +202,10 @@
       match none_label with
       | None -> "<" ^ false_label ^ "|" ^ true_label ^ ">"
       | Some label -> label in
-    let elem = D.Raw.select ?a [
-      D.Raw.option ~a:[D.a_value ""] (D.pcdata none_label);
-      D.Raw.option ~a:[D.a_value "false"] (D.pcdata false_label);
-      D.Raw.option ~a:[D.a_value "true"] (D.pcdata true_label);
+    let elem = D.select ?a [
+      D.option ~a:[D.a_value ""] (D.pcdata none_label);
+      D.option ~a:[D.a_value "false"] (D.pcdata false_label);
+      D.option ~a:[D.a_value "true"] (D.pcdata true_label);
     ] in
     let absorb = [%client
       outfit_select
@@ -223,13 +223,13 @@
       let s = conv value in
       let a = if enabled then [D.a_value s]
                          else [D.a_value s; D.a_disabled `Disabled] in
-      D.Raw.option ~a (D.pcdata label) in
+      D.option ~a (D.pcdata label) in
     let mk_optgroup (label_opt, subitems) =
       let suboptions = List.map mk_option subitems in
       match label_opt with
       | None -> suboptions
-      | Some label -> [D.Raw.optgroup ~label suboptions] in
-    D.Raw.select ?a (D.Raw.option ~a:[D.a_value ""] (D.pcdata none_label) ::
+      | Some label -> [D.optgroup ~label suboptions] in
+    D.select ?a (D.option ~a:[D.a_value ""] (D.pcdata none_label) ::
                      List.flatten (List.map mk_optgroup items))
 
   let int_option_selector ?a ?none_label ~items ?(value : int option option)
@@ -270,7 +270,7 @@
     let make_option label = D.option ~a:[D.a_value label] (D.pcdata label) in
     let options = D.option ~a:[D.a_value "__none__"] (D.pcdata "-") ::
                   List.map make_option values in
-    let select = D.Raw.select ?a options in
+    let select = D.select ?a options in
     let patch_in = [%client
       let of_string = function "__none__" -> None | s -> Some s in
       let to_string = function None -> "__none__" | Some s -> s in
@@ -281,7 +281,7 @@
   let bool_checkbox ?(a = []) ?(value = false) patch_out =
     let open Html5 in
     let a = if value then D.a_checked `Checked :: a else a in
-    let input = D.Raw.input ~a:(D.a_input_type `Checkbox :: a) () in
+    let input = D.input ~a:(D.a_input_type `Checkbox :: a) () in
     let patch_in = [%client
       (* TODO: Use Pandom_interactive.outfit_checkbox if this is kept. *)
       let open Html5 in

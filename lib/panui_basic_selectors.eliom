@@ -43,7 +43,7 @@
   let string_option_selector ?a ~selection ?(value : string option option)
                         (emit : (string option -> ack Lwt.t) client_value) =
     let elem =
-      D.Raw.select ?a (selection : string option Selection.t :> _ elt list) in
+      D.select ?a (selection : string option Selection.t :> _ elt list) in
     let absorb = [%client
       outfit_select
         ~to_string:string_of_string_option
@@ -55,7 +55,7 @@
   let bool_option_selector ?a ~selection ?(value : bool option option)
                            (emit : (bool option -> ack Lwt.t) client_value) =
     let elem =
-      D.Raw.select ?a (selection : bool option Selection.t :> _ elt list) in
+      D.select ?a (selection : bool option Selection.t :> _ elt list) in
     let absorb = [%client
       outfit_select
         ~to_string:string_of_bool_option
@@ -67,7 +67,7 @@
   let int_option_selector ?a ~selection ?(value : int option option)
                           (emit : (int option -> ack Lwt.t) client_value) =
     let elem =
-      D.Raw.select ?a (selection : int option Selection.t :> _ elt list) in
+      D.select ?a (selection : int option Selection.t :> _ elt list) in
     let absorb = [%client
       outfit_select
         ~to_string:string_of_int_option
@@ -79,7 +79,7 @@
   let int32_option_selector ?a ~selection ?(value : int32 option option)
                             (emit : (int32 option -> ack Lwt.t) client_value) =
     let elem =
-      D.Raw.select ?a (selection : int32 option Selection.t :> _ elt list) in
+      D.select ?a (selection : int32 option Selection.t :> _ elt list) in
     let absorb = [%client
       outfit_select
         ~to_string:string_of_int32_option
@@ -91,7 +91,7 @@
   let int64_option_selector ?a ~selection ?(value : int64 option option)
                             (emit : (int64 option -> ack Lwt.t) client_value) =
     let elem =
-      D.Raw.select ?a (selection : int64 option Selection.t :> _ elt list) in
+      D.select ?a (selection : int64 option Selection.t :> _ elt list) in
     let absorb = [%client
       outfit_select
         ~to_string:string_of_int64_option

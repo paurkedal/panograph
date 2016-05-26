@@ -33,7 +33,7 @@ let add_edit outer pcdata input_dom emit x =
   let outer_dom = To_dom.of_element outer in
 
   let mkbutton f label =
-    D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick f] [D.pcdata label] in
+    D.button ~a:[D.a_button_type `Button; D.a_onclick f] [D.pcdata label] in
 
   let rec add_edit_button () =
     let edit_button = mkbutton on_edit "edit" in
@@ -83,11 +83,11 @@ let add_edit outer pcdata input_dom emit x =
   set_value
 
 let add_edit_input outer pcdata emit x =
-  let inp = D.Raw.input ~a:[F.a_input_type `Text] () in
+  let inp = D.input ~a:[F.a_input_type `Text] () in
   add_edit outer pcdata (To_dom.of_input inp) emit x
 
 let add_edit_textarea outer pcdata emit x =
-  let inp = D.Raw.textarea (D.pcdata x) in
+  let inp = D.textarea (D.pcdata x) in
   add_edit outer pcdata (To_dom.of_textarea inp) emit x
 
 ]

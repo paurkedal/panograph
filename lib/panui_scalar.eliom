@@ -66,7 +66,7 @@
     val mutable absorb = fun _ -> ()
 
     method edit_on f =
-      let inp = D.Raw.input ~a:[F.a_input_type `Text] () in
+      let inp = D.input ~a:[F.a_input_type `Text] () in
       absorb <- outfit_input ~to_string ~of_string ?error ~value inp f;
       Manip.replaceChildren el [inp]
 
@@ -94,7 +94,7 @@
 
     method edit_on f =
       let a = if init then [D.a_checked `Checked] else [] in
-      let inp = D.Raw.input ~a:(D.a_input_type `Checkbox :: a) () in
+      let inp = D.input ~a:(D.a_input_type `Checkbox :: a) () in
       absorb <- outfit_checkbox ?error ~value inp f;
       Manip.replaceChildren el [inp]
 
@@ -140,7 +140,7 @@
           let a = if enabled then [] else [D.a_disabled `Disabled] in
           D.optgroup ~label ~a (List.map mk0 opts) in
       List.map mk1 opts in
-    let select = D.Raw.select options in
+    let select = D.select options in
   object (self)
     inherit common_handle el
 
