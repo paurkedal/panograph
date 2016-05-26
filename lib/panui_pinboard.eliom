@@ -16,6 +16,8 @@
 
 [%%shared.start]
 open Eliom_content.Html5
+open Lwt.Infix
+open Unprime
 open Unprime_option
 
 type item = Html5_types.tr elt
@@ -27,19 +29,27 @@ type t = {
 
 type subject_content = Html5_types.flow5
 
-let create () =
+let create ?(freeze_on_hover = true) ?(freeze_timeout = 0.2) () =
   let table = D.table ~a:[D.a_class ["pan-pinboard"]] [] in
   let hover_mutex = [%client Lwt_mutex.create ()] in
-  ignore [%client
+  if freeze_on_hover then ignore [%client
     let table_dom = To_dom.of_element ~%table in
     let hover_mutex = ~%hover_mutex in
-    let rec hover_loop () =
+    let rec not_hovering () =
       let%lwt _ = Lwt_js_events.mouseover table_dom in
       Lwt_mutex.lock hover_mutex >>
+      hovering ()
+    and hovering () =
       let%lwt _ = Lwt_js_events.mouseout table_dom in
-      Lwt_mutex.unlock hover_mutex;
-      hover_loop () in
-    Lwt.async hover_loop
+      let%lwt reentered = Lwt.pick [
+        Lwt_js_events.mouseover table_dom >|= konst true;
+        Lwt_js.sleep ~%freeze_timeout >> Lwt.return_false;
+      ] in
+      if reentered then hovering () else begin
+        Lwt_mutex.unlock hover_mutex;
+        not_hovering ()
+      end in
+    Lwt.async not_hovering
   ];
   {table; hover_mutex}
 

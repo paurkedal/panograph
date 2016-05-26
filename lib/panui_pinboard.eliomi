@@ -22,7 +22,7 @@ type t
 
 type subject_content = Html5_types.flow5
 
-val create : unit -> t
+val create : ?freeze_on_hover: bool -> ?freeze_timeout: float -> unit -> t
 
 val ui : t -> [> Html5_types.table] elt
 

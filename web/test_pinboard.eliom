@@ -26,7 +26,7 @@
 
   let rec populate pinboard i =
     let timeout = Random.float 4.0 in
-    Panui_pinboard.pin ~subject:[pcdata_f "Item %d pinned for %g" i timeout]
+    Panui_pinboard.pin ~subject:[pcdata_f "Item %d pinned for %g s" i timeout]
                        ~level:levels.(Random.int (Array.length levels))
                        ~timeout pinboard |> ignore;
     Lwt_js.sleep (Random.float 1.0) >>
