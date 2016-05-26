@@ -94,15 +94,17 @@ let add_edit_textarea outer pcdata emit x =
 
 [%%shared
 
-let span_with_input ?a (emit : (string -> ack Lwt.t) client_value) x =
+let span_with_input ?(a = [D.a_class ["pan-with-edit"]])
+                    (emit : (string -> ack Lwt.t) client_value) x =
   let pcdata = D.pcdata x in
-  let outer = D.span ?a [pcdata] in
+  let outer = D.span ~a [pcdata] in
   let g = [%client add_edit_input ~%outer ~%pcdata ~%emit ~%x] in
   g, outer
 
-let p_with_textarea ?a (emit : (string -> ack Lwt.t) client_value) x =
+let p_with_textarea ?(a = [D.a_class ["pan-with-edit"]])
+                    (emit : (string -> ack Lwt.t) client_value) x =
   let pcdata = D.pcdata x in
-  let outer = D.p ?a [pcdata] in
+  let outer = D.p ~a [pcdata] in
   let g = [%client add_edit_textarea ~%outer ~%pcdata ~%emit ~%x] in
   g, outer
 

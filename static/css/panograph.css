@@ -70,3 +70,6 @@ table.pan-pinboard td.notice	button { background-color: #0f0; }
 table.pan-pinboard td.warning	button { background-color: #c60; }
 table.pan-pinboard td.error	button { background-color: #f00; }
 table.pan-pinboard td.fatal	button { background-color: #f05; }
+
+.pan-with-edit button { margin-left: 0.33em; }
+.pan-with-edit textarea { margin-left: 0.33em; }
