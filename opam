@@ -9,12 +9,10 @@ dev-repo: "https://github.com/paurkedal/panograph.git"
 license: "LGPL-3 with OCaml linking exception"
 build: [ocaml "pkg/pkg.ml" "build" "--installer" "true"]
 install: [
-  ["opam-installer" "--prefix=%{prefix}%" "panograph.install"]
   ["opam-installer" "--prefix=%{prefix}%" "panograph-server.install"]
   ["opam-installer" "--prefix=%{prefix}%" "panograph-client.install"]
 ]
 remove: [
-  ["opam-installer" "-u" "--prefix=%{prefix}%" "panograph.install"]
   ["opam-installer" "-u" "--prefix=%{prefix}%" "panograph-server.install"]
   ["opam-installer" "-u" "--prefix=%{prefix}%" "panograph-client.install"]
 ]
