@@ -1,0 +1,42 @@
+true: bin_annot, eliom_ppx
+false: package(ocamlbuild-eliom-dev)
+
+true: package(lwt), package(js_of_ocaml.deriving)
+true: package(prime), package(react)
+
+<lib/server/*>: package(eliom.server)
+<lib/client/*>: package(eliom.client), package(prime.unstable)
+
+"lib/client/pandom_finalizer.ml": package(js_of_ocaml.ppx)
+"lib/client/pandom_interactive.ml": package(lwt.ppx), package(js_of_ocaml.ppx)
+"lib/client/pandom_style.ml": package(js_of_ocaml.ppx)
+"lib/client/pandom_weakchan.ml": package(js_of_ocaml.ppx)
+"lib/client/pandom_weaktbl.ml": package(js_of_ocaml.ppx)
+
+<lib/*/operated_types.ml{,i}>: package(ppx_deriving.std), package(js_of_ocaml.deriving.ppx)
+"lib/panograph_i18n.mli": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"lib/panograph_i18n.ml": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"lib/panograph_types.mli": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"lib/panograph_types.ml": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"lib/presentation_types.mli": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+"lib/presentation_types.ml": package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+<lib/*/panograph_twine_editor.ml{,i}>: package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+<lib/*/panograph_basic_editors.ml{,i}>: package(lwt.ppx), package(js_of_ocaml.ppx)
+
+"lib/client/panograph_common.ml": package(lwt.ppx)
+"lib/client/panograph_simple.ml": package(lwt.ppx), package(js_of_ocaml.ppx)
+"lib/client/panograph_tabular.ml": package(js_of_ocaml.ppx)
+<lib/*/panui_completion.ml{,i}>: package(lwt.ppx)
+<lib/*/panui_content_with_edit.ml{,i}>: package(lwt.ppx)
+<lib/*/panui_pinboard.ml>: package(lwt.ppx)
+"lib/client/panui_pinboard.ml": package(js_of_ocaml.ppx)
+
+<lib/pwt*.ml>: package(lwt.ppx)
+<lib/server/*>: thread
+<lib/client/*.ml{,i}>: package(js_of_ocaml.ppx)
+
+<web/*.ml{,i}>: package(lwt.ppx)
+<web/*/test_{basic_editors,combo_selectors,operated,scalar,twine_editor}.*>: \
+    package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+<web/client/*>: package(js_of_ocaml.ppx)
+<web/server/*>: thread

@@ -1,0 +1,30 @@
+description = "Assortment of widgets for Eliom"
+version = "%%VERSION_NUM%%"
+
+requires = "lwt, js_of_ocaml.deriving, ppx_deriving.runtime, prime, react"
+archive(byte) = "panograph.cma"
+archive(native) = "panograph.cmxa"
+plugin(byte) = "panograph.cma"
+plugin(native) = "panograph.cmxs"
+
+package "server" (
+  version = "%%VERSION_NUM%%"
+  description = "Panograph server-side"
+  directory = "server"
+  requires = "eliom.server, panograph"
+  archive(byte) = "panograph-server.cma"
+  archive(native) = "panograph-server.cmxa"
+  plugin(byte) = "panograph-server.cma"
+  plugin(native) = "panograph-server.cmxs"
+)
+
+package "client" (
+  version = "%%VERSION_NUM%%"
+  description = "Panograph client-side"
+  directory = "client"
+  requires = "eliom.client, panograph, prime, prime.unstable"
+  archive(byte) = "panograph-client.cma"
+  archive(native) = "panograph-client.cmxa"
+  plugin(byte) = "panograph-client.cma"
+  plugin(native) = "panograph-client.cmxs"
+)
