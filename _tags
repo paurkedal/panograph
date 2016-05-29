@@ -1,11 +1,12 @@
 true: bin_annot, eliom_ppx
 false: package(ocamlbuild-eliom-dev)
 
-true: package(lwt), package(js_of_ocaml.deriving)
+true: package(lwt)
 true: package(prime), package(react)
+true: package(ppx_deriving.runtime), package(js_of_ocaml.deriving)
 
-<lib/server/*>: package(eliom.server)
-<lib/client/*>: package(eliom.client), package(prime.unstable)
+<*/server/*>: package(eliom.server)
+<*/client/*>: package(eliom.client), package(prime.unstable)
 
 "lib/client/pandom_finalizer.ml": package(js_of_ocaml.ppx)
 "lib/client/pandom_interactive.ml": package(lwt.ppx), package(js_of_ocaml.ppx)
@@ -35,8 +36,11 @@ true: package(prime), package(react)
 <lib/server/*>: thread
 <lib/client/*.ml{,i}>: package(js_of_ocaml.ppx)
 
-<web/*.ml{,i}>: package(lwt.ppx)
+<web/server/*.ml{,i}>: use2_panograph, use1_panograph-server
+<web/client/*.ml{,i}>: use2_panograph, use1_panograph-client
+<web/client/*.byte>:   use2_panograph, use1_panograph-client
+<web/**.ml{,i}>: package(lwt.ppx)
 <web/*/test_{basic_editors,combo_selectors,operated,scalar,twine_editor}.*>: \
     package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
-<web/client/*>: package(js_of_ocaml.ppx)
 <web/server/*>: thread
+<web/client/*>: package(js_of_ocaml.ppx)
