@@ -12,6 +12,13 @@ let oasis_executables = [
 
 let () = mark_tag_used "tests"
 
+let () =
+  rule "pkg/META -> lib/META"
+    ~dep:"pkg/META" ~prod:"lib/META"
+    begin fun env build ->
+      Cmd (S[A"sed"; A"s/%%NAME%%/lib/g"; P"pkg/META"; Sh">"; Px"lib/META"])
+    end
+
 let () = Ocamlbuild_plugin.dispatch @@ fun hook ->
   M.dispatcher ~oasis_executables hook;
   match hook with

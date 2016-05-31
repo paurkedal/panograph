@@ -36,9 +36,8 @@ true: package(ppx_deriving.runtime), package(js_of_ocaml.deriving)
 <lib/server/*>: thread
 <lib/client/*.ml{,i}>: package(js_of_ocaml.ppx)
 
-<web/server/*.ml{,i}>: use2_panograph, use1_panograph-server
-<web/client/*.ml{,i}>: use2_panograph, use1_panograph-client
-<web/client/*.byte>:   use2_panograph, use1_panograph-client
+<web/server/*>: package(lib.server)
+<web/client/*>: package(lib.client)
 <web/**.ml{,i}>: package(lwt.ppx)
 <web/*/test_{basic_editors,combo_selectors,operated,scalar,twine_editor}.*>: \
     package(ppx_deriving), package(js_of_ocaml.deriving.ppx)

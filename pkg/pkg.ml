@@ -33,7 +33,9 @@ let build_cmd c os =
 
 let build = Pkg.build ~cmd:build_cmd ()
 
-let () = Pkg.describe ~build ~license "panograph" @@ fun c ->
+let metas = [Pkg.meta_file "pkg/META"; Pkg.meta_file ~install:false "lib/META"]
+
+let () = Pkg.describe ~build ~license ~metas "panograph" @@ fun c ->
   Ok [
     Pkg.mllib "lib/panograph.mllib";
     Pkg.mllib ~dst_dir:"server/" "lib/server/panograph-server.mllib";
