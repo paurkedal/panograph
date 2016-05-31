@@ -23,11 +23,4 @@ let () = Ocamlbuild_plugin.dispatch @@ fun hook ->
   M.dispatcher ~oasis_executables hook;
   match hook with
   | Before_options -> Options.make_links := false
-  | After_rules ->
-    ocaml_lib ~tag_name:"use2_panograph" ~dir:"lib" "lib/panograph";
-    ocaml_lib ~tag_name:"use1_panograph-server"
-              ~dir:"lib/server" "lib/server/panograph-server";
-    ocaml_lib ~tag_name:"use1_panograph-client"
-              ~dir:"lib/client" "lib/client/panograph-client";
-    ()
   | _ -> ()
