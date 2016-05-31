@@ -17,6 +17,18 @@ let () =
     ~dep:"pkg/META" ~prod:"lib/META"
     begin fun env build ->
       Cmd (S[A"sed"; A"s/%%NAME%%/lib/g"; P"pkg/META"; Sh">"; Px"lib/META"])
+    end;
+  rule "%.mli & %.idem -> %.ml"
+    ~deps:["%.mli"; "%.idem"] ~prod:"%.ml"
+    begin fun env build ->
+      let src = env "%.mli" and dst = env "%.ml" in
+      cp src dst
+    end;
+  rule "%.eliomi & %.idem -> %.eliom"
+    ~deps:["%.eliomi"; "%.idem"] ~prod:"%.eliom"
+    begin fun env build ->
+      let src = env "%.eliomi" and dst = env "%.eliom" in
+      cp src dst
     end
 
 let () = Ocamlbuild_plugin.dispatch @@ fun hook ->
