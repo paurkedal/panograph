@@ -21,8 +21,10 @@ depends: [
   "lwt"
   "ocamlbuild" {build}
   "ocamlbuild-eliom-dev" {build}
+  "ocamlfind" {build}
   "ppx_deriving"
   "prime"
   "react"
   "topkg" {build & = "0.7.1"}
 ]
+dev-repo: "https://github.com/paurkedal/panograph.git"
