@@ -1,4 +1,4 @@
-# Panograph
+# Panograph - An Assortment of Eliom Widgets
 
 ## Disclaimer
 

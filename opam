@@ -1,6 +1,5 @@
 opam-version: "1.2"
 name: "panograph"
-version: "dev"
 authors: ["Petter A. Urkedal"]
 maintainer: "paurkedal@gmail.com"
 homepage: "https://github.com/paurkedal/panograph/"
@@ -25,5 +24,5 @@ depends: [
   "ppx_deriving"
   "prime"
   "react"
-  "topkg" {build}
+  "topkg" {build & = "0.7.1"}
 ]
