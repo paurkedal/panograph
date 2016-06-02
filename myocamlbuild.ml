@@ -16,7 +16,8 @@ let () =
   rule "pkg/META -> lib/META"
     ~dep:"pkg/META" ~prod:"lib/META"
     begin fun env build ->
-      Cmd (S[A"sed"; A"s/%%NAME%%/lib/g"; P"pkg/META"; Sh">"; Px"lib/META"])
+      Cmd (S[A"sed"; A"/^\\s*requires =/ s/\\<panograph\\>/lib/g";
+             P"pkg/META"; Sh">"; Px"lib/META"])
     end;
   rule "%.mli & %.idem -> %.ml"
     ~deps:["%.mli"; "%.idem"] ~prod:"%.ml"
