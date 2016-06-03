@@ -27,4 +27,3 @@ depends: [
   "react"
   "topkg" {build & = "0.7.1"}
 ]
-dev-repo: "https://github.com/paurkedal/panograph.git"
