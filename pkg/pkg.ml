@@ -21,7 +21,7 @@
 
 open Topkg
 
-let license = Pkg.std_file "COPYING.LESSER"
+let licenses = List.map Pkg.std_file ["COPYING.LESSER"; "COPYING"]
 
 let build_cmd c os =
   let ocamlbuild = Conf.tool "ocamlbuild" os in
@@ -33,11 +33,9 @@ let build_cmd c os =
 
 let build = Pkg.build ~cmd:build_cmd ()
 
-let metas = [Pkg.meta_file "pkg/META"]
-
 let opams = [Pkg.opam_file ~lint_deps_excluding:(Some ["lib"]) "opam"]
 
-let () = Pkg.describe ~build ~license ~metas ~opams "panograph" @@ fun c ->
+let () = Pkg.describe ~build ~licenses ~opams "panograph" @@ fun c ->
   Ok [
     Pkg.mllib "lib/panograph.mllib";
     Pkg.mllib ~dst_dir:"server/" "lib/server/panograph-server.mllib";

@@ -25,5 +25,5 @@ depends: [
   "ppx_deriving"
   "prime"
   "react"
-  "topkg" {build & = "0.7.1"}
+  "topkg" {build}
 ]
