@@ -10,9 +10,7 @@ let oasis_executables = [
   "web/client/test.byte";
 ]
 
-let () = mark_tag_used "tests"
-
-let () =
+let local_rules () =
   rule "pkg/META -> lib/META"
     ~dep:"pkg/META" ~prod:"lib/META"
     begin fun env build ->
@@ -36,4 +34,8 @@ let () = Ocamlbuild_plugin.dispatch @@ fun hook ->
   M.dispatcher ~oasis_executables hook;
   match hook with
   | Before_options -> Options.make_links := false
+  | After_rules ->
+    local_rules ();
+    dep ["ocaml"; "ocamldep"; "package(lib.server)"] ["lib/server.otarget"];
+    dep ["ocaml"; "ocamldep"; "package(lib.client)"] ["lib/client.otarget"]
   | _ -> ()
