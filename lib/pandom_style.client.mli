@@ -37,7 +37,7 @@ val clear_error : #Dom_html.element Js.t -> unit
     resets the original tooltip. *)
 
 val flash_error : string -> #Dom_html.element Js.t -> unit Lwt.t
-(** [flash_error msg elem] calls {#set_error} and {#clear_error} with a brief
+(** [flash_error msg elem] calls {!set_error} and {!clear_error} with a brief
     pause. *)
 
 val set_dirty : #Dom_html.element Js.t -> unit
