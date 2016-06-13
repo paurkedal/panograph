@@ -5,3 +5,6 @@
 /_build
 /_var
 /panograph.install
+/lib/panograph.mllib
+/lib/server/panograph-server.mllib
+/lib/client/panograph-client.mllib

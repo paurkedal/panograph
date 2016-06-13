@@ -1,0 +1,45 @@
+Pwt			{shared}
+Pwt_emitter		{shared}
+Pwt_hashtbl		{shared}
+Pwt_infix		{shared}
+Pwt_list		{shared}
+Pwt_option		{shared}
+
+Panograph_basic_editors {server, client}
+Panograph_basic_viewers {server, client}
+Panograph_collection	{client}
+Panograph_common	{client}
+Panograph_dltree	{shared}
+Panograph_event_table	{shared}
+Panograph_i18n		{shared}
+Panograph_intf		{client}
+Panograph_mapped	{client}
+Panograph_prereq	{internal, server, client}
+Panograph_signal_table	{shared}
+Panograph_simple	{client}
+Panograph_tabular	{client}
+Panograph_twine_editor	{server, client}
+Panograph_types		{shared}
+
+Pandom_finalizer	{client}
+Pandom_interactive	{client}
+Pandom_style		{client}
+Pandom_weakchan		{client}
+Pandom_weaktbl		{client}
+
+Panui_basic_selectors	{server, client}
+Panui_combo_selectors	{server, client}
+Panui_completion	{server, client}
+Panui_content		{server, client}
+Panui_content_intf	{server, client}
+Panui_content_with_edit	{server, client}
+Panui_dialogs		{client}
+Panui_pinboard		{server, client}
+Panui_scalar		{server, client}
+
+Operated_html5		{client}
+Operated_types		{shared}
+Presentation_sigs	{shared}
+Presentation_types	{shared}
+Presenting_map		{shared}
+Presenting_set		{shared}

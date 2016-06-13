@@ -16,6 +16,7 @@ remove: [
   ["opam-installer" "-u" "--prefix=%{prefix}%" "panograph-client.install"]
 ]
 depends: [
+  "adpkg" {build}
   "eliom" {>= "5.0.0" & < "6.0.0"}
   "js_of_ocaml"
   "lwt"

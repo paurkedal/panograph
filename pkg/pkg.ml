@@ -17,8 +17,10 @@
  *)
 
 #use "topfind"
+#require "adpkg"
 #require "topkg"
 
+open Adpkg
 open Topkg
 
 let licenses = List.map Pkg.std_file ["COPYING.LESSER"; "COPYING"]
@@ -36,9 +38,19 @@ let build = Pkg.build ~cmd:build_cmd ()
 let opams = [Pkg.opam_file ~lint_deps_excluding:(Some ["lib"]) "opam"]
 
 let () = Pkg.describe ~build ~licenses ~opams "panograph" @@ fun c ->
+  Modules.(add_file "lib/panograph.oclib" empty) >>= fun modules ->
+  Modules.mllib
+    ~filter:Filter.(tagged "shared") modules
+    "lib/panograph.mllib" >>= fun shared_mllib ->
+  Modules.mllib
+    ~filter:Filter.(tagged "server") modules
+    ~strip_dir:"lib" ~dst_dir:"server/"
+    "lib/server/panograph-server.mllib" >>= fun server_mllib ->
+  Modules.mllib
+    ~filter:Filter.(tagged "client") modules
+    ~strip_dir:"lib" ~dst_dir:"client/"
+    "lib/client/panograph-client.mllib" >>= fun client_mllib ->
   Ok [
-    Pkg.mllib "lib/panograph.mllib";
-    Pkg.mllib ~dst_dir:"server/" "lib/server/panograph-server.mllib";
-    Pkg.mllib ~dst_dir:"client/" "lib/client/panograph-client.mllib";
+    shared_mllib; server_mllib; client_mllib;
     Pkg.share ~dst:"static/css/" "static/css/panograph.css";
   ]
