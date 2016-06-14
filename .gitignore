@@ -4,6 +4,8 @@
 /Makefile
 /_build
 /_var
+/doc/api.odocl
+/doc/dev.odocl
 /panograph.install
 /lib/panograph.mllib
 /lib/server/panograph-server.mllib

@@ -37,8 +37,13 @@ let build = Pkg.build ~cmd:build_cmd ()
 
 let opams = [Pkg.opam_file ~lint_deps_excluding:(Some ["lib"]) "opam"]
 
+let map_client_server_dir tags dir =
+  if Tags.mem "server" tags then Fpath.append dir "server" else
+  if Tags.mem "client" tags then Fpath.append dir "client" else
+  dir
+
 let () = Pkg.describe ~build ~licenses ~opams "panograph" @@ fun c ->
-  Modules.(add_file "lib/panograph.oclib" empty) >>= fun modules ->
+  Modules.of_file "lib/panograph.oclib" >>= fun modules ->
   Modules.mllib
     ~filter:Filter.(tagged "shared") modules
     "lib/panograph.mllib" >>= fun shared_mllib ->
@@ -50,6 +55,11 @@ let () = Pkg.describe ~build ~licenses ~opams "panograph" @@ fun c ->
     ~filter:Filter.(tagged "client") modules
     ~strip_dir:"lib" ~dst_dir:"client/"
     "lib/client/panograph-client.mllib" >>= fun client_mllib ->
+  Modules.save
+    ~filter:Filter.(not (tagged "internal"))
+    ~map_dir:map_client_server_dir modules "doc/api.odocl";
+  Modules.save
+    ~map_dir:map_client_server_dir modules "doc/dev.odocl";
   Ok [
     shared_mllib; server_mllib; client_mllib;
     Pkg.share ~dst:"static/css/" "static/css/panograph.css";
