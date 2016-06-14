@@ -6,7 +6,7 @@ homepage: "https://github.com/paurkedal/panograph/"
 bug-reports: "https://github.com/paurkedal/panograph/issues"
 dev-repo: "https://github.com/paurkedal/panograph.git"
 license: "LGPL-3 with OCaml linking exception"
-build: [ocaml "pkg/pkg.ml" "build" "--installer" "true"]
+build: [ocaml "pkg/pkg.ml" "build" "--pinned" "%{pinned}%"]
 install: [
   ["opam-installer" "--prefix=%{prefix}%" "panograph-server.install"]
   ["opam-installer" "--prefix=%{prefix}%" "panograph-client.install"]
