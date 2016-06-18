@@ -15,6 +15,7 @@
  *)
 
 open Lwt
+open Unprime_list
 
 let rec fold_s f = function
   | [] -> return
@@ -43,3 +44,14 @@ let rec fmap_p f = function
   | x :: xs ->
     let%lwt yo = f x and ys = fmap_p f xs in
     return (match yo with None -> ys | Some y -> y :: ys)
+
+let flatten_map_s f xs =
+  let rec loop acc = function
+    | [] -> Lwt.return (List.rev acc)
+    | x :: xs ->
+      let%lwt ys = f x in
+      loop (List.rev_append ys acc) xs in
+  loop [] xs
+
+let flatten_map_p f xs =
+  Lwt_list.rev_map_p f xs >|= fun yss -> List.(fold rev_append) yss []
