@@ -7,14 +7,6 @@ bug-reports: "https://github.com/paurkedal/panograph/issues"
 dev-repo: "https://github.com/paurkedal/panograph.git"
 license: "LGPL-3 with OCaml linking exception"
 build: [ocaml "pkg/pkg.ml" "build" "--pinned" "%{pinned}%"]
-install: [
-  ["opam-installer" "--prefix=%{prefix}%" "panograph-server.install"]
-  ["opam-installer" "--prefix=%{prefix}%" "panograph-client.install"]
-]
-remove: [
-  ["opam-installer" "-u" "--prefix=%{prefix}%" "panograph-server.install"]
-  ["opam-installer" "-u" "--prefix=%{prefix}%" "panograph-client.install"]
-]
 depends: [
   "adpkg" {build}
   "eliom" {>= "5.0.0" & < "6.0.0"}
