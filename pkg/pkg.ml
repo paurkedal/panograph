@@ -25,13 +25,15 @@ open Topkg
 
 let licenses = List.map Pkg.std_file ["COPYING.LESSER"; "COPYING"]
 
-let build_cmd c os =
+let build_cmd c os targets =
   let ocamlbuild = Conf.tool "ocamlbuild" os in
   let build_dir = Conf.build_dir c in
+  OS.Cmd.run @@
   Cmd.(ocamlbuild
         % "-use-ocamlfind"
         % "-plugin-tag" % "package(ocamlbuild-eliom-dev)"
-        % "-build-dir" % build_dir)
+        % "-build-dir" % build_dir
+        %% of_list targets)
 
 let build = Pkg.build ~cmd:build_cmd ()
 
@@ -57,9 +59,9 @@ let () = Pkg.describe ~build ~licenses ~opams "panograph" @@ fun c ->
     "lib/client/panograph-client.mllib" >>= fun client_mllib ->
   Modules.save
     ~filter:Filter.(not (tagged "internal"))
-    ~map_dir:map_client_server_dir modules "doc/api.odocl";
+    ~map_dir:map_client_server_dir modules "doc/api.odocl" >>= fun () ->
   Modules.save
-    ~map_dir:map_client_server_dir modules "doc/dev.odocl";
+    ~map_dir:map_client_server_dir modules "doc/dev.odocl" >>= fun () ->
   Ok [
     shared_mllib; server_mllib; client_mllib;
     Pkg.share ~dst:"static/css/" "static/css/panograph.css";

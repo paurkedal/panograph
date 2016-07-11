@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.4.1] - 2016-07-11
+
+### Changed
+- Adjusted for latest topkg and adpkg.
+
 ## [0.4.0] - 2016-06-29
 
 ### Added
