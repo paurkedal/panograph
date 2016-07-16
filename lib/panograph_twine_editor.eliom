@@ -73,8 +73,8 @@
       let remove_dom = To_dom.of_button remove_button in
       let item = D.span [D.span [D.pcdata (Lang.to_string lang)];
                          inp; remove_button] in
-      let next = Option.map (fst *< snd)
-                            (Lang_map.succ_binding_o twe.twe_map lang) in
+      let next = Option.map (fst <@ snd)
+                            (Lang_map.succ_binding twe.twe_map lang) in
       let item_dom = To_dom.of_span item in
       Dom.insertBefore twe.twe_container_dom item_dom (Js.Opt.option next);
       twe.twe_map <- Lang_map.add lang (item_dom, inp_dom) twe.twe_map;

@@ -96,7 +96,7 @@ struct
 
   let remove_key w k =
     try
-      let _, item = Set.find_e k w.w_set in
+      let _, item = Set.find k w.w_set in
       w.w_set <- Set.remove k w.w_set;
       Container.remove w.w_container item
     with Not_found -> ()
@@ -104,9 +104,9 @@ struct
   let patch_elt w p =
     try
       match Elt_PE.key_of_patch_in p with
-      | k, None -> Elt_PE.patch (fst (Set.find_e k w.w_set)) p
+      | k, None -> Elt_PE.patch (fst (Set.find k w.w_set)) p
       | k, Some k' ->
-        let (elt, item) = Set.find_e k w.w_set in
+        let (elt, item) = Set.find k w.w_set in
         if Set.contains k' w.w_set then
           error "Collection_editor: Conflict for incoming patch."
         else begin

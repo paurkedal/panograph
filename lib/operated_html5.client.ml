@@ -32,7 +32,7 @@ module O = struct
     let state = ref (Enumlist.of_list ys) in
     let rec find_next pos =
       if pos = Enumlist.length !state then Js.Opt.empty else
-      match Enumlist.get pos !state with
+      match Enumlist.get !state pos with
       | _, [] -> find_next (pos + 1)
       | _, item :: items -> Js.Opt.return (To_dom.of_element item) in
     let insert_at pos item =
@@ -47,16 +47,16 @@ module O = struct
       List.iter (insert_at pos) (snd y);
       state := Enumlist.insert pos y !state
     | `Delete pos ->
-      List.iter delete (snd (Enumlist.get pos !state));
+      List.iter delete (snd (Enumlist.get !state pos));
       state := Enumlist.delete pos !state
     | `Move (pos, pos') ->
-      let f, items = Enumlist.get pos !state in
+      let f, items = Enumlist.get !state pos in
       List.iter delete items;
       state := Enumlist.delete pos !state;
       List.iter (insert_at pos') items;
       state := Enumlist.insert pos (f, items) !state
     | `Update (pos, dx) ->
-      fst (Enumlist.get pos !state) dx
+      fst (Enumlist.get !state pos) dx
 
   let p ?a ?(intro = []) f xs =
     let ys = List.map f xs in

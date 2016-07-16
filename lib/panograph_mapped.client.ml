@@ -66,8 +66,8 @@ struct
 
   let add_elt w k elt =
     w.w_map <- Map.add k elt w.w_map;
-    let before =
-      Option.found (fun () -> (snd (Map.succ_binding_e w.w_map k)).e_item) in
+    let before = Option.map (fun b -> (snd b).e_item)
+                            (Map.succ_binding w.w_map k) in
     Container.append ?before w.w_container elt.e_item
 
   let add_binding w (k, v) =

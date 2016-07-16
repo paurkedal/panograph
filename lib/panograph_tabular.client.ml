@@ -307,7 +307,9 @@ module Tabular = struct
     assert found_old;
     assert (not found_new);
     let tc = Cs_map.find cs tn_old.tn_tcs in
-    let tc'_opt = Cs_map.get_o pos_new tn_new.tn_tcs in
+    let tc'_opt =
+      if pos_new = Cs_map.cardinal tn_new.tn_tcs then None else
+      Some (Cs_map.get tn_new.tn_tcs pos_new) in
     tn_old.tn_tcs <- Cs_map.remove cs tn_old.tn_tcs;
     Dom.removeChild tn_old.tn_tr tc;
     tn_new.tn_tcs <- Cs_map.add cs tc tn_new.tn_tcs;
@@ -807,13 +809,13 @@ module Tabular = struct
     let add_first tab ?css_class cs_up =
       let cs = Dltree.add_first (make_csn tab css_class) cs_up in
       alloc_cs tab cs;
-      Option.iter (update_cs_attribs tab *< Dltree.first_leaf) (Dltree.next cs);
+      Option.iter (update_cs_attribs tab <@ Dltree.first_leaf) (Dltree.next cs);
       cs
 
     let add_last tab ?css_class cs_up =
       let cs = Dltree.add_last (make_csn tab css_class) cs_up in
       alloc_cs tab cs;
-      Option.iter (update_cs_attribs tab *< Dltree.last_leaf) (Dltree.prev cs);
+      Option.iter (update_cs_attribs tab <@ Dltree.last_leaf) (Dltree.prev cs);
       cs
 
     let add_before tab ?css_class cs_n =
