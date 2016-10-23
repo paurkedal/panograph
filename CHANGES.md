@@ -2,10 +2,13 @@
 
 ## [Unreleased]
 
+## [0.4.2] - 2016-07-16
+
+Updated to prime 0.7.0.
+
 ## [0.4.1] - 2016-07-11
 
-### Changed
-- Adjusted for latest topkg and adpkg.
+Updated to latest topkg and adpkg.
 
 ## [0.4.0] - 2016-06-29
 
@@ -26,7 +29,8 @@
 - Findlib packages `panograph-client` and `panograph-server` have been
   replaced by `panograph.client` and `panograph.server`.
 
-[Unreleased]: https://github.com/paurkedal/panograph/compare/0.4.1...HEAD
+[Unreleased]: https://github.com/paurkedal/panograph/compare/0.4.2...HEAD
+[0.4.2]: https://github.com/paurkedal/panograph/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/paurkedal/panograph/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/paurkedal/panograph/compare/0.3.4...0.4.0
 [0.3.4]: https://github.com/paurkedal/panograph/compare/0.3.3...0.3.4
