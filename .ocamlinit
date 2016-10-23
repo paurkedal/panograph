@@ -1,0 +1,13 @@
+#use "topfind"
+#thread
+
+#require "ppx_deriving.runtime"
+#require "prime.unstable"
+#require "ocsigenserver"
+#require "ocsigenserver.ext.ocsipersist-sqlite"
+#require "eliom.server"
+
+#directory "_build/lib"
+#directory "_build/lib/server"
+#load "panograph.cma"
+#load "panograph-server.cma"
