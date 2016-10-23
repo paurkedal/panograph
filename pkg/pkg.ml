@@ -1,24 +1,8 @@
 #! /usr/bin/env ocaml
-
-(* Copyright (C) 2016  Petter A. Urkedal <paurkedal@gmail.com>
- *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version, with the OCaml static compilation exception.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library.  If not, see <http://www.gnu.org/licenses/>.
- *)
-
 #use "topfind"
 #require "adpkg"
 #require "topkg"
+#require "unix"
 
 open Adpkg
 open Topkg
@@ -28,6 +12,15 @@ let licenses = List.map Pkg.std_file ["COPYING.LESSER"; "COPYING"]
 let build_cmd c os targets =
   let ocamlbuild = Conf.tool "ocamlbuild" os in
   let build_dir = Conf.build_dir c in
+  let targets =
+    if Conf.build_tests c then
+      "web/server/panograph-test.cma" ::
+      "web/server/panograph-test.cmxs" ::
+      "web/client/test.js" ::
+      targets
+    else
+      targets in
+  Unix.putenv "OCAMLPATH" ".";
   OS.Cmd.run @@
   Cmd.(ocamlbuild
         % "-use-ocamlfind"
@@ -37,7 +30,7 @@ let build_cmd c os targets =
 
 let build = Pkg.build ~cmd:build_cmd ()
 
-let opams = [Pkg.opam_file ~lint_deps_excluding:(Some ["lib"]) "opam"]
+let opams = [Pkg.opam_file ~lint_deps_excluding:(Some ["lib"; "oUnit"]) "opam"]
 
 let map_client_server_dir tags dir =
   if Tags.mem "server" tags then Fpath.append dir "server" else
@@ -65,4 +58,5 @@ let () = Pkg.describe ~build ~licenses ~opams "panograph" @@ fun c ->
   Ok [
     shared_mllib; server_mllib; client_mllib;
     Pkg.share ~dst:"static/css/" "static/css/panograph.css";
+    Pkg.test "tests/testsuite";
   ]

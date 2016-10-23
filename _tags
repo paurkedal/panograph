@@ -43,3 +43,5 @@ true: package(ppx_deriving.runtime), package(js_of_ocaml.deriving)
     package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
 <web/server/*>: thread
 <web/client/*>: package(js_of_ocaml.ppx)
+
+<tests/*>: package(lib), package(oUnit)
