@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -14,14 +14,13 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open OUnit
+(** Dispatch events indexed by integers. *)
 
-let suite = "panograph" >::: [
-  "test_dltree" >:: Test_dltree.run;
-  "test_event_table" >:: Test_event_table.run;
-  "test_event_array" >:: Test_event_array.run;
-]
+type 'a t
 
-let _ =
-  Random.self_init ();
-  run_test_tt_main suite
+val create : int React.signal -> (int * 'a) React.event -> 'a t
+(** [create m e] is a dispatcher of events [e] with modulus [2^m]. The modulus
+    determines the efficiency of the dispatch, see {!get_mod} for details. *)
+
+val get : 'a t -> int -> 'a React.event
+(** [get a i] receives every event of [a] with index [i]. *)

@@ -21,6 +21,8 @@ Panograph_tabular	{client}
 Panograph_twine_editor	{server, client}
 Panograph_types		{shared}
 
+Panreact_event_array	{shared}
+
 Pandom_finalizer	{client}
 Pandom_interactive	{client}
 Pandom_style		{client}
