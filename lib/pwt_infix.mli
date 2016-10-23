@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -20,7 +20,7 @@
 
 open Lwt
 
-val (>>=) : 'a t -> ('a -> 'b t) -> 'b t
-val (=<<) : ('a -> 'b t) -> 'a t -> 'b t
-val (>|=) : 'a t -> ('a -> 'b) -> 'b t
-val (=|<) : ('a -> 'b) -> 'a t -> 'b t
+val (>>=) : 'a t -> ('a -> 'b t) -> 'b t [@@ocaml.deprecated "Use Lwt.Infix"]
+val (=<<) : ('a -> 'b t) -> 'a t -> 'b t [@@ocaml.deprecated "Use Lwt.Infix"]
+val (>|=) : 'a t -> ('a -> 'b) -> 'b t [@@ocaml.deprecated "Use Lwt.Infix"]
+val (=|<) : ('a -> 'b) -> 'a t -> 'b t [@@ocaml.deprecated "Use Lwt.Infix"]

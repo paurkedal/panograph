@@ -16,7 +16,7 @@
 
 open Eliom_content.Html5
 open Html5_types
-open Pwt_infix
+open Lwt.Infix
 open Unprime
 
 let ok_label = [D.pcdata "Ok"]
