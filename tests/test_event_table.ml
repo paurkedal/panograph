@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -30,13 +30,14 @@ let test1 et =
   let b_ev = React.E.trace (fun _ -> assert false) b_ev in
   assert (Et.size et = 2);
   Et.emit et "a" 1;
-  Gc.full_major ();
   Et.emit et "a" 10;
+  Gc.full_major ();
   Et.emit et "a" 100;
-  assert (!a_r = 111);
+  Et.emit et "a" 1000;
+  assert (!a_r = 1111);
   assert (Et.size et = 2);
-  ignore a_ev;
-  ignore b_ev
+  React.E.stop a_ev; (* retained *)
+  React.E.stop b_ev  (* retained *)
 
 let run () =
   let et = Et.create 23 in
