@@ -24,56 +24,49 @@ module type S = sig
   val size : 'a t -> int
 end
 
-type ex_epair =
-  Ex_epair : 'a React.E.t * ('a -> unit) -> ex_epair
+exception Retained : 'a -> exn
 
-let ex_epair_dummy = Ex_epair (React.E.never, (fun _ -> assert false))
-
-let enclose x () = ignore x
+let never_emit ?step x = assert false
 
 module Make (Key : Hashtbl.HashedType) = struct
-
   type key = Key.t
+  type 'a node = Key.t * 'a React.E.t * (?step: React.step -> 'a -> unit)
 
-  module Node = struct
-    type t = Key.t * ex_epair
-    let hash (key, _) = Key.hash key
-    let equal (k1, _) (k2, _) = Key.equal k1 k2
-  end
+  type _ t =
+    Pack : (module Weak.S with type data = 'a node and type t = 'wt) * 'wt ->
+           'a t
 
-  module Wt = Weak.Make (Node)
+  let create (type a) n : a t =
+    let module Wt =
+      Weak.Make (struct
+        type t = a node
+        let hash (k, _, _) = Key.hash k
+        let equal (k1, _, _) (k2, _, _) = Key.equal k1 k2
+      end) in
+    Pack ((module Wt), Wt.create n)
 
-  type 'a t = Wt.t
-
-  let create = Wt.create
-
-  let event (wt : 'a t) key : 'a React.E.t =
-    let (_, Ex_epair (event, _)) =
-      try
-        Wt.find wt (key, ex_epair_dummy)
-      with Not_found ->
-        let event, emit = React.E.create () in
-        let node = (key, Ex_epair (event, emit)) in
-        let `R _ = React.E.retain event (enclose node) in
-        Wt.add wt node; node in
-    Obj.magic event (*[1]*)
-
-  let event_opt (wt : 'a t) key : 'a React.E.t option =
+  let event (type a) (Pack ((module Wt), wt) : a t) key =
     try
-      let (_, Ex_epair (event, _)) = Wt.find wt (key, ex_epair_dummy) in
-      Some (Obj.magic event : 'a React.E.t)
+      let _, ev, _ = Wt.find wt (key, React.E.never, never_emit) in
+      ev
+    with Not_found ->
+      let ev, emit = React.E.create () in
+      let node = (key, ev, emit) in
+      let `R _ = React.E.retain ev (fun () -> raise (Retained node)) in
+      Wt.add wt node; ev
+
+  let event_opt (type a) (Pack ((module Wt), et) : a t) key =
+    try
+      let _, ev, _ = Wt.find et (key, React.E.never, never_emit) in
+      Some ev
     with Not_found ->
       None
 
-  let emit (wt : 'a t) key (x : 'a) =
+  let emit (type a) (Pack ((module Wt), wt) : a t) key (x : a) =
     try
-      let (_, Ex_epair (_, emit)) = Wt.find wt (key, ex_epair_dummy) in
-      Obj.magic emit x (*[1]*)
-    with Not_found ->
-      ()
+      let _, _, emit = Wt.find wt (key, React.E.never, never_emit) in
+      emit x
+    with Not_found -> ()
 
-  let size wt = Wt.count wt
+  let size (type a) (Pack ((module Wt), wt) : a t) = Wt.count wt
 end
-
-(* [1] The Weak module has monomorphic elements, so we need to introduce
- * polymorphism by swearing. *)
