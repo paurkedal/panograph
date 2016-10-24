@@ -18,7 +18,6 @@ module Event_array = Panreact_event_array
 
 let check watchers expected =
   for i = 0 to Array.length watchers - 1 do
-    Printf.printf "Y %d ? %d = %d\n" i (React.S.value watchers.(i)) expected.(i);
     assert (React.S.value watchers.(i) = expected.(i))
   done
 
@@ -37,7 +36,6 @@ let run () =
     let count = 1 lsl (Random.int (d + 1)) in
     for _ = 0 to count - 1 do
       let i = Random.int (1 lsl d) in
-      Printf.printf "X %d <- %d\n" i (i + round);
       expected.(i) <- i + round;
       send_elt (i, i + round)
     done;
