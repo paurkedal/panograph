@@ -16,9 +16,17 @@
 
 module Event_array = Panreact_event_array
 
-let check watchers expected =
-  for i = 0 to Array.length watchers - 1 do
-    assert (React.S.value watchers.(i) = expected.(i))
+type watch = {
+  value_sn : int React.S.t;
+  count_sn : int React.S.t;
+  mutable value_ck : int;
+  mutable count_ck : int;
+}
+
+let check watches =
+  for i = 0 to Array.length watches - 1 do
+    assert (React.S.value watches.(i).value_sn = watches.(i).value_ck);
+    assert (React.S.value watches.(i).count_sn = watches.(i).count_ck)
   done
 
 let run () =
@@ -26,18 +34,22 @@ let run () =
   let n_watch = 1 lsl d_max in
   let depth_sn, set_depth = React.S.create 4 in
   let elt_ev, send_elt = React.E.create () in
-  let disp = Event_array.create depth_sn elt_ev in
-  let watchers =
-    Array.init n_watch (fun i -> React.S.hold 0 (Event_array.get disp i)) in
-  let expected = Array.make n_watch 0 in
-  for round = 0 to 999 do
+  let ea = Event_array.create depth_sn elt_ev in
+  let mk_watch i =
+    let value_sn = Event_array.hold ea i (-1) in
+    let count_sn = React.S.fold (fun c _ -> succ c) 0 (Event_array.get ea i) in
+    {value_sn; count_sn; value_ck = -1; count_ck = 0} in
+  let watches = Array.init n_watch mk_watch in
+  for round = 1 to 1000 do
     let d = Random.int (d_max + 1) in
     set_depth d;
-    let count = 1 lsl (Random.int (d + 1)) in
-    for _ = 0 to count - 1 do
+    let repeat = Random.int (1 lsl (Random.int (d + 1))) in
+    for _ = 0 to repeat - 1 do
       let i = Random.int (1 lsl d) in
-      expected.(i) <- i + round;
-      send_elt (i, i + round)
+      let v = Random.int 16 in
+      send_elt (i, v);
+      watches.(i).value_ck <- v;
+      watches.(i).count_ck <- watches.(i).count_ck + 1
     done;
-    check watchers expected
+    check watches
   done
