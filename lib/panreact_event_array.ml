@@ -18,9 +18,12 @@ open Unprime
 
 type 'a t = (int * 'a) React.event array list React.signal
 
+let never_eq _ _ = false
+
 let create d_sn ev =
 
   let rec shrink dd = function
+   | [] -> assert false
    | arr :: arrs when dd > 0 ->
       Array.iter React.E.stop arr;
       shrink (dd - 1) arrs
@@ -44,12 +47,13 @@ let create d_sn ev =
     if d < d_new then grow d_new d (List.hd arrs) (List.tl arrs) else
     arrs in
 
+  let d_sn = React.S.l1 (max 0) d_sn in
   let init = grow (React.S.value d_sn) 0 [|ev|] [] in
   React.S.fold ~eq:(==) resize init (React.S.changes d_sn)
 
 let bind_event_signal sn f =
-  let f' x = React.S.hold None (React.E.Option.some (f x)) in
-  React.E.fmap ident (React.S.changes (React.S.bind sn f'))
+  let f' x = React.S.hold ~eq:never_eq None (React.E.Option.some (f x)) in
+  React.E.fmap ident (React.S.changes (React.S.bind ~eq:never_eq sn f'))
 
 let get arrs_sn i =
   bind_event_signal arrs_sn @@ fun arrs ->
@@ -59,4 +63,4 @@ let get arrs_sn i =
   else
     React.E.never
 
-let hold arrs_sn i c = React.S.hold c (get arrs_sn i)
+let hold ?eq arrs_sn i c = React.S.hold ?eq c (get arrs_sn i)

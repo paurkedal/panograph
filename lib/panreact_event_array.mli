@@ -25,5 +25,5 @@ val create : int React.signal -> (int * 'a) React.event -> 'a t
 val get : 'a t -> int -> 'a React.event
 (** [get a i] receives every event of [a] with index [i]. *)
 
-val hold : 'a t -> int -> 'a -> 'a React.signal
+val hold : ?eq: ('a -> 'a -> bool) -> 'a t -> int -> 'a -> 'a React.signal
 (** [signal a i x] is [React.S.hold x (get a i)]. *)

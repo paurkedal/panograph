@@ -22,7 +22,7 @@ let check watchers expected =
   done
 
 let run () =
-  let d_max = 5 in
+  let d_max = 7 in
   let n_watch = 1 lsl d_max in
   let depth_sn, set_depth = React.S.create 4 in
   let elt_ev, send_elt = React.E.create () in
@@ -30,7 +30,7 @@ let run () =
   let watchers =
     Array.init n_watch (fun i -> React.S.hold 0 (Event_array.get disp i)) in
   let expected = Array.make n_watch 0 in
-  for round = 0 to 99 do
+  for round = 0 to 999 do
     let d = Random.int (d_max + 1) in
     set_depth d;
     let count = 1 lsl (Random.int (d + 1)) in
