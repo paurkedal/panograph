@@ -30,8 +30,8 @@ let check watches =
   done
 
 let run () =
-  let d_max = 7 in
-  let n_watch = 1 lsl d_max in
+  let d_max = 6 in
+  let n_watch = 2 lsl d_max in
   let depth_sn, set_depth = React.S.create 4 in
   let elt_ev, send_elt = React.E.create () in
   let ea = Event_array.create depth_sn elt_ev in
@@ -40,12 +40,12 @@ let run () =
     let count_sn = React.S.fold (fun c _ -> succ c) 0 (Event_array.get ea i) in
     {value_sn; count_sn; value_ck = -1; count_ck = 0} in
   let watches = Array.init n_watch mk_watch in
-  for round = 1 to 1000 do
+  for round = 1 to 500 do
     let d = Random.int (d_max + 1) in
     set_depth d;
     let repeat = Random.int (1 lsl (Random.int (d + 1))) in
     for _ = 0 to repeat - 1 do
-      let i = Random.int (1 lsl d) in
+      let i = Random.int (2 lsl d) in
       let v = Random.int 16 in
       send_elt (i, v);
       watches.(i).value_ck <- v;

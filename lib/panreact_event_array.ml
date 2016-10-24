@@ -58,9 +58,8 @@ let bind_event_signal sn f =
 let get arrs_sn i =
   bind_event_signal arrs_sn @@ fun arrs ->
   let arr = List.hd arrs in
-  if i < Array.length arr then
-    React.E.l1 snd arr.(i)
-  else
-    React.E.never
+  React.E.fmap
+    (fun (j, x) -> if j = i then Some x else None)
+    arr.(i mod Array.length arr)
 
 let hold ?eq arrs_sn i c = React.S.hold ?eq c (get arrs_sn i)

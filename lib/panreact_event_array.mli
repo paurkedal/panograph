@@ -20,7 +20,8 @@ type 'a t
 
 val create : int React.signal -> (int * 'a) React.event -> 'a t
 (** [create m e] is a dispatcher of events [e] with modulus [2^m]. The modulus
-    determines the efficiency of the dispatch, see {!get_mod} for details. *)
+    only affects efficiency. Optimally the range of indices is dense, and [2^m]
+    is on the order of the largest index. *)
 
 val get : 'a t -> int -> 'a React.event
 (** [get a i] receives every event of [a] with index [i]. *)
