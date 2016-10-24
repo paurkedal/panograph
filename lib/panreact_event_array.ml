@@ -58,3 +58,5 @@ let get arrs_sn i =
     React.E.l1 snd arr.(i)
   else
     React.E.never
+
+let hold arrs_sn i c = React.S.hold c (get arrs_sn i)
