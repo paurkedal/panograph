@@ -14,12 +14,15 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-[%%shared
-  let string_of_option f = function
-    | None -> ""
-    | Some x -> f x
+[%%shared.start]
+open Eliom_lib
 
-  let option_of_string f = function
-    | "" -> None
-    | s -> Some (f s)
-]
+let ignore_cv (x : unit client_value) = ignore x
+
+let string_of_option f = function
+  | None -> ""
+  | Some x -> f x
+
+let option_of_string f = function
+  | "" -> None
+  | s -> Some (f s)

@@ -14,6 +14,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+[%%server
+  open Panograph_prereq
+]
 [%%shared
   open Eliom_content.Html5
 ]
@@ -26,15 +29,17 @@ let render () =
     D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Acknowledge"] in
   let open_confirm =
     D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Confirm"] in
-  ignore [%client
+  ignore_cv [%client
     Lwt.async begin fun () ->
-      Lwt_js_events.clicks (To_dom.of_button ~%open_acknowledge) @@ fun _ _ ->
+      Lwt_js_events.clicks
+        (To_dom.of_button ~%(open_acknowledge : [`Button] elt)) @@ fun _ _ ->
       let%lwt () = acknowledge_lwt [D.p [D.pcdata "Seen it?"]] in
       Manip.appendToBody (D.div [D.pcdata "It's seen."]);
       Lwt.return_unit
     end;
     Lwt.async begin fun () ->
-      Lwt_js_events.clicks (To_dom.of_button ~%open_confirm) @@ fun _ _ ->
+      Lwt_js_events.clicks
+        (To_dom.of_button ~%(open_confirm : [`Button] elt)) @@ fun _ _ ->
       let%lwt ans = confirm_lwt [D.p [D.pcdata "Do it?"]] in
       if ans then Manip.appendToBody (D.div [D.pcdata "It's done."])
              else Manip.appendToBody (D.div [D.pcdata "It's not done."]);

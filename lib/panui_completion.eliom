@@ -102,9 +102,11 @@
     let input_elem = D.input ~a:[D.a_input_type `Text] () in
     let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in
 
-    let absorb = [%client
-      string_completion_client ~%input_elem ~%choices_elem
-                               ~%value ~%commit ~%fetch
+    let absorb : (string -> unit) client_value = [%client
+      string_completion_client
+        ~%(input_elem : [`Input] elt)
+        ~%(choices_elem : [`Span] elt)
+        ~%value ~%commit ~%fetch
     ] in
 
     D.span ~a:[D.a_class ["pan-completion-input"]]

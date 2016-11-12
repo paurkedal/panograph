@@ -15,6 +15,8 @@
  *)
 
 [%%shared.start]
+open Eliom_lib
 
+val ignore_cv : unit client_value -> unit
 val string_of_option : ('a -> string) -> 'a option -> string
 val option_of_string : (string -> 'a) -> string -> 'a option

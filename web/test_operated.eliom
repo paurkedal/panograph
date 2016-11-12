@@ -104,4 +104,4 @@ let render () =
     Lwt_react.E.keep (React.E.trace patch ~%ev_c);
     dl
   ] in
-  C.node dl
+  (C.node dl : [`Dl] elt :> [> `Dl] elt)

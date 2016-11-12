@@ -108,19 +108,19 @@
     let error_span = D.span ~a:[D.a_class ["error"]] [] in
     let outer = D.span ~a:[D.a_class ["twine-editor"]]
                        [trans_span; add_span; error_span] in
-    let patch_in = [%client
+    let patch_in : (twine_editor_in -> unit) client_value = [%client
       let open Html5 in
-      let add_input_dom = To_dom.of_input ~%add_input in
-      let error_dom = To_dom.of_element ~%error_span in
+      let add_input_dom = To_dom.of_input ~%(add_input : [`Input] elt) in
+      let error_dom = To_dom.of_element ~%(error_span : [`Span] elt) in
       error_dom##.style##.visibility := Js.string "hidden";
       let twe =
-        { twe_container_dom = To_dom.of_element ~%trans_span;
-          twe_error_dom = To_dom.of_element ~%error_span;
+        { twe_container_dom = To_dom.of_element ~%(trans_span : [`Span] elt);
+          twe_error_dom = To_dom.of_element ~%(error_span : [`Span] elt);
           twe_patch_out = ~%patch_out;
           twe_map = Lang_map.empty } in
       Lang_map.iter (add_translation twe) ~%tw;
       Lwt_js_events.(async @@ fun () ->
-        clicks (To_dom.of_element ~%add_button) @@ fun _ _ ->
+        clicks (To_dom.of_element ~%(add_button : [`Button] elt)) @@ fun _ _ ->
         add_translation twe
           (Lang.of_string (Js.to_string add_input_dom##.value)) "";
         add_input_dom##.value := Js.string "";

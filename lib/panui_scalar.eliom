@@ -27,7 +27,7 @@
 ]
 
 [%%shared
-  type ('a, 'opt) opt =
+  type ('a, +'opt) opt =
     | Opt of string option * bool * 'a
     | Optgroup of string * bool * ('a, [`Opt]) opt list
     constraint 'opt = [< `Opt | `Optgroup]
@@ -219,13 +219,16 @@
     let h : bool handle client_value =
       match to_string, of_string, opts with
       | None, None, None ->
-        [%client new checkbox_handle ~%emit ~%error ~%init ~%el]
+        [%client new checkbox_handle ~%emit ~%error ~%init ~%(el : [`Span] elt)]
       | _ ->
         let to_string = Option.get_or [%client string_of_bool] to_string in
         let of_string = Option.get_or [%client bool_of_string] of_string in
         let opts = Option.get_or [opt "true" true; opt "false" false] opts in
-        [%client make_handle (Some ~%opts)
-                      ~%to_string ~%of_string ~%emit ~%error ~%init ~%el] in
+        [%client
+          make_handle (Some ~%(opts :> (bool, [`Opt | `Optgroup]) opt list))
+                      ~%to_string ~%of_string ~%emit ~%error ~%init
+                      ~%(el : [`Span] elt)
+        ] in
     el, h
 
   let string : (string, 'opt, 'attrib, 'elt) t =
@@ -235,9 +238,12 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "string"]]) init ->
     let el = D.span ~a [D.pcdata init] in
-    let h : string handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
-    ] in
+    let h : string handle client_value =
+      [%client
+        make_handle ~%(opts :> (string, [`Opt | `Optgroup]) opt list option)
+                    ~%to_string ~%of_string ~%emit ~%error ~%init
+                    ~%(el : [`Span] elt)
+      ] in
     el, h
 
   let int : (int, 'opt, 'attrib, 'elt) t =
@@ -248,7 +254,9 @@
         ?(a = [D.a_class ["pan-scalar"; "int"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_int init)] in
     let h : int handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (int, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -260,7 +268,9 @@
         ?(a = [D.a_class ["pan-scalar"; "int32"]]) init ->
     let el = D.span ~a [D.pcdata (Int32.to_string init)] in
     let h : int32 handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -272,7 +282,9 @@
         ?(a = [D.a_class ["pan-scalar"; "int64"]]) init ->
     let el = D.span ~a [D.pcdata (Int64.to_string init)] in
     let h : int64 handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -284,7 +296,9 @@
         ?(a = [D.a_class ["pan-scalar"; "float"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_float init)] in
     let h : float handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -297,8 +311,9 @@
         ?(a = [D.a_class ["pan-scalar"; "bool"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_bool init)] in
     let h : bool option handle client_value = [%client
-      make_handle (Some ~%opts)
-                  ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle (Some ~%(opts :> (_, [`Opt | `Optgroup]) opt list))
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                              ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -310,7 +325,9 @@
         ?(a = [D.a_class ["pan-scalar"; "string"; "option"]])  init ->
     let el = D.span ~a [D.pcdata (string_of_option ident init)] in
     let h : string option handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -322,7 +339,9 @@
         ?(a = [D.a_class ["pan-scalar"; "int"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_int init)] in
     let h : int option handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -334,7 +353,9 @@
         ?(a = [D.a_class ["pan-scalar"; "int32"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option Int32.to_string init)] in
     let h : int32 option handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -346,7 +367,9 @@
         ?(a = [D.a_class ["pan-scalar"; "int64"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option Int64.to_string init)] in
     let h : int64 option handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 
@@ -358,7 +381,9 @@
         ?(a = [D.a_class ["pan-scalar"; "float"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_float init)] in
     let h : float option handle client_value = [%client
-      make_handle ~%opts ~%to_string ~%of_string ~%emit ~%error ~%init ~%el
+      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+                  ~%to_string ~%of_string ~%emit ~%error ~%init
+                  ~%(el : [`Span] elt)
     ] in
     el, h
 ]

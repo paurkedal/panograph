@@ -42,4 +42,4 @@
     ul
 ]
 
-let render () = C.node [%client make []]
+let render () = (C.node [%client make []] : [`Ul | `B] elt :> [> `Ul | `B] elt)

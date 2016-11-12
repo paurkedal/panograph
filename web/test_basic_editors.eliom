@@ -16,6 +16,7 @@
 
 open Eliom_content
 open Panograph_basic_editors
+open Panograph_prereq
 open Panograph_types
 open Unprime_option
 
@@ -106,40 +107,40 @@ let render () =
   let open Html5 in
 
   let string_ed, string_in = string_editor [%client ~%string_out] in
-  ignore [%client Lwt.async (fun () -> Lwt_stream.iter ~%string_in ~%string_comet)];
+  ignore_cv [%client Lwt.async (fun () -> Lwt_stream.iter ~%string_in ~%string_comet)];
 
   let int_ed, int_in = int_editor [%client ~%int_out ] in
-  ignore [%client Lwt.async (fun () -> Lwt_stream.iter ~%int_in ~%int_comet)];
+  ignore_cv [%client Lwt.async (fun () -> Lwt_stream.iter ~%int_in ~%int_comet)];
 
   let float_ed, float_in = float_editor [%client ~%float_out ] in
-  ignore [%client Lwt.async (fun () -> Lwt_stream.iter ~%float_in ~%float_comet)];
+  ignore_cv [%client Lwt.async (fun () -> Lwt_stream.iter ~%float_in ~%float_comet)];
 
   let int_option_ed, int_option_in = int_option_editor [%client ~%int_option_out] in
-  ignore [%client Lwt.async @@ fun () ->
+  ignore_cv [%client Lwt.async @@ fun () ->
     Lwt_stream.iter ~%int_option_in ~%int_option_comet];
 
   let bool_option_ed, bool_option_in =
     bool_option_selector ~false_label:"false" ~true_label:"true"
                          [%client  ~%bool_option_out] in
-  ignore [%client Lwt.async @@ fun () ->
+  ignore_cv [%client Lwt.async @@ fun () ->
     Lwt_stream.iter ~%bool_option_in ~%bool_option_comet];
 
   let int_option_ed, int_option_in =
     int_option_selector ~items:[None, [0, "zero", true; 1, "one", true];
                                 Some "g", [2, "two", true; 3, "three", false]]
                         [%client ~%int_option_out] in
-  ignore [%client Lwt.async @@ fun () ->
+  ignore_cv [%client Lwt.async @@ fun () ->
     Lwt_stream.iter ~%int_option_in ~%int_option_comet];
 
   let string_option_menu, string_option_menu_in =
     string_option_menu ~values:["Earth"; "Sun"; "The Milky Way"]
                        [%client ~%string_option_menu_out] in
-  ignore [%client Lwt.async @@ fun () ->
+  ignore_cv [%client Lwt.async @@ fun () ->
     Lwt_stream.iter ~%string_option_menu_in ~%string_option_menu_comet];
 
   let string_option_textarea, string_option_textarea_in =
     string_option_textarea [%client ~%string_option_textarea_out] in
-  ignore [%client Lwt.async @@ fun () ->
+  ignore_cv [%client Lwt.async @@ fun () ->
     Lwt_stream.iter ~%string_option_textarea_in ~%string_option_textarea_comet];
 
   D.div [

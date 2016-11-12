@@ -25,6 +25,7 @@
 
 open Eliom_lib
 open Panograph_i18n
+open Panograph_prereq
 
 let stream, emit = Lwt_stream.create ()
 let comet = Eliom_comet.Channel.create ~scope:`Site stream
@@ -45,7 +46,7 @@ let render () =
   let open Html5 in
   let twe_el, twe_patch = twine_editor [%client ~%on_update] in
 
-  ignore [%client Lwt.async (fun () -> Lwt_stream.iter ~%twe_patch ~%comet)];
+  ignore_cv [%client Lwt.async (fun () -> Lwt_stream.iter ~%twe_patch ~%comet)];
 
   D.div [
     D.h2 [D.pcdata "Server Side"];

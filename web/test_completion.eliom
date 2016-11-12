@@ -16,6 +16,7 @@
 
 open Eliom_content.Html5
 open Panui_completion
+open Panograph_prereq
 
 [%%shared
   open Panograph_types
@@ -69,5 +70,5 @@ let render () =
   let value = "1 2 4" in
   let elem, absorb =
     string_completion_input ~value [%client fetch] [%client commit] in
-  ignore [%client  Lwt_react.S.keep (React.S.trace ~%absorb state) ];
+  ignore_cv [%client  Lwt_react.S.keep (React.S.trace ~%absorb state) ];
   D.p [elem]

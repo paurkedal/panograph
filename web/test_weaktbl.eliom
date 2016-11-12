@@ -15,7 +15,7 @@
  *)
 
 [%%shared
-  open Eliom_content
+  open Eliom_content.Html5
 ]
 
 [%%client
@@ -25,7 +25,6 @@
     Pandom_weaktbl.iter (fun _ i -> Eliom_lib.debug "Found item %d" i) wt
 
   let render () =
-    let open Html5 in
     let item0 = D.li [D.pcdata "item 11"] in
     let item1 = D.li [D.pcdata "item 12"] in
     let item2 = D.li [D.pcdata "item 13"] in
@@ -38,4 +37,4 @@
     D.div [D.ul [item0; item2]; iter_button]
 ]
 
-let render () = Html5.C.node [%client render ()]
+let render () = (C.node [%client render ()] : [`Div] elt :> [> `Div] elt)

@@ -15,7 +15,7 @@
  *)
 
 [%%shared
-  open Eliom_content
+  open Eliom_content.Html5
   open Unprime_list
   open Unprime_option
 ]
@@ -51,16 +51,24 @@ module App = Eliom_registration.App (struct let application_name = "test" end)
 let css = [["css"; "panograph.css"]; ["css"; "panograph-test.css"]]
 
 let simple_handler title render () () =
-  let open Html5 in
   Lwt.return @@
     Eliom_tools.D.html ~title ~css
       (D.body [D.h1 [D.pcdata title]; render ()])
 
 let make_test_service (name, render) =
-  let open Html5 in
   name,
   App.register_service ~path:[name] ~get_params:Eliom_parameter.unit
     (simple_handler name render)
+
+module C : sig
+  include module type of C
+  val div : [`Div] elt client_value -> [> `Div] elt
+  val table : [`Table] elt client_value -> [> `Table] elt
+end = struct
+  include C
+  let div c = (C.node c : [`Div] elt :> [> `Div] elt)
+  let table c = (C.node c : [`Table] elt :> [> `Table] elt)
+end
 
 let test_services = List.map make_test_service [
   "combo_selectors", Test_combo_selectors.render;
@@ -68,10 +76,10 @@ let test_services = List.map make_test_service [
   "content_with_edit", Test_content_with_edit.render;
   "dialogs", Test_dialogs.render;
   "finalizer", Test_finalizer.render;
-  "inputs", (fun () -> Html5.C.node [%client Test_inputs.render ()]);
-  "tabular1", (fun () -> Html5.C.node [%client Test_tabular1.render ()]);
-  "tabular2", (fun () -> Html5.C.node [%client Test_tabular2.render ()]);
-  "tabular3", (fun () -> Html5.C.node [%client Test_tabular3.render ()]);
+  "inputs", (fun () -> C.div [%client Test_inputs.render ()]);
+  "tabular1", (fun () -> C.table [%client Test_tabular1.render ()]);
+  "tabular2", (fun () -> C.table [%client Test_tabular2.render ()]);
+  "tabular3", (fun () -> C.table [%client Test_tabular3.render ()]);
   "basic_editors", Test_basic_editors.render;
   "operated", Test_operated.render;
   "pinboard", Test_pinboard.render;

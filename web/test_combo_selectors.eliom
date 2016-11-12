@@ -16,6 +16,7 @@
 
 open Eliom_content.Html5
 open Panograph_basic_editors
+open Panograph_prereq
 open Panui_combo_selectors
 open Panui_content
 
@@ -26,7 +27,7 @@ open Panui_content
   module Dep = Panui_combo_selectors
 
   let ev, emit_ev =
-    (React.E.create () : (float, float) either option React.event * _)
+    (React.E.create () : (int32, string) either option React.event * _)
 
   let emit x =
     Lwt_js.sleep 0.4 >>
@@ -55,16 +56,16 @@ let render () =
     [%client function Some x -> emit (Some (Inr x)) | None -> emit None] in
   let elemI, absorbI = int32_option_editor emitI in
   let elemS, absorbS = string_option_editor emitS in
-  let absorbI = [%client
+  let absorbIS : ((int32, string) either option -> unit) client_value = [%client
     let absorbI : int32 option -> unit = ~%absorbI in
-    let absorbS : int32 option -> unit = ~%absorbS in
+    let absorbS : string option -> unit = ~%absorbS in
     function
     | Some (Inl x) -> absorbI (Some x); absorbS None
     | Some (Inr x) -> absorbS (Some x); absorbI None
     | _ -> absorbI None; absorbS None
   ] in
-  ignore [%client
+  ignore_cv [%client
     Lwt_react.E.keep (React.E.trace ~%absorb ev);
-    Lwt_react.E.keep (React.E.trace ~%absorbI ev)
+    Lwt_react.E.keep (React.E.trace ~%absorbIS ev)
   ];
   D.div [elem; D.pcdata " = "; elemI; D.pcdata " | "; elemS]

@@ -44,11 +44,11 @@
                         (emit : (string option -> ack Lwt.t) client_value) =
     let elem =
       D.select ?a (selection : string option Selection.t :> _ elt list) in
-    let absorb = [%client
+    let absorb : (string option -> unit) client_value = [%client
       outfit_select
         ~to_string:string_of_string_option
         ~of_string:string_option_of_string
-        ?value:~%value ~%elem ~%emit
+        ?value:~%value ~%(elem : [`Select] elt) ~%emit
     ] in
     elem, absorb
 
@@ -56,11 +56,11 @@
                            (emit : (bool option -> ack Lwt.t) client_value) =
     let elem =
       D.select ?a (selection : bool option Selection.t :> _ elt list) in
-    let absorb = [%client
+    let absorb : (bool option -> unit) client_value = [%client
       outfit_select
         ~to_string:string_of_bool_option
         ~of_string:bool_option_of_string
-        ?value:~%value ~%elem ~%emit
+        ?value:~%value ~%(elem : [`Select] elt) ~%emit
     ] in
     elem, absorb
 
@@ -68,11 +68,11 @@
                           (emit : (int option -> ack Lwt.t) client_value) =
     let elem =
       D.select ?a (selection : int option Selection.t :> _ elt list) in
-    let absorb = [%client
+    let absorb : (int option -> unit) client_value = [%client
       outfit_select
         ~to_string:string_of_int_option
         ~of_string:int_option_of_string
-        ?value:~%value ~%elem ~%emit
+        ?value:~%value ~%(elem : [`Select] elt) ~%emit
     ] in
     elem, absorb
 
@@ -80,11 +80,11 @@
                             (emit : (int32 option -> ack Lwt.t) client_value) =
     let elem =
       D.select ?a (selection : int32 option Selection.t :> _ elt list) in
-    let absorb = [%client
+    let absorb : (int32 option -> unit) client_value = [%client
       outfit_select
         ~to_string:string_of_int32_option
         ~of_string:int32_option_of_string
-        ?value:~%value ~%elem ~%emit
+        ?value:~%value ~%(elem : [`Select] elt) ~%emit
     ] in
     elem, absorb
 
@@ -92,11 +92,11 @@
                             (emit : (int64 option -> ack Lwt.t) client_value) =
     let elem =
       D.select ?a (selection : int64 option Selection.t :> _ elt list) in
-    let absorb = [%client
+    let absorb : (int64 option -> unit) client_value = [%client
       outfit_select
         ~to_string:string_of_int64_option
         ~of_string:int64_option_of_string
-        ?value:~%value ~%elem ~%emit
+        ?value:~%value ~%(elem : [`Select] elt) ~%emit
     ] in
     elem, absorb
 ]

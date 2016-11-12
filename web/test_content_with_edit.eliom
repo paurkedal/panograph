@@ -18,6 +18,7 @@
 open Eliom_content
 open Eliom_content.Html5
 open Lwt.Infix
+open Panograph_prereq
 open Panograph_types
 open Panui_content_with_edit
 ]
@@ -38,7 +39,7 @@ let render () =
   let set_a, elem_a = span_with_input [%client emit_a'] "value a" in
   let set_b, elem_b = span_with_input [%client emit_b'] "value b" in
   let set_c, elem_c = p_with_textarea [%client emit_c'] "A paragraph." in
-  ignore [%client
+  ignore_cv [%client
     Lwt_react.E.keep (React.E.trace ~%set_a a_ev);
     Lwt_react.E.keep (React.E.trace ~%set_b b_ev);
     Lwt_react.E.keep (React.E.trace ~%set_c c_ev)

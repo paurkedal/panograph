@@ -20,7 +20,7 @@ open Eliom_content.Html5
 open Eliom_pervasives
 open Panograph_types
 
-type ('a, 'opt) opt constraint 'opt = [< `Opt | `Optgroup]
+type ('a, +'opt) opt constraint 'opt = [< `Opt | `Optgroup]
 
 [%%server.start]
 

@@ -23,7 +23,7 @@ open Panograph_types
 open Panui_content
 
 val int_string_option_combo_selector :
-      ?a: span_attrib attrib list ->
+      ?a: [< span_attrib > `Class] attrib list ->
       ?inl_a: select_attrib attrib list ->
       ?inr_a: input_attrib attrib list ->
       inl_selection: int option Selection.t ->
@@ -34,7 +34,7 @@ val int_string_option_combo_selector :
       [> span] elt * ((int, string) either option -> unit) client_value
 
 val int32_string_option_combo_selector :
-      ?a: span_attrib attrib list ->
+      ?a: [< span_attrib > `Class] attrib list ->
       ?inl_a: select_attrib attrib list ->
       ?inr_a: input_attrib attrib list ->
       inl_selection: int32 option Selection.t ->
@@ -45,7 +45,7 @@ val int32_string_option_combo_selector :
       [> span] elt * ((int32, string) either option -> unit) client_value
 
 val int64_string_option_combo_selector :
-      ?a: span_attrib attrib list ->
+      ?a: [< span_attrib > `Class] attrib list ->
       ?inl_a: select_attrib attrib list ->
       ?inr_a: input_attrib attrib list ->
       inl_selection: int64 option Selection.t ->

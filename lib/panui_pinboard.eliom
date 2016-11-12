@@ -17,6 +17,7 @@
 [%%shared.start]
 open Eliom_content.Html5
 open Lwt.Infix
+open Panograph_prereq
 open Unprime
 open Unprime_option
 
@@ -31,9 +32,9 @@ type subject_content = Html5_types.flow5
 
 let create ?(freeze_on_hover = true) ?(freeze_timeout = 0.2) () =
   let table = D.table ~a:[D.a_class ["pan-pinboard"]] [] in
-  let hover_mutex = [%client Lwt_mutex.create ()] in
-  if freeze_on_hover then ignore [%client
-    let table_dom = To_dom.of_element ~%table in
+  let hover_mutex : Lwt_mutex.t client_value = [%client Lwt_mutex.create ()] in
+  if freeze_on_hover then ignore_cv [%client
+    let table_dom = To_dom.of_element ~%(table : [`Table] elt) in
     let hover_mutex = ~%hover_mutex in
     let rec not_hovering () =
       let%lwt _ = Lwt_js_events.mouseover table_dom in

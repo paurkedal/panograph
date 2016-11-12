@@ -70,4 +70,4 @@
     D.div [stat; tree]
 ]
 
-let render () = C.node [%client render ()]
+let render () = (C.node [%client render ()] : [`Div] elt :> [> `Div] elt)

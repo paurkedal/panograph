@@ -14,6 +14,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+[%%server
+  open Panograph_prereq
+]
 [%%shared
   open Lwt.Infix
   open Eliom_content.Html5
@@ -35,5 +38,5 @@
 
 let render () =
   let pinboard = Panui_pinboard.create () in
-  ignore [%client Lwt.async (fun () -> populate ~%pinboard 0)];
+  ignore_cv [%client Lwt.async (fun () -> populate ~%pinboard 0)];
   Panui_pinboard.ui pinboard
