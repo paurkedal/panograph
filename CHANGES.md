@@ -1,6 +1,10 @@
 # Change Log
 
-## [0.4.3]
+## [0.4.4] - 2016-11-12
+
+- Fix server-client typing.
+
+## [0.4.3] - 2016-10-25
 
 - Added `Panreact_event_array`.
 - Fixed tests.
@@ -28,7 +32,8 @@
 - Findlib packages `panograph-client` and `panograph-server` have been
   replaced by `panograph.client` and `panograph.server`.
 
-[Unreleased]: https://github.com/paurkedal/panograph/compare/0.4.3...HEAD
+[Unreleased]: https://github.com/paurkedal/panograph/compare/0.4.4...HEAD
+[0.4.4]: https://github.com/paurkedal/panograph/compare/0.4.3...0.4.4
 [0.4.3]: https://github.com/paurkedal/panograph/compare/0.4.2...0.4.3
 [0.4.2]: https://github.com/paurkedal/panograph/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/paurkedal/panograph/compare/0.4.0...0.4.1
