@@ -56,22 +56,22 @@ let outfit_interactive ~to_string ~of_string ?error ?value input_dom emit =
 
 let outfit_input ~to_string ~of_string ?error ?value input emit =
   outfit_interactive ~to_string ~of_string ?error ?value
-                     (Eliom_content.Html5.To_dom.of_input input) emit
+                     (Eliom_content.Html.To_dom.of_input input) emit
 
 let outfit_select ~to_string ~of_string ?error ?value select emit =
   outfit_interactive ~to_string ~of_string ?error ?value
-                     (Eliom_content.Html5.To_dom.of_select select) emit
+                     (Eliom_content.Html.To_dom.of_select select) emit
 
 let outfit_textarea ~to_string ~of_string ?error ?value textarea emit =
   outfit_interactive ~to_string ~of_string ?error ?value
-                     (Eliom_content.Html5.To_dom.of_textarea textarea) emit
+                     (Eliom_content.Html.To_dom.of_textarea textarea) emit
 
 let outfit_checkbox ?error ?value checkbox emit =
   let set_error, clear_error =
     match error with
     | None -> set_error, clear_error
     | Some f -> (fun msg _ -> f (Some msg)), (fun _ -> f None) in
-  let input_dom = Eliom_content.Html5.To_dom.of_input checkbox in
+  let input_dom = Eliom_content.Html.To_dom.of_input checkbox in
   Lwt_js_events.async begin fun () ->
     Lwt_js_events.changes input_dom @@ fun _ _ ->
     clear_error input_dom;

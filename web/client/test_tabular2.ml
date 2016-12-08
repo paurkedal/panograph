@@ -51,7 +51,7 @@ let tile ns ms =
     (fun pr rs ->
       Tabular.Colspan.iterp ~depth:(List.length ms)
         (fun pc cs ->
-          let open Html5 in
+          let open Html in
           let sr = String.concat "." (List.map string_of_int pr) in
           let sc = String.concat "." (List.map string_of_int pc) in
           let label = [F.pcdata sr; F.pcdata ", "; F.pcdata sc] in
@@ -61,7 +61,7 @@ let tile ns ms =
   Tabular.ui tab
 
 let render () =
-  let open Html5 in
+  let open Html in
   let tab = Tabular.create () in
   let rs = Tabular.root_rowspan tab in
   let cs = Tabular.root_colspan tab in

@@ -17,7 +17,7 @@
 open Eliom_content
 open Panograph_types
 
-type controls_ui = [`Button | `Img | `Img_interactive | `Span] Html5.elt list
+type controls_ui = [`Button | `Img | `Img_interactive | `Span] Html.elt list
 
 module type STRINGABLE = sig
   type t

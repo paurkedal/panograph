@@ -16,8 +16,7 @@
 
 [%%shared.start]
 
-open Eliom_content.Html5
-open Eliom_pervasives
+open Eliom_content.Html
 open Panograph_types
 
 type ('a, +'opt) opt constraint 'opt = [< `Opt | `Optgroup]
@@ -53,14 +52,14 @@ val optgroup : ?enabled: bool -> string ->
                ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
 
 type ('a, 'opt, 'attrib, 'elt) t =
-      ?to_string: ('a -> string) client_value ->
-      ?of_string: (string -> 'a) client_value ->
+      ?to_string: ('a -> string) Eliom_client_value.t ->
+      ?of_string: (string -> 'a) Eliom_client_value.t ->
       ?opts: ('a, 'opt) opt list ->
-      ?emit: ('a -> ack Lwt.t) client_value ->
-      ?error: (string option -> unit) client_value ->
+      ?emit: ('a -> ack Lwt.t) Eliom_client_value.t ->
+      ?error: (string option -> unit) Eliom_client_value.t ->
       ?a: 'attrib attrib list ->
-      'a -> 'elt elt * 'a handle client_value
-    constraint 'attrib = [< Html5_types.common > `Class]
+      'a -> 'elt elt * 'a handle Eliom_client_value.t
+    constraint 'attrib = [< Html_types.common > `Class]
     constraint 'opt = [< `Opt | `Optgroup]
     constraint 'elt = [> `Span]
 

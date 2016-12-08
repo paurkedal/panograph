@@ -15,7 +15,7 @@
  *)
 
 [%%shared
-  open Eliom_content.Html5
+  open Eliom_content.Html
   open Panograph_basic_editors
   open Panograph_types
   open Panui_basic_selectors
@@ -44,7 +44,7 @@
         ?inr_to_string
         ?inr_of_string
         ?(value : (int, string) either option = None)
-        (emit : ((int, string) either option -> ack Lwt.t) client_value) =
+        (emit : ((int, string) either option -> ack Lwt.t) Eliom_client_value.t) =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
     let inl_emit = [%client
@@ -65,7 +65,7 @@
     let cls_other = if inl_value = None then ["other"] else [] in
     let a = D.a_class ("pan-comboselect" :: cls_other) :: a in
     let elem = D.span ~a [inl_elem; inr_elem] in
-    let absorb : ((int, string) either option -> unit) client_value =
+    let absorb : ((int, string) either option -> unit) Eliom_client_value.t =
       [%client combo_absorb ~%(elem : [`Span] elt) ~%inl_absorb ~%inr_absorb] in
     elem, absorb
 
@@ -77,7 +77,7 @@
         ?inr_to_string
         ?inr_of_string
         ?(value : (int32, string) either option = None)
-        (emit : ((int32, string) either option -> ack Lwt.t) client_value) =
+        (emit : ((int32, string) either option -> ack Lwt.t) Eliom_client_value.t) =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
     let inl_emit = [%client
@@ -98,7 +98,7 @@
     let cls_other = if inl_value = None then ["other"] else [] in
     let a = D.a_class ("pan-comboselect" :: cls_other) :: a in
     let elem = D.span ~a [inl_elem; inr_elem] in
-    let absorb : ((int32, string) either option -> unit) client_value =
+    let absorb : ((int32, string) either option -> unit) Eliom_client_value.t =
       [%client combo_absorb ~%(elem : [`Span] elt) ~%inl_absorb ~%inr_absorb] in
     elem, absorb
 
@@ -110,7 +110,7 @@
         ?inr_to_string
         ?inr_of_string
         ?(value : (int64, string) either option = None)
-        (emit : ((int64, string) either option -> ack Lwt.t) client_value) =
+        (emit : ((int64, string) either option -> ack Lwt.t) Eliom_client_value.t) =
     let inl_value = match value with Some (Inl x) -> Some x | _ -> None in
     let inr_value = match value with Some (Inr x) -> Some x | _ -> None in
     let inl_emit = [%client
@@ -131,7 +131,7 @@
     let cls_other = if inl_value = None then ["other"] else [] in
     let a = D.a_class ("pan-comboselect" :: cls_other) :: a in
     let elem = D.span ~a [inl_elem; inr_elem] in
-    let absorb : ((int64, string) either option -> unit) client_value =
+    let absorb : ((int64, string) either option -> unit) Eliom_client_value.t =
       [%client combo_absorb ~%(elem : [`Span] elt) ~%inl_absorb ~%inr_absorb] in
     elem, absorb
 ]

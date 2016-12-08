@@ -24,7 +24,7 @@ open Unprime_option
 exception Invalid_input of string
 
 let make_button f content =
-  let open Html5 in
+  let open Html in
   let button = D.Raw.button ~a:[D.a_button_type `Button] content in
   let button_dom = To_dom.of_button button in
   let on_click _ _ =
@@ -54,10 +54,10 @@ module Basic_shape = struct
     a_title = None;
   }
   let attribs_of_shape s =
-    [] |> Option.fold (fun id -> List.push (Html5.F.a_id id)) s.a_id
+    [] |> Option.fold (fun id -> List.push (Html.F.a_id id)) s.a_id
        |> begin match s.a_class with
           | [] -> ident
-          | cls -> List.push (Html5.F.a_class cls)
+          | cls -> List.push (Html.F.a_class cls)
           end
-       |> Option.fold (fun s -> List.push (Html5.F.a_title s)) s.a_title
+       |> Option.fold (fun s -> List.push (Html.F.a_title s)) s.a_title
 end

@@ -15,7 +15,7 @@
  *)
 
 [%%shared
-  open Eliom_content.Html5
+  open Eliom_content.Html
   open Eliom_lib
   open Unprime
   open Unprime_option
@@ -41,93 +41,93 @@
 [%%shared
   let string_viewer
         ?a
-        ?(to_string : (string -> string) client_value = [%client ident])
+        ?(to_string : (string -> string) Eliom_client_value.t = [%client ident])
         ?(value : string option) () =
     let span = D.span ?a [] in
-    let g : (string -> unit) client_value =
+    let g : (string -> unit) Eliom_client_value.t =
       [%client with_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let int_viewer
       ?a
-      ?(to_string : (int -> string) client_value = [%client string_of_int])
+      ?(to_string : (int -> string) Eliom_client_value.t = [%client string_of_int])
       ?(value : int option) () =
     let span = D.span ?a [] in
-    let g : (int -> unit) client_value =
+    let g : (int -> unit) Eliom_client_value.t =
       [%client with_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let int32_viewer
       ?a
-      ?(to_string : (int32 -> string) client_value = [%client Int32.to_string])
+      ?(to_string : (int32 -> string) Eliom_client_value.t = [%client Int32.to_string])
       ?(value : int32 option) () =
     let span = D.span ?a [] in
-    let g : (int32 -> unit) client_value =
+    let g : (int32 -> unit) Eliom_client_value.t =
       [%client with_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let int64_viewer
       ?a
-      ?(to_string : (int64 -> string) client_value = [%client Int64.to_string])
+      ?(to_string : (int64 -> string) Eliom_client_value.t = [%client Int64.to_string])
       ?(value : int64 option) () =
     let span = D.span ?a [] in
-    let g : (int64 -> unit) client_value =
+    let g : (int64 -> unit) Eliom_client_value.t =
       [%client with_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let float_viewer
       ?a
-      ?(to_string : (float -> string) client_value = [%client string_of_float])
+      ?(to_string : (float -> string) Eliom_client_value.t = [%client string_of_float])
       ?(value : float option) () =
     let span = D.span ?a [] in
-    let g : (float -> unit) client_value =
+    let g : (float -> unit) Eliom_client_value.t =
       [%client with_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let string_option_viewer
         ?a
-        ?(to_string : (string -> string) client_value = [%client ident])
+        ?(to_string : (string -> string) Eliom_client_value.t = [%client ident])
         ?(value : string option option) () =
     let span = D.span ?a [] in
-    let g : (string option -> unit) client_value =
+    let g : (string option -> unit) Eliom_client_value.t =
       [%client with_opt_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let int_option_viewer
         ?a
-        ?(to_string : (int -> string) client_value = [%client string_of_int])
+        ?(to_string : (int -> string) Eliom_client_value.t = [%client string_of_int])
         ?(value : int option option) () =
     let span = D.span ?a [] in
-    let g : (int option -> unit) client_value =
+    let g : (int option -> unit) Eliom_client_value.t =
       [%client with_opt_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let int32_option_viewer
         ?a
-        ?(to_string : (int32 -> string) client_value =
+        ?(to_string : (int32 -> string) Eliom_client_value.t =
             [%client Int32.to_string])
         ?(value : int32 option option) () =
     let span = D.span ?a [] in
-    let g : (int32 option -> unit) client_value =
+    let g : (int32 option -> unit) Eliom_client_value.t =
       [%client with_opt_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let int64_option_viewer
         ?a
-        ?(to_string : (int64 -> string) client_value =
+        ?(to_string : (int64 -> string) Eliom_client_value.t =
             [%client Int64.to_string])
         ?(value : int64 option option) () =
     let span = D.span ?a [] in
-    let g : (int64 option -> unit) client_value =
+    let g : (int64 option -> unit) Eliom_client_value.t =
       [%client with_opt_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 
   let float_option_viewer
         ?a
-        ?(to_string : (float -> string) client_value = [%client string_of_float])
+        ?(to_string : (float -> string) Eliom_client_value.t = [%client string_of_float])
         ?(value : float option option) () =
     let span = D.span ?a [] in
-    let g : (float option -> unit) client_value =
+    let g : (float option -> unit) Eliom_client_value.t =
       [%client with_opt_setter ~%(span : [`Span] elt) ~%to_string ~%value] in
     span, g
 ]

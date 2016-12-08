@@ -28,7 +28,7 @@ module type SIMPLE_SNAPSHOT_VIEWER = sig
   include BASIC_SHAPE_TYPE
   include SNAPSHOT_VIEWER
     with type shape := shape
-     and type ui = Html5_types.flow5 Html5.elt
+     and type ui = Html_types.flow5 Html.elt
 end
 
 module Simple_SV (Value : SIMPLE_VALUE) :
@@ -36,7 +36,7 @@ module Simple_SV (Value : SIMPLE_VALUE) :
 
 module Simple_shape : sig
   type t
-  val make : ?a: Html5_types.input_attrib Html5.attrib list -> unit -> t
+  val make : ?a: Html_types.input_attrib Html.attrib list -> unit -> t
 end
 
 module type SIMPLE_PATCH_EDITOR = sig
@@ -50,14 +50,14 @@ module type SIMPLE_PATCH_EDITOR = sig
       and type patch_out = [`Change of value * value]
       and type patch_in = [`Change of value * value]
       and type shape := shape
-      and type ui = Html5_types.flow5 Html5.elt
+      and type ui = Html_types.flow5 Html.elt
 end
 
 module type SIMPLE_SNAPSHOT_EDITOR = sig
   include BASIC_SHAPE_TYPE
   include SNAPSHOT_EDITOR
     with type shape := shape
-     and type ui = Html5_types.flow5 Html5.elt
+     and type ui = Html_types.flow5 Html.elt
 end
 
 module Simple_PE (Value : SIMPLE_VALUE) :

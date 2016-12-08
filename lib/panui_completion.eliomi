@@ -17,11 +17,10 @@
 [%%shared.start]
 
 open Eliom_content
-open Eliom_pervasives
 open Panograph_types
 
 val string_completion_input :
       ?value: string ->
-      (string -> string list Lwt.t) client_value ->
-      (string -> ack Lwt.t) client_value ->
-      [> Html5_types.span] Html5.elt * (string -> unit) client_value
+      (string -> string list ui_result Lwt.t) Eliom_client_value.t ->
+      (string -> unit ui_result Lwt.t) Eliom_client_value.t ->
+      [> Html_types.span] Html.elt * (string -> unit) Eliom_client_value.t

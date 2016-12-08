@@ -15,16 +15,16 @@
  *)
 
 [%%shared.start]
-open Eliom_content.Html5
+open Eliom_content.Html
 
 type item
 type t
 
-type subject_content = Html5_types.flow5
+type subject_content = Html_types.flow5
 
 val create : ?freeze_on_hover: bool -> ?freeze_timeout: float -> unit -> t
 
-val ui : t -> [> Html5_types.table] elt
+val ui : t -> [> Html_types.table] elt
 
 [%%client.start]
 

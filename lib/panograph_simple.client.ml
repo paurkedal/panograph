@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Eliom_content.Html5
+open Eliom_content.Html
 open Panograph_common
 open Panograph_i18n
 open Panograph_intf
@@ -31,14 +31,14 @@ module type SIMPLE_SNAPSHOT_VIEWER = sig
   include BASIC_SHAPE_TYPE
   include SNAPSHOT_VIEWER
     with type shape := shape
-     and type ui = Html5_types.flow5 elt
+     and type ui = Html_types.flow5 elt
 end
 
 module Simple_SV (Value : SIMPLE_VALUE) = struct
   include Basic_shape
 
   type value = Value.t
-  type ui = Html5_types.flow5 elt
+  type ui = Html_types.flow5 elt
   type t = ui * ui
 
   let default_shape = make_default_shape ("SV" :: Value.css_classes)
@@ -53,7 +53,7 @@ end
 
 module Simple_shape = struct
   type t = {
-    input_a : Html5_types.input_attrib attrib list;
+    input_a : Html_types.input_attrib attrib list;
   }
   let make ?(a = []) () = {input_a = a}
 end
@@ -67,14 +67,14 @@ module type SIMPLE_PATCH_EDITOR = sig
       and type patch_out = [`Change of value * value]
       and type patch_in = [`Change of value * value]
       and type shape := shape
-      and type ui = Html5_types.flow5 elt
+      and type ui = Html_types.flow5 elt
 end
 
 module type SIMPLE_SNAPSHOT_EDITOR = sig
   include BASIC_SHAPE_TYPE
   include SNAPSHOT_EDITOR
     with type shape := shape
-     and type ui = Html5_types.flow5 elt
+     and type ui = Html_types.flow5 elt
 end
 
 module Simple_PE (Value : SIMPLE_VALUE) = struct
@@ -84,7 +84,7 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
   type patch_out = [`Change of value * value]
   type patch_in = patch_out
 
-  type ui = Html5_types.flow5 elt
+  type ui = Html_types.flow5 elt
   type t = {
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;
@@ -155,7 +155,7 @@ module Simple_SE (Value : SIMPLE_VALUE) = struct
   include Basic_shape
 
   type value = Value.t
-  type ui = Html5_types.flow5 elt
+  type ui = Html_types.flow5 elt
   type t = {
     w_dom : Dom_html.inputElement Js.t;
     w_saved_title : string;

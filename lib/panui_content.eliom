@@ -29,29 +29,29 @@
          and type 'a list_wrap = 'a list
          and type +'a attrib = 'a Eliom_content.Svg.attrib
 
-    module Html5 :
-      Html5_sigs.T
+    module Html :
+      Html_sigs.T
         with module Xml := Eliom_content.Xml
         with module Svg := Svg
-         and type +'a elt = 'a Eliom_content.Html5.elt
+         and type +'a elt = 'a Eliom_content.Html.elt
          and type 'a wrap = 'a
          and type 'a list_wrap = 'a list
-         and type +'a attrib = 'a Eliom_content.Html5.attrib
+         and type +'a attrib = 'a Eliom_content.Html.attrib
   end
 
   module Make_selection (Content : Make_selection_param) = struct
     include Content
 
     let group ?(disabled = false) label opts =
-      let a = if disabled then [Html5.a_disabled `Disabled] else [] in
-      Html5.optgroup ~label ~a opts
+      let a = if disabled then [Html.a_disabled ()] else [] in
+      Html.optgroup ~label ~a opts
 
     let (^:) label opts = group label opts
 
     let unsafe ?(disabled = false) label value =
-      let a = [Html5.a_value value] in
-      let a = if disabled then Html5.a_disabled `Disabled :: a else a in
-      Html5.option ~a (Html5.pcdata label)
+      let a = [Html.a_value value] in
+      let a = if disabled then Html.a_disabled () :: a else a in
+      Html.option ~a (Html.pcdata label)
 
     let conv to_string ?disabled label x = unsafe ?disabled label (to_string x)
     let string = conv ident
@@ -68,17 +68,17 @@
   end
 
   module Selection = struct
-    type ('a, 'tag) elt = 'tag Eliom_content.Html5.elt
-    type 'a t = ('a, Html5_types.select_content_fun) elt list
+    type ('a, 'tag) elt = 'tag Eliom_content.Html.elt
+    type 'a t = ('a, Html_types.select_content_fun) elt list
     module F =
       Make_selection (struct
         module Svg = Eliom_content.Svg.F
-        module Html5 = Eliom_content.Html5.F.Raw
+        module Html = Eliom_content.Html.F.Raw
       end)
     module D =
       Make_selection (struct
         module Svg = Eliom_content.Svg.D
-        module Html5 = Eliom_content.Html5.D.Raw
+        module Html = Eliom_content.Html.D.Raw
       end)
   end
 

@@ -15,14 +15,15 @@
  *)
 
 [%%shared
-  open Eliom_content.Html5
+  open Eliom_content.Html
+  open Eliom_lib
 ]
 
 [%%client
   let wt = Pandom_weaktbl.create ()
 
   let do_iter _ =
-    Pandom_weaktbl.iter (fun _ i -> Eliom_lib.debug "Found item %d" i) wt
+    Pandom_weaktbl.iter (fun _ i -> Lwt_log.ign_info_f "Found item %d" i) wt
 
   let render () =
     let item0 = D.li [D.pcdata "item 11"] in
@@ -32,8 +33,8 @@
     Pandom_weaktbl.add wt (To_dom.of_element item1) 12;
     Pandom_weaktbl.add wt (To_dom.of_element item2) 13;
     let iter_button =
-      D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick do_iter]
-                   [D.pcdata "iter"] in
+      D.button ~a:[D.a_button_type `Button; D.a_onclick do_iter]
+               [D.pcdata "iter"] in
     D.div [D.ul [item0; item2]; iter_button]
 ]
 

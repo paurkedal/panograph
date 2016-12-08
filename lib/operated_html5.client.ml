@@ -15,20 +15,20 @@
  *)
 
 open Eliom_content
-open Html5_types
+open Html_types
 open Operated_types
 open Unprime_enumlist
 
 module O = struct
 
   type ('attr, 'ev, 'ep, 'eu, 'cv, 'cp, 'cu) star =
-    ?a: (('attr Html5.attrib) list) ->
-    ?intro: 'eu Html5.elt list ->
-    ('ev -> ('ep -> unit) * 'eu Html5.elt list) ->
-    'cv -> ('cp -> unit) * 'cu Html5.elt
+    ?a: (('attr Html.attrib) list) ->
+    ?intro: 'eu Html.elt list ->
+    ('ev -> ('ep -> unit) * 'eu Html.elt list) ->
+    'cv -> ('cp -> unit) * 'cu Html.elt
 
   let list_op f container_dom ys =
-    let open Html5 in
+    let open Html in
     let state = ref (Enumlist.of_list ys) in
     let rec find_next pos =
       if pos = Enumlist.length !state then Js.Opt.empty else
@@ -60,58 +60,58 @@ module O = struct
 
   let p ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.p ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.p ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let pre ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.pre ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.pre ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let div ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.div ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.div ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let span ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.span ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.span ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let ul ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.ul ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.ul ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let ol ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.ol ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.ol ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let dl ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.dl ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.dl ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let table ?caption ?columns ?thead ?tfoot ?a ?(intro = []) f xs =
     let ys = List.map f xs in
     let trs = intro @ List.flatten (List.map snd ys) in
-    let elem = Html5.D.table ?caption ?columns ?thead ?tfoot ?a trs in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.table ?caption ?columns ?thead ?tfoot ?a trs in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let tr ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.tr ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.tr ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let select ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.Raw.select ?a (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    let elem = Html.D.Raw.select ?a (intro @ List.flatten (List.map snd ys)) in
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 
   let optgroup ~label ?a ?(intro = []) f xs =
     let ys = List.map f xs in
-    let elem = Html5.D.Raw.optgroup ~label ?a
+    let elem = Html.D.Raw.optgroup ~label ?a
                                     (intro @ List.flatten (List.map snd ys)) in
-    (list_op f (Html5.To_dom.of_element elem) ys, elem)
+    (list_op f (Html.To_dom.of_element elem) ys, elem)
 end

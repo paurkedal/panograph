@@ -21,8 +21,8 @@ open Eliom_content
 open Eliom_lib
 open Unprime_option
 
-let label_for_remove = [Html5.F.(b [pcdata "−"])]
-let label_for_add = [Html5.F.(b [pcdata "+"])]
+let label_for_remove = [Html.F.(b [pcdata "−"])]
+let label_for_add = [Html.F.(b [pcdata "+"])]
 
 module Collection_PE
         (Elt_PE : RETRACTABLE_PATCH_EDITOR)
@@ -146,16 +146,16 @@ end
 
 module Ul_collection_container = struct
   include Basic_shape
-  type ui = Html5_types.flow5 Html5.elt
+  type ui = Html_types.flow5 Html.elt
   type t = ui
-  type item_ui = Html5_types.flow5 Html5.elt * controls_ui
-  type item = Html5_types.ul_content Html5.elt
-  type static_ui = Html5_types.flow5 Html5.elt * controls_ui
+  type item_ui = Html_types.flow5 Html.elt * controls_ui
+  type item = Html_types.ul_content Html.elt
+  type static_ui = Html_types.flow5 Html.elt * controls_ui
 
   let default_shape = make_default_shape ["collection"]
 
   let create ?(shape = default_shape) ?(static : static_ui option) () =
-    let open Html5 in
+    let open Html in
     let ui =
       D.ul
         begin match static with
@@ -166,24 +166,24 @@ module Ul_collection_container = struct
     ui, ui
 
   let create_item ?(shape = default_shape) ((elt_ui, controls_ui) : item_ui) =
-    let open Html5 in
+    let open Html in
     D.li [elt_ui; D.span ~a:[D.a_class ["controls"]] controls_ui]
-  let append ?before ul li = Html5.Manip.appendChild ?before ul li
-  let remove ul li = Html5.Manip.removeChild ul li
+  let append ?before ul li = Html.Manip.appendChild ?before ul li
+  let remove ul li = Html.Manip.removeChild ul li
 end
 
 module Table_collection_container = struct
   include Basic_shape
-  type ui = Html5_types.flow5 Html5.elt
+  type ui = Html_types.flow5 Html.elt
   type t = ui
-  type item_ui = Html5_types.flow5 Html5.elt list * controls_ui
-  type item = Html5_types.table_content Html5.elt
-  type static_ui = Html5_types.flow5 Html5.elt list * controls_ui
+  type item_ui = Html_types.flow5 Html.elt list * controls_ui
+  type item = Html_types.table_content Html.elt
+  type static_ui = Html_types.flow5 Html.elt list * controls_ui
 
   let default_shape = make_default_shape ["collection"]
 
   let create ?(shape = default_shape) ?(static : static_ui option) () =
-    let open Html5 in
+    let open Html in
     let ui =
       D.table
         begin match static with
@@ -196,10 +196,10 @@ module Table_collection_container = struct
     ui, ui
 
   let create_item ?(shape = default_shape) ((elt_ui, controls_ui) : item_ui) =
-    let open Html5 in
+    let open Html in
     D.tr (List.rev_append
             (List.rev_map (fun el -> D.td [el]) elt_ui)
             [D.td ~a:[D.a_class ["controls"]] controls_ui])
-  let append ?before table tr = Html5.Manip.appendChild ?before table tr
-  let remove table tr = Html5.Manip.removeChild table tr
+  let append ?before table tr = Html.Manip.appendChild ?before table tr
+  let remove table tr = Html.Manip.removeChild table tr
 end

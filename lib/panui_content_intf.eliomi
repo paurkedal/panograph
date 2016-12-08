@@ -16,7 +16,7 @@
 
 [%%shared.start]
 
-open Html5_types
+open Html_types
 
 module type Selection = sig
 

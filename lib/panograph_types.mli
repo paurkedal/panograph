@@ -16,6 +16,9 @@
 
 type ('a, 'b) either = Inl of 'a | Inr of 'b [@@deriving json]
 
+type ui_error = string
+type 'a ui_result = ('a, ui_error) result
+
 type ack =
   | Ack_ok
   | Ack_error of string

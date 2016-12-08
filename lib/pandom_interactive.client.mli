@@ -34,7 +34,7 @@ val outfit_input :
       of_string: (string -> 'b) ->
       ?error: (string option -> unit) ->
       ?value: 'a ->
-      [< Html5_types.input] Eliom_content.Html5.elt ->
+      [< Html_types.input] Eliom_content.Html.elt ->
       ('b -> ack Lwt.t) -> ('a -> unit)
 
 val outfit_select :
@@ -42,7 +42,7 @@ val outfit_select :
       of_string: (string -> 'b) ->
       ?error: (string option -> unit) ->
       ?value: 'a ->
-      [< Html5_types.select] Eliom_content.Html5.elt ->
+      [< Html_types.select] Eliom_content.Html.elt ->
       ('b -> ack Lwt.t) -> ('a -> unit)
 
 val outfit_textarea :
@@ -50,11 +50,11 @@ val outfit_textarea :
       of_string: (string -> 'b) ->
       ?error: (string option -> unit) ->
       ?value: 'a ->
-      [< Html5_types.textarea] Eliom_content.Html5.elt ->
+      [< Html_types.textarea] Eliom_content.Html.elt ->
       ('b -> ack Lwt.t) -> ('a -> unit)
 
 val outfit_checkbox :
       ?error: (string option -> unit) ->
       ?value: bool ->
-      [< Html5_types.input] Eliom_content.Html5.elt ->
+      [< Html_types.input] Eliom_content.Html.elt ->
       (bool -> ack Lwt.t) -> (bool -> unit)

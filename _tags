@@ -1,5 +1,5 @@
 true: bin_annot, eliom_ppx
-false: package(adpkg), package(ocamlbuild-eliom-dev)
+false: package(adpkg)
 
 true: package(lwt)
 true: package(prime), package(react)

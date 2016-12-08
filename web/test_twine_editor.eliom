@@ -14,6 +14,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+[%%server
+  open Eliom_client
+]
 [%%shared
   open Eliom_content
   open Panograph_twine_editor
@@ -43,7 +46,7 @@ let on_update' p =
 let on_update = server_function [%json: twine_editor_out] on_update'
 
 let render () =
-  let open Html5 in
+  let open Html in
   let twe_el, twe_patch = twine_editor [%client ~%on_update] in
 
   ignore_cv [%client Lwt.async (fun () -> Lwt_stream.iter ~%twe_patch ~%comet)];

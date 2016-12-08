@@ -15,24 +15,24 @@
  *)
 
 [%%shared.start]
-open Eliom_content.Html5
+open Eliom_content.Html
 open Lwt.Infix
 open Panograph_prereq
 open Unprime
 open Unprime_option
 
-type item = Html5_types.tr elt
+type item = Html_types.tr elt
 
 type t = {
-  table : 'a. ([> Html5_types.table] as 'a) elt;
-  hover_mutex : Lwt_mutex.t client_value;
+  table : 'a. ([> Html_types.table] as 'a) elt;
+  hover_mutex : Lwt_mutex.t Eliom_client_value.t;
 }
 
-type subject_content = Html5_types.flow5
+type subject_content = Html_types.flow5
 
 let create ?(freeze_on_hover = true) ?(freeze_timeout = 0.2) () =
   let table = D.table ~a:[D.a_class ["pan-pinboard"]] [] in
-  let hover_mutex : Lwt_mutex.t client_value = [%client Lwt_mutex.create ()] in
+  let hover_mutex : Lwt_mutex.t Eliom_client_value.t = [%client Lwt_mutex.create ()] in
   if freeze_on_hover then ignore_cv [%client
     let table_dom = To_dom.of_element ~%(table : [`Table] elt) in
     let hover_mutex = ~%hover_mutex in

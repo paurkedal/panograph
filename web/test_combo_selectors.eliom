@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Eliom_content.Html5
+open Eliom_content.Html
 open Panograph_basic_editors
 open Panograph_prereq
 open Panui_combo_selectors
@@ -56,7 +56,7 @@ let render () =
     [%client function Some x -> emit (Some (Inr x)) | None -> emit None] in
   let elemI, absorbI = int32_option_editor emitI in
   let elemS, absorbS = string_option_editor emitS in
-  let absorbIS : ((int32, string) either option -> unit) client_value = [%client
+  let absorbIS : ((int32, string) either option -> unit) Eliom_client_value.t = [%client
     let absorbI : int32 option -> unit = ~%absorbI in
     let absorbS : string option -> unit = ~%absorbS in
     function

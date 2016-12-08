@@ -14,6 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open Eliom_client
 open Eliom_content
 open Panograph_basic_editors
 open Panograph_prereq
@@ -104,7 +105,7 @@ let string_option_textarea_out =
   (string_option_textarea_out' (Some (Option.map tr x_opt)); Lwt.return Ack_ok)
 
 let render () =
-  let open Html5 in
+  let open Html in
 
   let string_ed, string_in = string_editor [%client ~%string_out] in
   ignore_cv [%client Lwt.async (fun () -> Lwt_stream.iter ~%string_in ~%string_comet)];

@@ -15,7 +15,8 @@
  *)
 
 [%%shared
-  open Eliom_content.Html5
+  open Eliom_content.Html
+  open Eliom_lib
   open Unprime_list
   open Unprime_option
 ]
@@ -42,11 +43,15 @@
 ]
 [%%client
   let () =
-    Lwt_log_js.(Section.set_level (Section.make "eliom:client") Warning);
-    Option.iter Lwt_log_js.load_rules ~%lwt_log_rules
+    Lwt_log.(Section.set_level (Section.make "eliom:client") Warning);
+    Option.iter Lwt_log.load_rules ~%lwt_log_rules
 ]
 
-module App = Eliom_registration.App (struct let application_name = "test" end)
+module App = Eliom_registration.App
+  (struct
+    let application_name = "test"
+    let global_data_path = None
+  end)
 
 let css = [["css"; "panograph.css"]; ["css"; "panograph-test.css"]]
 
@@ -56,14 +61,15 @@ let simple_handler title render () () =
       (D.body [D.h1 [D.pcdata title]; render ()])
 
 let make_test_service (name, render) =
+  let open Eliom_service in
   name,
-  App.register_service ~path:[name] ~get_params:Eliom_parameter.unit
+  App.create ~path:(Path [name]) ~meth:(Get Eliom_parameter.unit)
     (simple_handler name render)
 
 module C : sig
   include module type of C
-  val div : [`Div] elt client_value -> [> `Div] elt
-  val table : [`Table] elt client_value -> [> `Table] elt
+  val div : [`Div] elt Eliom_client_value.t -> [> `Div] elt
+  val table : [`Table] elt Eliom_client_value.t -> [> `Table] elt
 end = struct
   include C
   let div c = (C.node c : [`Div] elt :> [> `Div] elt)
@@ -90,7 +96,6 @@ let test_services = List.map make_test_service [
 ]
 
 let main_handler () () =
-  let open Html5 in
   let test_service_item (name, service) =
     F.li [F.a ~service [F.pcdata name] ()] in
   Lwt.return @@
@@ -102,4 +107,5 @@ let main_handler () () =
       ])
 
 let main_service =
-  App.register_service ~path:[] ~get_params:Eliom_parameter.unit main_handler
+  let open Eliom_service in
+  App.create ~path:(Path []) ~meth:(Get Eliom_parameter.unit) main_handler

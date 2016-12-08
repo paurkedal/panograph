@@ -17,16 +17,15 @@
 [%%shared.start]
 
 open Eliom_content
-open Eliom_pervasives
-open Html5_types
+open Html_types
 open Panograph_types
 
 val span_with_input :
-  ?a: [< span_attrib > `Class] Html5.attrib list ->
-  (string -> ack Lwt.t) client_value -> string ->
-  (string -> unit) client_value * [> span] Html5.elt
+  ?a: [< span_attrib > `Class] Html.attrib list ->
+  (string -> ack Lwt.t) Eliom_client_value.t -> string ->
+  (string -> unit) Eliom_client_value.t * [> span] Html.elt
 
 val p_with_textarea :
-  ?a: [< p_attrib > `Class] Html5.attrib list ->
-  (string -> ack Lwt.t) client_value -> string ->
-  (string -> unit) client_value * [> p] Html5.elt
+  ?a: [< p_attrib > `Class] Html.attrib list ->
+  (string -> ack Lwt.t) Eliom_client_value.t -> string ->
+  (string -> unit) Eliom_client_value.t * [> p] Html.elt

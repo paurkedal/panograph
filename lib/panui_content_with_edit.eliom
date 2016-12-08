@@ -16,7 +16,7 @@
 
 [%%shared
 open Eliom_content
-open Eliom_content.Html5
+open Eliom_content.Html
 open Panograph_types
 ]
 
@@ -95,19 +95,19 @@ let add_edit_textarea outer pcdata emit x =
 [%%shared
 
 let span_with_input ?(a = [D.a_class ["pan-with-edit"]])
-                    (emit : (string -> ack Lwt.t) client_value) x =
+                    (emit : (string -> ack Lwt.t) Eliom_client_value.t) x =
   let pcdata = D.pcdata x in
   let outer = D.span ~a [pcdata] in
-  let g : (string -> unit) client_value =
+  let g : (string -> unit) Eliom_client_value.t =
     [%client add_edit_input ~%(outer : [`Span] elt) ~%(pcdata : [`PCDATA] elt)
                             ~%emit ~%x] in
   g, outer
 
 let p_with_textarea ?(a = [D.a_class ["pan-with-edit"]])
-                    (emit : (string -> ack Lwt.t) client_value) x =
+                    (emit : (string -> ack Lwt.t) Eliom_client_value.t) x =
   let pcdata = D.pcdata x in
   let outer = D.p ~a [pcdata] in
-  let g : (string -> unit) client_value =
+  let g : (string -> unit) Eliom_client_value.t =
     [%client add_edit_textarea ~%(outer : [`P] elt) ~%(pcdata : [`PCDATA] elt)
                                ~%emit ~%x] in
   g, outer

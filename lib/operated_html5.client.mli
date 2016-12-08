@@ -15,16 +15,16 @@
  *)
 
 open Eliom_content
-open Html5_types
+open Html_types
 open Operated_types
 
 module O : sig
 
   type ('attr, 'ev, 'ep, 'eu, 'cv, 'cp, 'cu) star =
-    ?a: ('attr Html5.attrib) list ->
-    ?intro: 'eu Html5.elt list ->
-    ('ev -> ('ep -> unit) * 'eu Html5.elt list) ->
-    'cv -> ('cp -> unit) * 'cu Html5.elt
+    ?a: ('attr Html.attrib) list ->
+    ?intro: 'eu Html.elt list ->
+    ('ev -> ('ep -> unit) * 'eu Html.elt list) ->
+    'cv -> ('cp -> unit) * 'cu Html.elt
 
   val p : ([< p_attrib],
            'ev, 'ep, [< p_content_fun],
@@ -55,10 +55,10 @@ module O : sig
             'ev list, ('ev, 'ep) grid1_op, [> dl]) star
 
   val table :
-    ?caption: [< caption] Html5.elt ->
-    ?columns: [< colgroup] Html5.elt list ->
-    ?thead: [< thead] Html5.elt ->
-    ?tfoot: [< tfoot] Html5.elt ->
+    ?caption: [< caption] Html.elt ->
+    ?columns: [< colgroup] Html.elt list ->
+    ?thead: [< thead] Html.elt ->
+    ?tfoot: [< tfoot] Html.elt ->
     ([< table_attrib],
      'ev, 'ep, [< table_content_fun],
      'ev list, ('ev, 'ep) grid1_op, [> table]) star

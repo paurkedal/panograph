@@ -16,9 +16,8 @@
 
 [%%shared.start]
 
-open Eliom_content.Html5
-open Eliom_pervasives
-open Html5_types
+open Eliom_content.Html
+open Html_types
 open Panograph_types
 open Panui_content
 
@@ -26,33 +25,33 @@ val string_option_selector :
       ?a: select_attrib attrib list ->
       selection: string option Selection.t ->
       ?value: string option ->
-      (string option -> ack Lwt.t) client_value ->
-      [> select] elt * (string option -> unit) client_value
+      (string option -> ack Lwt.t) Eliom_client_value.t ->
+      [> select] elt * (string option -> unit) Eliom_client_value.t
 
 val bool_option_selector :
       ?a: select_attrib attrib list ->
       selection: bool option Selection.t ->
       ?value: bool option ->
-      (bool option -> ack Lwt.t) client_value ->
-      [> select] elt * (bool option -> unit) client_value
+      (bool option -> ack Lwt.t) Eliom_client_value.t ->
+      [> select] elt * (bool option -> unit) Eliom_client_value.t
 
 val int_option_selector :
-      ?a: Html5_types.select_attrib attrib list ->
+      ?a: Html_types.select_attrib attrib list ->
       selection: int option Selection.t ->
       ?value: int option ->
-      (int option -> ack Lwt.t) client_value ->
-      [> select] elt * (int option -> unit) client_value
+      (int option -> ack Lwt.t) Eliom_client_value.t ->
+      [> select] elt * (int option -> unit) Eliom_client_value.t
 
 val int32_option_selector :
-      ?a: Html5_types.select_attrib attrib list ->
+      ?a: Html_types.select_attrib attrib list ->
       selection: int32 option Selection.t ->
       ?value: int32 option ->
-      (int32 option -> ack Lwt.t) client_value ->
-      [> select] elt * (int32 option -> unit) client_value
+      (int32 option -> ack Lwt.t) Eliom_client_value.t ->
+      [> select] elt * (int32 option -> unit) Eliom_client_value.t
 
 val int64_option_selector :
-      ?a: Html5_types.select_attrib attrib list ->
+      ?a: Html_types.select_attrib attrib list ->
       selection: int64 option Selection.t ->
       ?value: int64 option ->
-      (int64 option -> ack Lwt.t) client_value ->
-      [> select] elt * (int64 option -> unit) client_value
+      (int64 option -> ack Lwt.t) Eliom_client_value.t ->
+      [> select] elt * (int64 option -> unit) Eliom_client_value.t

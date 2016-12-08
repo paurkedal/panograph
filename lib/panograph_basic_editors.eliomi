@@ -17,145 +17,144 @@
 [%%shared.start]
 
 open Eliom_content
-open Eliom_pervasives
 open Panograph_types
 
 val string_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (string -> string) client_value ->
-      ?of_string: (string -> string) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (string -> string) Eliom_client_value.t ->
+      ?of_string: (string -> string) Eliom_client_value.t ->
       ?value: string ->
-      (string -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (string -> unit) client_value
+      (string -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (string -> unit) Eliom_client_value.t
 
 val int_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (int -> string) client_value ->
-      ?of_string: (string -> int) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (int -> string) Eliom_client_value.t ->
+      ?of_string: (string -> int) Eliom_client_value.t ->
       ?value: int ->
-      (int -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (int -> unit) client_value
+      (int -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (int -> unit) Eliom_client_value.t
 
 val int32_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (int32 -> string) client_value ->
-      ?of_string: (string -> int32) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (int32 -> string) Eliom_client_value.t ->
+      ?of_string: (string -> int32) Eliom_client_value.t ->
       ?value: int32 ->
-      (int32 -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (int32 -> unit) client_value
+      (int32 -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (int32 -> unit) Eliom_client_value.t
 
 val int64_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (int64 -> string) client_value ->
-      ?of_string: (string -> int64) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (int64 -> string) Eliom_client_value.t ->
+      ?of_string: (string -> int64) Eliom_client_value.t ->
       ?value: int64 ->
-      (int64 -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (int64 -> unit) client_value
+      (int64 -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (int64 -> unit) Eliom_client_value.t
 
 val float_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (float -> string) client_value ->
-      ?of_string: (string -> float) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (float -> string) Eliom_client_value.t ->
+      ?of_string: (string -> float) Eliom_client_value.t ->
       ?value: float ->
-      (float -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (float -> unit) client_value
+      (float -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (float -> unit) Eliom_client_value.t
 
 val string_option_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (string -> string) client_value ->
-      ?of_string: (string -> string) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (string -> string) Eliom_client_value.t ->
+      ?of_string: (string -> string) Eliom_client_value.t ->
       ?value: string option ->
-      (string option -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (string option -> unit) client_value
+      (string option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (string option -> unit) Eliom_client_value.t
 
 val string_option_textarea :
-      ?a: Html5_types.textarea_attrib Html5.attrib list ->
-      ?to_string: (string -> string) client_value ->
-      ?of_string: (string -> string) client_value ->
+      ?a: Html_types.textarea_attrib Html.attrib list ->
+      ?to_string: (string -> string) Eliom_client_value.t ->
+      ?of_string: (string -> string) Eliom_client_value.t ->
       ?value: string option ->
-      (string option -> ack Lwt.t) client_value ->
-      [> Html5_types.textarea] Html5.elt
-        * (string option -> unit) client_value
+      (string option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.textarea] Html.elt
+        * (string option -> unit) Eliom_client_value.t
 
 val int_option_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (int -> string) client_value ->
-      ?of_string: (string -> int) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (int -> string) Eliom_client_value.t ->
+      ?of_string: (string -> int) Eliom_client_value.t ->
       ?value: int option ->
-      (int option -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (int option -> unit) client_value
+      (int option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (int option -> unit) Eliom_client_value.t
 
 val int32_option_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (int32 -> string) client_value ->
-      ?of_string: (string -> int32) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (int32 -> string) Eliom_client_value.t ->
+      ?of_string: (string -> int32) Eliom_client_value.t ->
       ?value: int32 option ->
-      (int32 option -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (int32 option -> unit) client_value
+      (int32 option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (int32 option -> unit) Eliom_client_value.t
 
 val int64_option_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (int64 -> string) client_value ->
-      ?of_string: (string -> int64) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (int64 -> string) Eliom_client_value.t ->
+      ?of_string: (string -> int64) Eliom_client_value.t ->
       ?value: int64 option ->
-      (int64 option -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (int64 option -> unit) client_value
+      (int64 option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (int64 option -> unit) Eliom_client_value.t
 
 val float_option_editor :
-      ?a: [< Html5_types.input_attrib > `Input_Type] Html5.attrib list ->
-      ?to_string: (float -> string) client_value ->
-      ?of_string: (string -> float) client_value ->
+      ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
+      ?to_string: (float -> string) Eliom_client_value.t ->
+      ?of_string: (string -> float) Eliom_client_value.t ->
       ?value: float option ->
-      (float option -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (float option -> unit) client_value
+      (float option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (float option -> unit) Eliom_client_value.t
 
 val bool_option_selector :
-      ?a: [< Html5_types.select_attrib] Html5.attrib list ->
+      ?a: [< Html_types.select_attrib] Html.attrib list ->
       ?none_label: string ->
       false_label: string ->
       true_label: string ->
       ?value: bool option ->
-      (bool option -> ack Lwt.t) client_value ->
-      [> Html5_types.select] Html5.elt * (bool option -> unit) client_value
+      (bool option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.select] Html.elt * (bool option -> unit) Eliom_client_value.t
 (** @deprecated Use {!Panui_basic_selectors}. *)
 
 val int_option_selector :
-      ?a: [< Html5_types.select_attrib] Html5.attrib list ->
+      ?a: [< Html_types.select_attrib] Html.attrib list ->
       ?none_label: string ->
       items: (string option * (int * string * bool) list) list ->
       ?value: int option ->
-      (int option -> ack Lwt.t) client_value ->
-      [> Html5_types.select] Html5.elt * (int option -> unit) client_value
+      (int option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.select] Html.elt * (int option -> unit) Eliom_client_value.t
 (** @deprecated Use {!Panui_basic_selectors}. *)
 
 val int32_option_selector :
-      ?a: [< Html5_types.select_attrib] Html5.attrib list ->
+      ?a: [< Html_types.select_attrib] Html.attrib list ->
       ?none_label: string ->
       items: (string option * (int32 * string * bool) list) list ->
       ?value: int32 option ->
-      (int32 option -> ack Lwt.t) client_value ->
-      [> Html5_types.select] Html5.elt * (int32 option -> unit) client_value
+      (int32 option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.select] Html.elt * (int32 option -> unit) Eliom_client_value.t
 (** @deprecated Use {!Panui_basic_selectors}. *)
 
 val int64_option_selector :
-      ?a: [< Html5_types.select_attrib] Html5.attrib list ->
+      ?a: [< Html_types.select_attrib] Html.attrib list ->
       ?none_label: string ->
       items: (string option * (int64 * string * bool) list) list ->
       ?value: int64 option ->
-      (int64 option -> ack Lwt.t) client_value ->
-      [> Html5_types.select] Html5.elt * (int64 option -> unit) client_value
+      (int64 option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.select] Html.elt * (int64 option -> unit) Eliom_client_value.t
 (** @deprecated Use {!Panui_basic_selectors}. *)
 
 val string_option_menu :
-      ?a: [< Html5_types.select_attrib] Html5.attrib list ->
+      ?a: [< Html_types.select_attrib] Html.attrib list ->
       values: string list -> ?value: string option ->
-      (string option -> ack Lwt.t) client_value ->
-      [> Html5_types.select] Html5.elt * (string option -> unit) client_value
+      (string option -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.select] Html.elt * (string option -> unit) Eliom_client_value.t
 (** @deprecated Use {!Panui_basic_selectors}. *)
 
 val bool_checkbox :
-      ?a: [< Html5_types.input_attrib > `Checked `Input_Type]
-            Html5.attrib list ->
+      ?a: [< Html_types.input_attrib > `Checked `Input_Type]
+            Html.attrib list ->
       ?value: bool ->
-      (bool -> ack Lwt.t) client_value ->
-      [> Html5_types.input] Html5.elt * (bool -> unit) client_value
+      (bool -> ack Lwt.t) Eliom_client_value.t ->
+      [> Html_types.input] Html.elt * (bool -> unit) Eliom_client_value.t

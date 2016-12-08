@@ -14,8 +14,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Eliom_content.Html5
-open Html5_types
+open Eliom_content.Html
+open Html_types
 open Lwt.Infix
 open Unprime
 

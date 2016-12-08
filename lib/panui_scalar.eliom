@@ -15,7 +15,7 @@
  *)
 
 [%%shared
-  open Eliom_content.Html5
+  open Eliom_content.Html
   open Panograph_prereq
   open Panograph_types
   open Unprime
@@ -93,7 +93,7 @@
     val mutable absorb = fun _ -> ()
 
     method edit_on f =
-      let a = if init then [D.a_checked `Checked] else [] in
+      let a = if init then [D.a_checked ()] else [] in
       let inp = D.input ~a:(D.a_input_type `Checkbox :: a) () in
       absorb <- outfit_checkbox ?error ~value inp f;
       Manip.replaceChildren el [inp]
@@ -129,7 +129,7 @@
         let label = match label with Some s -> s | None -> to_string value in
         Hashtbl.add label_by_value value label;
         let a = [D.a_value (to_string value)] in
-        let a = if enabled then a else D.a_disabled `Disabled :: a in
+        let a = if enabled then a else D.a_disabled () :: a in
         D.option ~a (D.pcdata label) in
       let mk0 = function
         | Opt (label, enabled, value) -> mk_option label enabled value
@@ -137,7 +137,7 @@
       let mk1 = function
         | Opt (label, enabled, value) -> mk_option label enabled value
         | Optgroup (label, enabled, opts) ->
-          let a = if enabled then [] else [D.a_disabled `Disabled] in
+          let a = if enabled then [] else [D.a_disabled ()] in
           D.optgroup ~label ~a (List.map mk0 opts) in
       List.map mk1 opts in
     let select = D.select options in
@@ -201,14 +201,14 @@
 
 [%%shared
   type ('a, 'opt, 'attrib, 'elt) t =
-        ?to_string: ('a -> string) client_value ->
-        ?of_string: (string -> 'a) client_value ->
+        ?to_string: ('a -> string) Eliom_client_value.t ->
+        ?of_string: (string -> 'a) Eliom_client_value.t ->
         ?opts: ('a, 'opt) opt list ->
-        ?emit: ('a -> ack Lwt.t) client_value ->
-        ?error: (string option -> unit) client_value ->
+        ?emit: ('a -> ack Lwt.t) Eliom_client_value.t ->
+        ?error: (string option -> unit) Eliom_client_value.t ->
         ?a: 'attrib attrib list ->
-        'a -> 'elt elt * 'a handle client_value
-      constraint 'attrib = [< Html5_types.common > `Class]
+        'a -> 'elt elt * 'a handle Eliom_client_value.t
+      constraint 'attrib = [< Html_types.common > `Class]
       constraint 'opt = [< `Opt | `Optgroup]
       constraint 'elt = [> `Span]
 
@@ -216,7 +216,7 @@
     fun ?to_string ?of_string ?opts ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "bool"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_bool init)] in
-    let h : bool handle client_value =
+    let h : bool handle Eliom_client_value.t =
       match to_string, of_string, opts with
       | None, None, None ->
         [%client new checkbox_handle ~%emit ~%error ~%init ~%(el : [`Span] elt)]
@@ -238,7 +238,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "string"]]) init ->
     let el = D.span ~a [D.pcdata init] in
-    let h : string handle client_value =
+    let h : string handle Eliom_client_value.t =
       [%client
         make_handle ~%(opts :> (string, [`Opt | `Optgroup]) opt list option)
                     ~%to_string ~%of_string ~%emit ~%error ~%init
@@ -253,7 +253,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "int"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_int init)] in
-    let h : int handle client_value = [%client
+    let h : int handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (int, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)
@@ -267,7 +267,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "int32"]]) init ->
     let el = D.span ~a [D.pcdata (Int32.to_string init)] in
-    let h : int32 handle client_value = [%client
+    let h : int32 handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)
@@ -281,7 +281,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "int64"]]) init ->
     let el = D.span ~a [D.pcdata (Int64.to_string init)] in
-    let h : int64 handle client_value = [%client
+    let h : int64 handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)
@@ -295,7 +295,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "float"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_float init)] in
-    let h : float handle client_value = [%client
+    let h : float handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)
@@ -310,7 +310,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "bool"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_bool init)] in
-    let h : bool option handle client_value = [%client
+    let h : bool option handle Eliom_client_value.t = [%client
       make_handle (Some ~%(opts :> (_, [`Opt | `Optgroup]) opt list))
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                               ~%(el : [`Span] elt)
@@ -324,7 +324,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "string"; "option"]])  init ->
     let el = D.span ~a [D.pcdata (string_of_option ident init)] in
-    let h : string option handle client_value = [%client
+    let h : string option handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)
@@ -338,7 +338,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "int"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_int init)] in
-    let h : int option handle client_value = [%client
+    let h : int option handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)
@@ -352,7 +352,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "int32"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option Int32.to_string init)] in
-    let h : int32 option handle client_value = [%client
+    let h : int32 option handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)
@@ -366,7 +366,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "int64"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option Int64.to_string init)] in
-    let h : int64 option handle client_value = [%client
+    let h : int64 option handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)
@@ -380,7 +380,7 @@
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "float"; "option"]]) init ->
     let el = D.span ~a [D.pcdata (string_of_option string_of_float init)] in
-    let h : float option handle client_value = [%client
+    let h : float option handle Eliom_client_value.t = [%client
       make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
                   ~%to_string ~%of_string ~%emit ~%error ~%init
                   ~%(el : [`Span] elt)

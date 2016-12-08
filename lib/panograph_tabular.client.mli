@@ -60,21 +60,21 @@ module Tabular : sig
   module Rowspan : SPAN_TREE with type tabular := t
   module Colspan : SPAN_TREE with type tabular := t
 
-  val create : ?a: [< Html5_types.table_attrib] Html5.attrib list ->
+  val create : ?a: [< Html_types.table_attrib] Html.attrib list ->
                ?root_css_class: string -> unit -> t
   val validate : t -> unit
-  val ui : t -> [> `Table] Html5.elt
+  val ui : t -> [> `Table] Html.elt
   val root_rowspan : t -> Rowspan.t
   val root_colspan : t -> Colspan.t
 
   val state : t -> Rowspan.t -> Colspan.t -> state
   val refine : t -> int -> int -> Rowspan.t -> Colspan.t -> unit
   val draw : t -> Rowspan.t -> Colspan.t ->
-             [< Html5_types.tr_content] Html5.elt -> unit
+             [< Html_types.tr_content] Html.elt -> unit
   val draw_th : t -> Rowspan.t -> Colspan.t ->
-                ?a: [< Html5_types.th_attrib] Html5.attrib list ->
-                [< Html5_types.th_content] Html5.elt list -> unit
+                ?a: [< Html_types.th_attrib] Html.attrib list ->
+                [< Html_types.th_content] Html.elt list -> unit
   val draw_td : t -> Rowspan.t -> Colspan.t ->
-                ?a: [< Html5_types.td_attrib] Html5.attrib list ->
-                [< Html5_types.td_content] Html5.elt list -> unit
+                ?a: [< Html_types.td_attrib] Html.attrib list ->
+                [< Html_types.td_content] Html.elt list -> unit
 end

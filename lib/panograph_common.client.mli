@@ -14,14 +14,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Eliom_content.Html5
+open Eliom_content.Html
 open Panograph_types
 
 exception Invalid_input of string
 
 val make_button :
       (unit -> ack Lwt.t) ->
-      [< Html5_types.button_content_fun] elt list ->
+      [< Html_types.button_content_fun] elt list ->
       [> `Button] elt
 
 module type BASIC_SHAPE_TYPE = sig

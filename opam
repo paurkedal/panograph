@@ -9,11 +9,10 @@ license: "LGPL-3 with OCaml linking exception"
 build: ["ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%"]
 depends: [
   "adpkg" {build}
-  "eliom" {>= "5.0.0" & < "6.0.0"}
+  "eliom" {>= "6.0" & < "7.0"}
   "js_of_ocaml"
   "lwt"
   "ocamlbuild" {build}
-  "ocamlbuild-eliom-dev" {build}
   "ocamlfind" {build}
   "ppx_deriving"
   "prime"

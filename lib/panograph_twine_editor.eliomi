@@ -17,7 +17,6 @@
 [%%shared.start]
 
 open Eliom_content
-open Eliom_pervasives
 open Panograph_i18n
 open Panograph_types
 
@@ -27,6 +26,6 @@ type twine_editor_out = [`Add of lang * string | `Remove of lang]
 type twine_editor_in = twine_editor_out
 
 val twine_editor : ?value: twine ->
-                   (twine_editor_out -> ack Lwt.t) client_value ->
-                   [> Html5_types.span] Html5.elt *
-                   (twine_editor_in -> unit) client_value
+                   (twine_editor_out -> ack Lwt.t) Eliom_client_value.t ->
+                   [> Html_types.span] Html.elt *
+                   (twine_editor_in -> unit) Eliom_client_value.t

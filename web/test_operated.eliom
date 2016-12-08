@@ -14,6 +14,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+[%%server
+  open Eliom_client
+]
 [%%shared
   open Eliom_content
   open Operated_types
@@ -57,13 +60,13 @@ let%client patch
                      patch)
 
 [%%client
-  open Html5
+  open Html
   open Operated_html5
 
   let make_item (k, p) =
     let intro =
       let input = D.Raw.input ~a:[D.a_input_type `Text] () in
-      let input_dom = Html5.To_dom.of_input input in
+      let input_dom = Html.To_dom.of_input input in
       let on_add _ =
         let s = Js.to_string (input_dom##.value) in
         Lwt.async (fun () -> patch (Map_at (k, Set_add s))) in
@@ -84,7 +87,7 @@ let%client patch
   let make_dl p =
     let intro =
       let input = D.Raw.input ~a:[D.a_input_type `Text] () in
-      let input_dom = Html5.To_dom.of_input input in
+      let input_dom = Html.To_dom.of_input input in
       let on_add _ =
         let k = Js.to_string (input_dom##.value) in
         Lwt.async (fun () -> patch (Map_add (k, String_set.empty))) in
@@ -96,7 +99,7 @@ let%client patch
 ]
 
 let render () =
-  let open Html5 in
+  let open Html in
   let p = Main_p.present (Eliom_reference.Volatile.get s_r) in
   let ev_c = Eliom_react.Down.of_react ev in
   let dl = [%client

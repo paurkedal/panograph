@@ -15,7 +15,7 @@
  *)
 
 [%%shared
-  open Eliom_content.Html5
+  open Eliom_content.Html
   open Panograph_prereq
   open Panograph_types
   open Panui_content
@@ -41,10 +41,10 @@
 
 [%%shared
   let string_option_selector ?a ~selection ?(value : string option option)
-                        (emit : (string option -> ack Lwt.t) client_value) =
+                        (emit : (string option -> ack Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : string option Selection.t :> _ elt list) in
-    let absorb : (string option -> unit) client_value = [%client
+    let absorb : (string option -> unit) Eliom_client_value.t = [%client
       outfit_select
         ~to_string:string_of_string_option
         ~of_string:string_option_of_string
@@ -53,10 +53,10 @@
     elem, absorb
 
   let bool_option_selector ?a ~selection ?(value : bool option option)
-                           (emit : (bool option -> ack Lwt.t) client_value) =
+                           (emit : (bool option -> ack Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : bool option Selection.t :> _ elt list) in
-    let absorb : (bool option -> unit) client_value = [%client
+    let absorb : (bool option -> unit) Eliom_client_value.t = [%client
       outfit_select
         ~to_string:string_of_bool_option
         ~of_string:bool_option_of_string
@@ -65,10 +65,10 @@
     elem, absorb
 
   let int_option_selector ?a ~selection ?(value : int option option)
-                          (emit : (int option -> ack Lwt.t) client_value) =
+                          (emit : (int option -> ack Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : int option Selection.t :> _ elt list) in
-    let absorb : (int option -> unit) client_value = [%client
+    let absorb : (int option -> unit) Eliom_client_value.t = [%client
       outfit_select
         ~to_string:string_of_int_option
         ~of_string:int_option_of_string
@@ -77,10 +77,10 @@
     elem, absorb
 
   let int32_option_selector ?a ~selection ?(value : int32 option option)
-                            (emit : (int32 option -> ack Lwt.t) client_value) =
+                            (emit : (int32 option -> ack Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : int32 option Selection.t :> _ elt list) in
-    let absorb : (int32 option -> unit) client_value = [%client
+    let absorb : (int32 option -> unit) Eliom_client_value.t = [%client
       outfit_select
         ~to_string:string_of_int32_option
         ~of_string:int32_option_of_string
@@ -89,10 +89,10 @@
     elem, absorb
 
   let int64_option_selector ?a ~selection ?(value : int64 option option)
-                            (emit : (int64 option -> ack Lwt.t) client_value) =
+                            (emit : (int64 option -> ack Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : int64 option Selection.t :> _ elt list) in
-    let absorb : (int64 option -> unit) client_value = [%client
+    let absorb : (int64 option -> unit) Eliom_client_value.t = [%client
       outfit_select
         ~to_string:string_of_int64_option
         ~of_string:int64_option_of_string

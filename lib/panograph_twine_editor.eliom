@@ -60,7 +60,7 @@
     twe.twe_map <- Lang_map.remove lang twe.twe_map
 
   let add_translation (twe : twine_editor) lang msg =
-    let open Html5 in
+    let open Html in
     try
       let _, inp_dom = Lang_map.find lang twe.twe_map in
       inp_dom##.classList##remove (Js.string "dirty");
@@ -97,8 +97,8 @@
 
 [%%shared
   let twine_editor ?value:(tw : Twine.t = Twine.make [])
-                   (patch_out : (twine_editor_out -> ack Lwt.t) client_value) =
-    let open Html5 in
+                   (patch_out : (twine_editor_out -> ack Lwt.t) Eliom_client_value.t) =
+    let open Html in
     let add_input =
       D.input ~a:[D.a_input_type `Text; D.a_class ["lang"];
                   D.a_size 2; D.a_maxlength 2] () in
@@ -108,8 +108,8 @@
     let error_span = D.span ~a:[D.a_class ["error"]] [] in
     let outer = D.span ~a:[D.a_class ["twine-editor"]]
                        [trans_span; add_span; error_span] in
-    let patch_in : (twine_editor_in -> unit) client_value = [%client
-      let open Html5 in
+    let patch_in : (twine_editor_in -> unit) Eliom_client_value.t = [%client
+      let open Html in
       let add_input_dom = To_dom.of_input ~%(add_input : [`Input] elt) in
       let error_dom = To_dom.of_element ~%(error_span : [`Span] elt) in
       error_dom##.style##.visibility := Js.string "hidden";

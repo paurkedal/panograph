@@ -18,7 +18,7 @@ open Eliom_content
 open Panograph_tabular
 
 let render () =
-  let open Html5 in
+  let open Html in
   let tab = Tabular.create ~a:[F.a_class ["tabular1"]]
                            ~root_css_class:"root" () in
   let rs_root = Tabular.root_rowspan tab in

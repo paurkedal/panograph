@@ -44,16 +44,16 @@ module Ul_mapped_container : sig
   include BASIC_SHAPE_TYPE
   include CONTAINER
     with type shape := shape
-     and type item_ui = Html5_types.flow5 Html5.elt
-                      * Html5_types.flow5 Html5.elt
-     and type ui = Html5_types.flow5 Html5.elt
+     and type item_ui = Html_types.flow5 Html.elt
+                      * Html_types.flow5 Html.elt
+     and type ui = Html_types.flow5 Html.elt
 end
 
 module Table_mapped_container : sig
   include BASIC_SHAPE_TYPE
   include CONTAINER
     with type shape := shape
-     and type item_ui = Html5_types.flow5 Html5.elt list
-                      * Html5_types.flow5 Html5.elt list
-     and type ui = Html5_types.flow5 Html5.elt
+     and type item_ui = Html_types.flow5 Html.elt list
+                      * Html_types.flow5 Html.elt list
+     and type ui = Html_types.flow5 Html.elt
 end

@@ -16,65 +16,64 @@
 
 [%%shared.start]
 
-open Eliom_content.Html5
-open Eliom_pervasives
+open Eliom_content.Html
 
 val string_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (string -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (string -> string) Eliom_client_value.t ->
       ?value: string -> unit ->
-      [> Html5_types.span] elt * (string -> unit) client_value
+      [> Html_types.span] elt * (string -> unit) Eliom_client_value.t
 
 val int_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (int -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (int -> string) Eliom_client_value.t ->
       ?value: int -> unit ->
-      [> Html5_types.span] elt * (int -> unit) client_value
+      [> Html_types.span] elt * (int -> unit) Eliom_client_value.t
 
 val int32_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (int32 -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (int32 -> string) Eliom_client_value.t ->
       ?value: int32 -> unit ->
-      [> Html5_types.span] elt * (int32 -> unit) client_value
+      [> Html_types.span] elt * (int32 -> unit) Eliom_client_value.t
 
 val int64_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (int64 -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (int64 -> string) Eliom_client_value.t ->
       ?value: int64 -> unit ->
-      [> Html5_types.span] elt * (int64 -> unit) client_value
+      [> Html_types.span] elt * (int64 -> unit) Eliom_client_value.t
 
 val float_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (float -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (float -> string) Eliom_client_value.t ->
       ?value: float -> unit ->
-      [> Html5_types.span] elt * (float -> unit) client_value
+      [> Html_types.span] elt * (float -> unit) Eliom_client_value.t
 
 val string_option_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (string -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (string -> string) Eliom_client_value.t ->
       ?value: string option -> unit ->
-      [> Html5_types.span] elt * (string option -> unit) client_value
+      [> Html_types.span] elt * (string option -> unit) Eliom_client_value.t
 
 val int_option_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (int -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (int -> string) Eliom_client_value.t ->
       ?value: int option -> unit ->
-      [> Html5_types.span] elt * (int option -> unit) client_value
+      [> Html_types.span] elt * (int option -> unit) Eliom_client_value.t
 
 val int32_option_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (int32 -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (int32 -> string) Eliom_client_value.t ->
       ?value: int32 option -> unit ->
-      [> Html5_types.span] elt * (int32 option -> unit) client_value
+      [> Html_types.span] elt * (int32 option -> unit) Eliom_client_value.t
 
 val int64_option_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (int64 -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (int64 -> string) Eliom_client_value.t ->
       ?value: int64 option -> unit ->
-      [> Html5_types.span] elt * (int64 option -> unit) client_value
+      [> Html_types.span] elt * (int64 option -> unit) Eliom_client_value.t
 
 val float_option_viewer :
-      ?a: [< Html5_types.span_attrib] attrib list ->
-      ?to_string: (float -> string) client_value ->
+      ?a: [< Html_types.span_attrib] attrib list ->
+      ?to_string: (float -> string) Eliom_client_value.t ->
       ?value: float option -> unit ->
-      [> Html5_types.span] elt * (float option -> unit) client_value
+      [> Html_types.span] elt * (float option -> unit) Eliom_client_value.t

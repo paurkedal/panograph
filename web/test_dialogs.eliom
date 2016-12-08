@@ -18,7 +18,7 @@
   open Panograph_prereq
 ]
 [%%shared
-  open Eliom_content.Html5
+  open Eliom_content.Html
 ]
 [%%client
   open Panui_dialogs

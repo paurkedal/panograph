@@ -16,7 +16,7 @@
 
 [%%shared
 open Eliom_content
-open Eliom_content.Html5
+open Eliom_content.Html
 open Lwt.Infix
 open Panograph_prereq
 open Panograph_types

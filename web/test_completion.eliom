@@ -14,7 +14,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Eliom_content.Html5
+open Eliom_content.Html
 open Panui_completion
 open Panograph_prereq
 
@@ -52,18 +52,20 @@ open Panograph_prereq
     let xs = String.chop_consecutive Char.is_space s in
     List.map int_of_string xs
 
+  let string_of_int_list zs =
+    String.concat " " (List.map string_of_int zs)
+
   let commit s =
     Lwt_js.sleep 1.0 >>
-    try ignore (int_list_of_string s); set_state s; Lwt.return Ack_ok
-    with Failure msg -> Lwt.return (Ack_error ("Invalid: " ^ msg))
+    try ignore (int_list_of_string s); set_state s; Lwt.return (Ok ())
+    with Failure msg -> Lwt.return (Error ("Invalid: " ^ msg))
 
   let fetch s =
     let xs = int_list_of_string s in
     let ys = predict xs in
     let zss = List.map (fun y -> xs @ [y]) ys in
     Lwt_js.sleep 1.0 >>
-    Lwt.return
-      (List.map (fun zs -> String.concat " " (List.map string_of_int zs)) zss)
+    Lwt.return (Ok (List.map string_of_int_list zss))
 ]
 
 let render () =

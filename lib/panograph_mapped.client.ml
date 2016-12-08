@@ -132,44 +132,44 @@ end
 
 module Ul_mapped_container = struct
   include Basic_shape
-  type ui = Html5_types.flow5 Html5.elt
+  type ui = Html_types.flow5 Html.elt
   type t = ui
-  type item_ui = Html5_types.flow5 Html5.elt * Html5_types.flow5 Html5.elt
-  type item = Html5_types.ul_content Html5.elt
+  type item_ui = Html_types.flow5 Html.elt * Html_types.flow5 Html.elt
+  type item = Html_types.ul_content Html.elt
   type static_ui = Prime.counit
 
   let default_shape = make_default_shape ["mapped"]
 
   let create ?(shape = default_shape) ?static () =
     let a = attribs_of_shape shape in
-    let ui = Html5.D.ul ~a [] in
+    let ui = Html.D.ul ~a [] in
     ui, ui
 
   let create_item ?(shape = default_shape) (key_ui, elt_ui) =
-    Html5.D.(li [key_ui; pcdata ": "; elt_ui])
+    Html.D.(li [key_ui; pcdata ": "; elt_ui])
 
-  let append ?before ul li = Html5.Manip.appendChild ?before ul li
-  let remove ul li = Html5.Manip.removeChild ul li
+  let append ?before ul li = Html.Manip.appendChild ?before ul li
+  let remove ul li = Html.Manip.removeChild ul li
 end
 
 module Table_mapped_container = struct
   include Basic_shape
-  type ui = Html5_types.flow5 Html5.elt
+  type ui = Html_types.flow5 Html.elt
   type t = ui
-  type item_ui = Html5_types.flow5 Html5.elt list
-               * Html5_types.flow5 Html5.elt list
-  type item = Html5_types.table_content Html5.elt
+  type item_ui = Html_types.flow5 Html.elt list
+               * Html_types.flow5 Html.elt list
+  type item = Html_types.table_content Html.elt
   type static_ui = Prime.counit
 
   let default_shape = make_default_shape ["mapped"]
 
   let create ?(shape = default_shape) ?static () =
     let a = attribs_of_shape shape in
-    let ui = Html5.D.table ~a [] in
+    let ui = Html.D.table ~a [] in
     ui, ui
 
   let create_item ?shape (key_ui, elt_ui) =
-    Html5.D.(tr (td key_ui :: List.map (fun el -> td [el]) elt_ui))
-  let append ?before table tr = Html5.Manip.appendChild ?before table tr
-  let remove table tr = Html5.Manip.removeChild table tr
+    Html.D.(tr (td key_ui :: List.map (fun el -> td [el]) elt_ui))
+  let append ?before table tr = Html.Manip.appendChild ?before table tr
+  let remove table tr = Html.Manip.removeChild table tr
 end

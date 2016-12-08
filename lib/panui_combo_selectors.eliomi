@@ -16,9 +16,8 @@
 
 [%%shared.start]
 
-open Eliom_content.Html5
-open Eliom_pervasives
-open Html5_types
+open Eliom_content.Html
+open Html_types
 open Panograph_types
 open Panui_content
 
@@ -27,30 +26,30 @@ val int_string_option_combo_selector :
       ?inl_a: select_attrib attrib list ->
       ?inr_a: input_attrib attrib list ->
       inl_selection: int option Selection.t ->
-      ?inr_to_string: (string -> string) client_value ->
-      ?inr_of_string: (string -> string) client_value ->
+      ?inr_to_string: (string -> string) Eliom_client_value.t ->
+      ?inr_of_string: (string -> string) Eliom_client_value.t ->
       ?value: (int, string) either option ->
-      ((int, string) either option -> ack Lwt.t) client_value ->
-      [> span] elt * ((int, string) either option -> unit) client_value
+      ((int, string) either option -> ack Lwt.t) Eliom_client_value.t ->
+      [> span] elt * ((int, string) either option -> unit) Eliom_client_value.t
 
 val int32_string_option_combo_selector :
       ?a: [< span_attrib > `Class] attrib list ->
       ?inl_a: select_attrib attrib list ->
       ?inr_a: input_attrib attrib list ->
       inl_selection: int32 option Selection.t ->
-      ?inr_to_string: (string -> string) client_value ->
-      ?inr_of_string: (string -> string) client_value ->
+      ?inr_to_string: (string -> string) Eliom_client_value.t ->
+      ?inr_of_string: (string -> string) Eliom_client_value.t ->
       ?value: (int32, string) either option ->
-      ((int32, string) either option -> ack Lwt.t) client_value ->
-      [> span] elt * ((int32, string) either option -> unit) client_value
+      ((int32, string) either option -> ack Lwt.t) Eliom_client_value.t ->
+      [> span] elt * ((int32, string) either option -> unit) Eliom_client_value.t
 
 val int64_string_option_combo_selector :
       ?a: [< span_attrib > `Class] attrib list ->
       ?inl_a: select_attrib attrib list ->
       ?inr_a: input_attrib attrib list ->
       inl_selection: int64 option Selection.t ->
-      ?inr_to_string: (string -> string) client_value ->
-      ?inr_of_string: (string -> string) client_value ->
+      ?inr_to_string: (string -> string) Eliom_client_value.t ->
+      ?inr_of_string: (string -> string) Eliom_client_value.t ->
       ?value: (int64, string) either option ->
-      ((int64, string) either option -> ack Lwt.t) client_value ->
-      [> span] elt * ((int64, string) either option -> unit) client_value
+      ((int64, string) either option -> ack Lwt.t) Eliom_client_value.t ->
+      [> span] elt * ((int64, string) either option -> unit) Eliom_client_value.t

@@ -881,18 +881,18 @@ module Tabular = struct
     Js.Unsafe.coerce
 
   let draw tab rs cs el =
-    set_tc tab rs cs (coerce_to_tc (Html5.To_dom.of_element el))
+    set_tc tab rs cs (coerce_to_tc (Html.To_dom.of_element el))
 
   let draw_td tab rs cs ?a content =
-    let td = Html5.D.td ?a content in
-    set_tc tab rs cs (coerce_to_tc (Html5.To_dom.of_td td))
+    let td = Html.D.td ?a content in
+    set_tc tab rs cs (coerce_to_tc (Html.To_dom.of_td td))
 
   let draw_th tab rs cs ?a content =
-    let th = Html5.D.th ?a content in
-    set_tc tab rs cs (coerce_to_tc (Html5.To_dom.of_th th))
+    let th = Html.D.th ?a content in
+    set_tc tab rs cs (coerce_to_tc (Html.To_dom.of_th th))
 
   let create ?a ?root_css_class () =
-    let table = Html5.D.table ?a [] in
+    let table = Html.D.table ?a [] in
     let root_rsn =
       { rsn_span = 1; rsn_blocks = Hashtbl.create 11;
         rsn_css_class = root_css_class } in
@@ -900,7 +900,7 @@ module Tabular = struct
       { csn_span = 1; csn_id = 0;
         csn_css_class = root_css_class; } in
     let tab =
-      { tab_table = Html5.To_dom.of_table table;
+      { tab_table = Html.To_dom.of_table table;
         tab_root_cs = Dltree.make root_csn;
         tab_root_rs = Dltree.make root_rsn;
         tab_next_col_id = 1;
@@ -930,7 +930,7 @@ module Tabular = struct
       | Refined (lr, lc) | Refining (lr, lc, _) -> Split (lr, lc)
     with Not_found -> Invalid
 
-  let ui t = Html5.Of_dom.of_table t.tab_table
+  let ui t = Html.Of_dom.of_table t.tab_table
   let root_rowspan t = t.tab_root_rs
   let root_colspan t = t.tab_root_cs
 
