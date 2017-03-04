@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -31,7 +31,7 @@ let string_comet = Eliom_comet.Channel.create ~scope:`Site string_stream
 let string_out = server_function [%json: string] @@ fun x ->
   Lwt_log.debug_f "Received string \"%s\"." x >>
   Lwt_unix.sleep 0.3 >>
-  (string_out' (Some (String.uppercase x)); Lwt.return Ack_ok)
+  (string_out' (Some (String.uppercase_ascii x)); Lwt.return Ack_ok)
 
 let int_stream, int_out' = Lwt_stream.create ()
 let int_comet = Eliom_comet.Channel.create ~scope:`Site int_stream

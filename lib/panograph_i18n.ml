@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -32,7 +32,7 @@ module Lang = struct
   let to_int = ident
 
   let of_string s =
-    let int_of_letter c = Char.code (Char.lowercase c) - 0x60 in
+    let int_of_letter c = Char.code (Char.lowercase_ascii c) - 0x60 in
     let len = String.length s in
     if len < 2 || len > 4 || not (String.for_all Char.is_alpha s) then
       invalid_arg_f "lang_of_string: %s is not an ISO 639 language code." s;
