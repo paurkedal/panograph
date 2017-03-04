@@ -9,7 +9,7 @@ clean:
 	ocaml pkg/pkg.ml clean
 
 doc:
-	ocamlbuild \
+	ocamlbuild -use-ocamlfind -plugin-tag 'package(eliom.ocamlbuild)' \
 	    doc/panograph.docdir/index.html \
 	    doc/panograph-server.docdir/index.html \
 	    doc/panograph-client.docdir/index.html

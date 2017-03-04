@@ -22,11 +22,6 @@ let doc_rules_for dir =
       sed ("s;^;" ^ dir ^ "/;") src dst)
 
 let local_rules () =
-  rule "pkg/META -> lib/META"
-    ~dep:"pkg/META" ~prod:"lib/META"
-    begin fun env build ->
-      sed "/^\\s*requires =/ s/\\<panograph\\>/lib/g" "pkg/META" "lib/META"
-    end;
   rule "%.mli & %.idem -> %.ml"
     ~deps:["%.mli"; "%.idem"] ~prod:"%.ml"
     begin fun env build ->
@@ -46,6 +41,10 @@ let () = Ocamlbuild_plugin.dispatch @@ fun hook ->
   | Before_options -> Options.make_links := false
   | After_rules ->
     local_rules ();
+    Pathname.define_context "tests" ["lib"];
+    Pathname.define_context "web/type" ["lib"; "lib/server"];
+    Pathname.define_context "web/server" ["lib"; "lib/server"];
+    Pathname.define_context "web/client" ["lib"; "lib/client"];
     doc_rules_for "lib";
     doc_rules_for "lib/server";
     doc_rules_for "lib/client";
