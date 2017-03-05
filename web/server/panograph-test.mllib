@@ -2,6 +2,7 @@ Test
 Test_combo_selectors
 Test_basic_editors
 Test_dialogs
+Test_complete
 Test_completion
 Test_content_with_edit
 Test_finalizer

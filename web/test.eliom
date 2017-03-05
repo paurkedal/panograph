@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -22,6 +22,7 @@
 ]
 [%%client
   module Dep_com = Test_completion
+  module Dep_cme = Test_complete
   module Dep_cse = Test_combo_selectors
   module Dep_cwe = Test_content_with_edit
   module Dep_dia = Test_dialogs
@@ -78,6 +79,7 @@ end
 
 let test_services = List.map make_test_service [
   "combo_selectors", Test_combo_selectors.render;
+  "complete", Test_complete.render;
   "completion", Test_completion.render;
   "content_with_edit", Test_content_with_edit.render;
   "dialogs", Test_dialogs.render;
