@@ -100,10 +100,12 @@ let render () =
   let log_elem_opt = D.span [] in
   let elem, _ =
     Panui_complete.labelled_int
+      ~has_feedback:false
       ~complete:[%client complete]
       ~emit:[%client emit ~%log_elem] ("zero", 0) in
   let elem_opt, _ =
     Panui_complete.labelled_int_option
+      ~has_feedback:false
       ~complete:[%client complete]
       ~emit:[%client emit_opt ~%log_elem_opt] None in
   D.p [

@@ -32,6 +32,7 @@ end
 [%%shared.start]
 
 type ('a, 'b, 'attrib, 'elt) t =
+    ?has_feedback: bool ->
     complete: (string -> 'b ui_result Lwt.t) Eliom_client_value.t ->
     emit: ('a -> unit ui_result Lwt.t) Eliom_client_value.t ->
     ?a: 'attrib attrib list ->

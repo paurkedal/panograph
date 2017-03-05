@@ -29,7 +29,8 @@ class type%client ['a] handle = object
 end
 
 class%client virtual ['a, 'b] base_handle
-  input_elem choices_elem init_choice emit complete =
+  has_feedback input_elem choices_elem init_choice emit complete =
+  let has_feedback = has_feedback <> Some false in
 object (self)
   val input_dom = To_dom.of_input input_elem
   val choices_dom = To_dom.of_span choices_elem
@@ -47,13 +48,13 @@ object (self)
     if choice = current_choice then Lwt.return_unit else
     begin
       current_choice <- choice;
-      Pandom_style.set_dirty input_dom;
+      if has_feedback then Pandom_style.set_dirty input_dom;
       (match%lwt emit choice with
        | Ok () ->
           Pandom_style.clear_error input_dom;
           Lwt.return_unit
        | Error msg ->
-          Pandom_style.clear_dirty input_dom;
+          if has_feedback then Pandom_style.clear_dirty input_dom;
           Pandom_style.set_error msg input_dom;
           Lwt.return_unit)
     end
@@ -118,17 +119,19 @@ object (self)
   method get = current_choice
 
   method set choice =
-    Pandom_style.clear_dirty input_dom;
-    Pandom_style.clear_error input_dom;
+    if has_feedback then begin
+      Pandom_style.clear_dirty input_dom;
+      Pandom_style.clear_error input_dom
+    end;
     current_choice <- choice;
     input_dom##.value := Js.string (self#to_label choice)
 end
 
 class%client string_req_handle
-  input_elem choices_elem init_choice emit complete =
+  has_feedback input_elem choices_elem init_choice emit complete =
 object
   inherit [string, string list] base_handle
-    input_elem choices_elem init_choice emit complete
+    has_feedback input_elem choices_elem init_choice emit complete
 
   val mutable completions : string list = []
 
@@ -142,10 +145,10 @@ object
 end
 
 class%client string_opt_handle
-  input_elem choices_elem init_choice emit complete =
+  has_feedback input_elem choices_elem init_choice emit complete =
 object
   inherit [string option, string list] base_handle
-    input_elem choices_elem init_choice emit complete
+    has_feedback input_elem choices_elem init_choice emit complete
 
   val mutable completions : string list = []
 
@@ -162,10 +165,10 @@ object
 end
 
 class%client ['a] labelled_req_handle
-  input_elem choices_elem init_choice emit complete =
+  has_feedback input_elem choices_elem init_choice emit complete =
 object
   inherit [string * 'a, (string * 'a) list] base_handle
-    input_elem choices_elem init_choice emit complete
+    has_feedback input_elem choices_elem init_choice emit complete
 
   val mutable completions : 'b = []
 
@@ -179,10 +182,10 @@ object
 end
 
 class%client ['a] labelled_opt_handle
-  input_elem choices_elem init_choice emit complete =
+  has_feedback input_elem choices_elem init_choice emit complete =
 object
   inherit [(string * 'a) option, (string * 'a) list] base_handle
-    input_elem choices_elem init_choice emit complete
+    has_feedback input_elem choices_elem init_choice emit complete
 
   val mutable completions : 'b = []
 
@@ -205,6 +208,7 @@ type%server 'a handle
 [%%shared.start]
 
 type ('a, 'b, 'attrib, 'elt) t =
+    ?has_feedback: bool ->
     complete: (string -> 'b ui_result Lwt.t) Eliom_client_value.t ->
     emit: ('a -> unit ui_result Lwt.t) Eliom_client_value.t ->
     ?a: 'attrib attrib list ->
@@ -225,81 +229,81 @@ let make_elem ?(a = []) () =
   (input_elem, choices_elem, main_elem)
 
 let string : (string, 'attrib, 'elt) t_req =
-  fun ~complete ~emit ?a choice ->
+  fun ?has_feedback ~complete ~emit ?a choice ->
   let input_elem, choices_elem, main_elem = make_elem ?a () in
   let h : string handle Eliom_client_value.t =
     [%client
-      new string_req_handle
+      new string_req_handle ~%has_feedback
         ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
 let string_option : (string, 'attrib, 'elt) t_opt =
-  fun ~complete ~emit ?a choice ->
+  fun ?has_feedback ~complete ~emit ?a choice ->
   let input_elem, choices_elem, main_elem = make_elem ?a () in
   let h : string option handle Eliom_client_value.t =
     [%client
-      new string_opt_handle
+      new string_opt_handle ~%has_feedback
         ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
 let labelled_int : (string * int, 'attrib, 'elt) t_req =
-  fun ~complete ~emit ?a choice ->
+  fun ?has_feedback ~complete ~emit ?a choice ->
   let input_elem, choices_elem, main_elem = make_elem ?a () in
   let h : (string * int) handle Eliom_client_value.t =
     [%client
-      new labelled_req_handle
+      new labelled_req_handle ~%has_feedback
         ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
 let labelled_int_option : (string * int, 'attrib, 'elt) t_opt =
-  fun ~complete ~emit ?a choice ->
+  fun ?has_feedback ~complete ~emit ?a choice ->
   let input_elem, choices_elem, main_elem = make_elem ?a () in
   let h : (string * int) option handle Eliom_client_value.t =
     [%client
-      new labelled_opt_handle
+      new labelled_opt_handle ~%has_feedback
         ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
 let labelled_int32 : (string * int32, 'attrib, 'elt) t_req =
-  fun ~complete ~emit ?a choice ->
+  fun ?has_feedback ~complete ~emit ?a choice ->
   let input_elem, choices_elem, main_elem = make_elem ?a () in
   let h : (string * int32) handle Eliom_client_value.t =
     [%client
-      new labelled_req_handle
+      new labelled_req_handle ~%has_feedback
         ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
 let labelled_int32_option : (string * int32, 'attrib, 'elt) t_opt =
-  fun ~complete ~emit ?a choice ->
+  fun ?has_feedback ~complete ~emit ?a choice ->
   let input_elem, choices_elem, main_elem = make_elem ?a () in
   let h : (string * int32) option handle Eliom_client_value.t =
     [%client
-      new labelled_opt_handle
+      new labelled_opt_handle ~%has_feedback
         ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
 let labelled_int64 : (string * int64, 'attrib, 'elt) t_req =
-  fun ~complete ~emit ?a choice ->
+  fun ?has_feedback ~complete ~emit ?a choice ->
   let input_elem, choices_elem, main_elem = make_elem ?a () in
   let h : (string * int64) handle Eliom_client_value.t =
     [%client
-      new labelled_req_handle
+      new labelled_req_handle ~%has_feedback
         ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
 let labelled_int64_option : (string * int64, 'attrib, 'elt) t_opt =
-  fun ~complete ~emit ?a choice ->
+  fun ?has_feedback ~complete ~emit ?a choice ->
   let input_elem, choices_elem, main_elem = make_elem ?a () in
   let h : (string * int64) option handle Eliom_client_value.t =
     [%client
-      new labelled_opt_handle
+      new labelled_opt_handle ~%has_feedback
         ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
