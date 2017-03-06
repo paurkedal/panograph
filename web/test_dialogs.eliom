@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -24,7 +24,7 @@
   open Panui_dialogs
 ]
 
-let render () =
+let handler () () =
   let open_acknowledge =
     D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Acknowledge"] in
   let open_confirm =
@@ -46,7 +46,7 @@ let render () =
       Lwt.return_unit
     end
   ];
-  D.div [
+  Lwt.return [
     D.p [
       D.pcdata "In user interface design, a modal window is a graphical control element subordinate to an application's main window which creates a mode where the main window can't be used. The modal window is a child window that requires users to interact with it before it can return to operating the parent application, thus preventing the workflow on the application main window. Modal windows are often called heavy windows or modal dialogs because the window is often used to display a dialog box.";
       D.i [D.pcdata " -- Wikipedia"]

@@ -75,7 +75,7 @@ let int_option_out = server_function [%json: int option] @@ fun x_opt ->
   Lwt_unix.sleep 0.3 >>
   (int_option_out' (Some (Option.map succ x_opt)); Lwt.return Ack_ok)
 
-let render () =
+let handler () () =
   let open Html in
 
   let string_ed, h = Panui_scalar.string "" in
@@ -123,7 +123,7 @@ let render () =
     (~%h#edit_on : (int option -> ack Lwt.t) -> unit) ~%int_option_out;
     Lwt.async @@ fun () -> Lwt_stream.iter ~%h#set ~%int_option_comet ];
 
-  D.div [
+  Lwt.return [
     D.h2 [D.pcdata "Server Side Inputs"];
     D.ul [
       D.li [D.pcdata "string: "; string_ed];

@@ -14,58 +14,23 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-[%%shared
-  open Eliom_content.Html
-  open Eliom_lib
-  open Unprime_list
-  open Unprime_option
-]
-[%%client
-  module Dep_com = Test_completion
-  module Dep_cme = Test_complete
-  module Dep_cse = Test_combo_selectors
-  module Dep_cwe = Test_content_with_edit
-  module Dep_dia = Test_dialogs
-  module Dep_fin = Test_finalizer
-  module Dep_tbe = Test_basic_editors
-  module Dep_tte = Test_twine_editor
-  module Dep_opr = Test_operated
-  module Dep_pin = Test_pinboard
-  module Dep_sca = Test_scalar
-  module Dep_twc = Test_weakchan
-  module Dep_twt = Test_weaktbl
-]
+open Eliom_content.Html
 
-[%%server
-  let lwt_log_rules =
-    try Some (Sys.getenv "LWT_LOG_JS") with Not_found ->
-    try Some (Sys.getenv "LWT_LOG") with Not_found ->
-    None
-]
-[%%client
-  let () =
-    Lwt_log.(Section.set_level (Section.make "eliom:client") Warning);
-    Option.iter Lwt_log.load_rules ~%lwt_log_rules
-]
-
-module App = Eliom_registration.App
-  (struct
-    let application_name = "test"
-    let global_data_path = None
-  end)
-
-let css = [["css"; "panograph.css"]; ["css"; "panograph-test.css"]]
-
-let simple_handler title render () () =
-  Lwt.return @@
-    Eliom_tools.D.html ~title ~css
-      (D.body [D.h1 [D.pcdata title]; render ()])
-
-let make_test_service (name, render) =
-  let open Eliom_service in
-  name,
-  App.create ~path:(Path [name]) ~meth:(Get Eliom_parameter.unit)
-    (simple_handler name render)
+module%client Linked = struct
+  module Test_complete = Test_complete
+  module Test_completion = Test_completion
+  module Test_combo_selectors = Test_combo_selectors
+  module Test_content_with_edit = Test_content_with_edit
+  module Test_dialogs = Test_dialogs
+  module Test_finalizer = Test_finalizer
+  module Test_basic_editors = Test_basic_editors
+  module Test_twine_editor = Test_twine_editor
+  module Test_operated = Test_operated
+  module Test_pinboard = Test_pinboard
+  module Test_scalar = Test_scalar
+  module Test_weakchan = Test_weakchan
+  module Test_weaktbl = Test_weaktbl
+end
 
 module C : sig
   include module type of C
@@ -77,37 +42,38 @@ end = struct
   let table c = (C.node c : [`Table] elt :> [> `Table] elt)
 end
 
-let test_services = List.map make_test_service [
-  "combo_selectors", Test_combo_selectors.render;
-  "complete", Test_complete.render;
-  "completion", Test_completion.render;
-  "content_with_edit", Test_content_with_edit.render;
-  "dialogs", Test_dialogs.render;
-  "finalizer", Test_finalizer.render;
-  "inputs", (fun () -> C.div [%client Test_inputs.render ()]);
-  "tabular1", (fun () -> C.table [%client Test_tabular1.render ()]);
-  "tabular2", (fun () -> C.table [%client Test_tabular2.render ()]);
-  "tabular3", (fun () -> C.table [%client Test_tabular3.render ()]);
-  "basic_editors", Test_basic_editors.render;
-  "operated", Test_operated.render;
-  "pinboard", Test_pinboard.render;
-  "scalar", Test_scalar.render;
-  "weakchan", Test_weakchan.render;
-  "weaktbl", Test_weaktbl.render;
-  "twine_editor", Test_twine_editor.render;
+let create_test_c_div name (f : (unit -> _) Eliom_client_value.t) =
+  Test_app.create_test name (fun () () -> Lwt.return [C.div [%client ~%f ()]])
+let create_test_c_table name (f : (unit -> _) Eliom_client_value.t) =
+  Test_app.create_test name (fun () () -> Lwt.return [C.table [%client ~%f ()]])
+
+let test_services = Test_app.[
+  create_test "combo_selectors" Test_combo_selectors.handler;
+  create_test "complete" Test_complete.handler;
+  create_test "completion" Test_completion.handler;
+  create_test "content_with_edit" Test_content_with_edit.handler;
+  create_test "dialogs" Test_dialogs.handler;
+  create_test_c_div "finalizer" [%client Test_finalizer.render];
+  create_test_c_div "inputs" [%client Test_inputs.render];
+  create_test_c_table "tabular1" [%client Test_tabular1.render];
+  create_test_c_table "tabular2" [%client Test_tabular2.render];
+  create_test_c_table "tabular3" [%client Test_tabular3.render];
+  create_test "basic_editors" Test_basic_editors.handler;
+  create_test "operated" Test_operated.handler;
+  create_test "pinboard" Test_pinboard.handler;
+  create_test "scalar" Test_scalar.handler;
+  create_test_c_div "weakchan" [%client Test_weakchan.render];
+  create_test_c_div "weaktbl" [%client Test_weaktbl.render];
+  create_test "twine_editor" Test_twine_editor.handler;
 ]
 
 let main_handler () () =
   let test_service_item (name, service) =
     F.li [F.a ~service [F.pcdata name] ()] in
-  Lwt.return @@
-    Eliom_tools.D.html
-      ~title:"Panograph Test" ~css
-      (F.body [
-        F.h1 [F.pcdata "Panograph Test"];
-        F.ul (List.map test_service_item test_services);
-      ])
+  Lwt.return [F.ul (List.map test_service_item test_services)]
 
 let main_service =
   let open Eliom_service in
-  App.create ~path:(Path []) ~meth:(Get Eliom_parameter.unit) main_handler
+  Test_app.create_page
+    ~path:(Path []) ~meth:(Get Eliom_parameter.unit)
+    ~title:"Panograph Tests" main_handler

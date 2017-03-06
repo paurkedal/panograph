@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -45,13 +45,13 @@ let on_update' p =
 
 let on_update = server_function [%json: twine_editor_out] on_update'
 
-let render () =
+let handler () () =
   let open Html in
   let twe_el, twe_patch = twine_editor [%client ~%on_update] in
 
   ignore_cv [%client Lwt.async (fun () -> Lwt_stream.iter ~%twe_patch ~%comet)];
 
-  D.div [
+  Lwt.return [
     D.h2 [D.pcdata "Server Side"];
     twe_el
   ]

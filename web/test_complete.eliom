@@ -95,7 +95,7 @@ let emit_opt elem choice =
 
 [%%server.start]
 
-let render () =
+let handler () () =
   let log_elem = D.span [] in
   let log_elem_opt = D.span [] in
   let elem, _ =
@@ -108,7 +108,9 @@ let render () =
       ~has_feedback:false
       ~complete:[%client complete]
       ~emit:[%client emit_opt ~%log_elem_opt] None in
-  D.p [
-    elem; log_elem; D.br ();
-    elem_opt; log_elem_opt
+  Lwt.return [
+    D.p [
+      elem; log_elem; D.br ();
+      elem_opt; log_elem_opt
+    ]
   ]

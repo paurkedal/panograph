@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -98,7 +98,7 @@ let%client patch
     O.dl ~intro make_item p
 ]
 
-let render () =
+let handler () () =
   let open Html in
   let p = Main_p.present (Eliom_reference.Volatile.get s_r) in
   let ev_c = Eliom_react.Down.of_react ev in
@@ -107,4 +107,4 @@ let render () =
     Lwt_react.E.keep (React.E.trace patch ~%ev_c);
     dl
   ] in
-  (C.node dl : [`Dl] elt :> [> `Dl] elt)
+  Lwt.return [(C.node dl : [`Dl] elt :> [> `Dl] elt)]

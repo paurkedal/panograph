@@ -1,4 +1,4 @@
-(* Copyright (C) 2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -36,7 +36,7 @@
     populate pinboard (succ i)
 ]
 
-let render () =
+let handler () () =
   let pinboard = Panui_pinboard.create () in
   ignore_cv [%client Lwt.async (fun () -> populate ~%pinboard 0)];
-  Panui_pinboard.ui pinboard
+  Lwt.return [Panui_pinboard.ui pinboard]

@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -34,7 +34,7 @@ open Panui_content
     (emit_ev x; Lwt.return Ack_ok)
 ]
 
-let render () =
+let handler () () =
   let selection = Selection.F.([
     none "";
     some int32 "Number two" 2l;
@@ -68,4 +68,4 @@ let render () =
     Lwt_react.E.keep (React.E.trace ~%absorb ev);
     Lwt_react.E.keep (React.E.trace ~%absorbIS ev)
   ];
-  D.div [elem; D.pcdata " = "; elemI; D.pcdata " | "; elemS]
+  Lwt.return [elem; D.pcdata " = "; elemI; D.pcdata " | "; elemS]

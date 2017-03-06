@@ -104,7 +104,7 @@ let string_option_textarea_out =
   let tr x = String.uppercase_ascii x in
   (string_option_textarea_out' (Some (Option.map tr x_opt)); Lwt.return Ack_ok)
 
-let render () =
+let handler () () =
   let open Html in
 
   let string_ed, string_in = string_editor [%client ~%string_out] in
@@ -144,7 +144,7 @@ let render () =
   ignore_cv [%client Lwt.async @@ fun () ->
     Lwt_stream.iter ~%string_option_textarea_in ~%string_option_textarea_comet];
 
-  D.div [
+  Lwt.return [
     D.h2 [D.pcdata "Server Side Inputs"];
     D.ul [
       D.li [string_ed];

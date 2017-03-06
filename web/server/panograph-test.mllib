@@ -1,14 +1,13 @@
-Test
+Test_app
+
 Test_combo_selectors
 Test_basic_editors
 Test_dialogs
 Test_complete
 Test_completion
 Test_content_with_edit
-Test_finalizer
 Test_operated
 Test_pinboard
 Test_scalar
 Test_twine_editor
-Test_weakchan
-Test_weaktbl
+Test
