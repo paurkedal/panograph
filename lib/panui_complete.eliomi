@@ -31,23 +31,33 @@ end
 
 [%%shared.start]
 
-type ('a, 'b, 'attrib, 'elt) t =
+type ('a, 'b, 'c, 'attrib, 'elt) t =
     ?has_feedback: bool ->
     complete: (string -> 'b ui_result Lwt.t) Eliom_client_value.t ->
-    emit: ('a -> unit ui_result Lwt.t) Eliom_client_value.t ->
+    ?name: 'c Eliom_parameter.param_name ->
+    ?emit: ('a -> unit ui_result Lwt.t) Eliom_client_value.t ->
     ?a: 'attrib attrib list ->
     'a -> 'elt elt * 'a handle Eliom_client_value.t
   constraint 'attrib = [< Html_types.common > `Class]
   constraint 'elt = [> `Span]
 
-type ('a, 'attrib, 'elt) t_req = ('a, 'a list, 'attrib, 'elt) t
-type ('a, 'attrib, 'elt) t_opt = ('a option, 'a list, 'attrib, 'elt) t
+type ('a, 'attrib, 'elt) simple_req =
+  ('a, 'a list, [`One of 'a], 'attrib, 'elt) t
 
-val string : (string, 'attrib, 'elt) t_req
-val string_option : (string, 'attrib, 'elt) t_opt
-val labelled_int : (string * int, 'attrib, 'elt) t_req
-val labelled_int_option : (string * int, 'attrib, 'elt) t_opt
-val labelled_int32 : (string * int32, 'attrib, 'elt) t_req
-val labelled_int32_option : (string * int32, 'attrib, 'elt) t_opt
-val labelled_int64 : (string * int64, 'attrib, 'elt) t_req
-val labelled_int64_option : (string * int64, 'attrib, 'elt) t_opt
+type ('a, 'attrib, 'elt) simple_opt =
+  ('a option, 'a list, [`One of 'a], 'attrib, 'elt) t
+
+type ('a, 'attrib, 'elt) labelled_req =
+  (string * 'a, (string * 'a) list, [`One of 'a], 'attrib, 'elt) t
+
+type ('a, 'attrib, 'elt) labelled_opt =
+  ((string * 'a) option, (string * 'a) list, [`One of 'a], 'attrib, 'elt) t
+
+val string : (string, 'attrib, 'elt) simple_req
+val string_option : (string, 'attrib, 'elt) simple_opt
+val labelled_int : (int, 'attrib, 'elt) labelled_req
+val labelled_int_option : (int, 'attrib, 'elt) labelled_opt
+val labelled_int32 : (int32, 'attrib, 'elt) labelled_req
+val labelled_int32_option : (int32, 'attrib, 'elt) labelled_opt
+val labelled_int64 : (int64, 'attrib, 'elt) labelled_req
+val labelled_int64_option : (int64, 'attrib, 'elt) labelled_opt

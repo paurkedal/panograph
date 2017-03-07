@@ -84,6 +84,19 @@ let complete_opt pfx =
         |> List.map (fun (s, v) -> (s, Some v)) in
   Ok choices
 
+let complete_int32_opt pfx =
+  Lwt_js.sleep 0.5 >|= fun () ->
+  if String.exists (fun c -> not (Char.is_alpha c)) pfx
+    then (Error "non-alpha") else
+  let choices =
+    if pfx = "" then
+      []
+    else
+      choices
+        |> List.filter (fun (s, _) -> String.has_prefix pfx s)
+        |> List.map (fun (s, v) -> (s, Int32.of_int v)) in
+  Ok choices
+
 let emit_opt elem choice =
   Manip.removeChildren elem;
   let text =
@@ -94,6 +107,21 @@ let emit_opt elem choice =
   Lwt.return (Ok ())
 
 [%%server.start]
+
+let get_handler arg () =
+  let result =
+    (match arg with
+     | None -> "unspecified"
+     | Some arg -> Int32.to_string arg) in
+  Lwt.return [F.p [F.pcdata "Post result: "; F.pcdata result]]
+
+let get_service =
+  let open Eliom_service in
+  Test_app.create_page
+    ~path:(Path ["complete_get"])
+    ~meth:(Get Eliom_parameter.(opt (int32 "arg")))
+    ~title:"Get Result"
+    get_handler
 
 let handler () () =
   let log_elem = D.span [] in
@@ -112,5 +140,12 @@ let handler () () =
     D.p [
       elem; log_elem; D.br ();
       elem_opt; log_elem_opt
-    ]
+    ];
+    D.Form.get_form get_service
+      (fun arg_name ->
+        let elt, h =
+          Panui_complete.labelled_int32_option
+            ~complete:[%client complete_int32_opt]
+            ~name:arg_name (Some ("one", 1l)) in
+        [elt; D.Form.input ~input_type:`Submit D.Form.string]);
   ]

@@ -17,6 +17,7 @@
 [%%shared
   open Eliom_content.Html
   open Lwt.Infix
+  open Panograph_prereq
   open Panograph_types
   open Printf
   open Unprime
@@ -29,8 +30,7 @@ class type%client ['a] handle = object
 end
 
 class%client virtual ['a, 'b] base_handle
-  has_feedback input_elem choices_elem init_choice emit complete =
-  let has_feedback = has_feedback <> Some false in
+    has_feedback input_elem choices_elem init_choice emit complete =
 object (self)
   val input_dom = To_dom.of_input input_elem
   val choices_dom = To_dom.of_span choices_elem
@@ -49,14 +49,17 @@ object (self)
     begin
       current_choice <- choice;
       if has_feedback then Pandom_style.set_dirty input_dom;
-      (match%lwt emit choice with
-       | Ok () ->
-          Pandom_style.clear_error input_dom;
-          Lwt.return_unit
-       | Error msg ->
-          if has_feedback then Pandom_style.clear_dirty input_dom;
-          Pandom_style.set_error msg input_dom;
-          Lwt.return_unit)
+      (match emit with
+       | None -> Lwt.return_unit;
+       | Some emit ->
+          (match%lwt emit choice with
+           | Ok () ->
+              Pandom_style.clear_error input_dom;
+              Lwt.return_unit
+           | Error msg ->
+              if has_feedback then Pandom_style.clear_dirty input_dom;
+              Pandom_style.set_error msg input_dom;
+              Lwt.return_unit))
     end
 
   method private cancel =
@@ -128,7 +131,12 @@ object (self)
 end
 
 class%client string_req_handle
-  has_feedback input_elem choices_elem init_choice emit complete =
+    has_feedback input_elem choices_elem init_choice emit complete =
+  let has_feedback =
+    (match has_feedback, emit with
+     | Some has_feedback, _ -> has_feedback
+     | None, Some _ -> true
+     | None, None -> false) in
 object
   inherit [string, string list] base_handle
     has_feedback input_elem choices_elem init_choice emit complete
@@ -145,7 +153,12 @@ object
 end
 
 class%client string_opt_handle
-  has_feedback input_elem choices_elem init_choice emit complete =
+    has_feedback input_elem choices_elem init_choice emit complete =
+  let has_feedback =
+    (match has_feedback, emit with
+     | Some has_feedback, _ -> has_feedback
+     | None, Some _ -> true
+     | None, None -> false) in
 object
   inherit [string option, string list] base_handle
     has_feedback input_elem choices_elem init_choice emit complete
@@ -165,7 +178,22 @@ object
 end
 
 class%client ['a] labelled_req_handle
-  has_feedback input_elem choices_elem init_choice emit complete =
+    has_feedback input_elem form_input_elem choices_elem
+    init_choice emit complete to_string =
+  let has_feedback =
+    (match has_feedback, emit with
+     | Some has_feedback, _ -> has_feedback
+     | None, Some _ -> true
+     | None, None -> false) in
+  let emit =
+    (match form_input_elem with
+     | None -> emit
+     | Some form_input_elem ->
+        let dom = To_dom.of_input form_input_elem in
+        let form_input_emit x = dom##.value := Js.string (to_string x) in
+        (match emit with
+         | None -> Some (fun x -> form_input_emit x; Lwt.return (Ok ()))
+         | Some emit -> Some (fun x -> form_input_emit x; emit x))) in
 object
   inherit [string * 'a, (string * 'a) list] base_handle
     has_feedback input_elem choices_elem init_choice emit complete
@@ -182,7 +210,22 @@ object
 end
 
 class%client ['a] labelled_opt_handle
-  has_feedback input_elem choices_elem init_choice emit complete =
+    has_feedback input_elem form_input_elem choices_elem
+    init_choice emit complete to_string =
+  let has_feedback =
+    (match has_feedback, emit with
+     | Some has_feedback, _ -> has_feedback
+     | None, Some _ -> true
+     | None, None -> false) in
+  let emit =
+    (match form_input_elem with
+     | None -> emit
+     | Some form_input_elem ->
+        let dom = To_dom.of_input form_input_elem in
+        let form_input_emit x = dom##.value := Js.string (to_string x) in
+        (match emit with
+         | None -> Some (fun x -> form_input_emit x; Lwt.return (Ok ()))
+         | Some emit -> Some (fun x -> form_input_emit x; emit x))) in
 object
   inherit [(string * 'a) option, (string * 'a) list] base_handle
     has_feedback input_elem choices_elem init_choice emit complete
@@ -207,20 +250,35 @@ type%server 'a handle
 
 [%%shared.start]
 
-type ('a, 'b, 'attrib, 'elt) t =
+type ('a, 'b, 'c, 'attrib, 'elt) t =
     ?has_feedback: bool ->
     complete: (string -> 'b ui_result Lwt.t) Eliom_client_value.t ->
-    emit: ('a -> unit ui_result Lwt.t) Eliom_client_value.t ->
+    ?name: 'c Eliom_parameter.param_name ->
+    ?emit: ('a -> unit ui_result Lwt.t) Eliom_client_value.t ->
     ?a: 'attrib attrib list ->
     'a -> 'elt elt * 'a handle Eliom_client_value.t
   constraint 'attrib = [< Html_types.common > `Class]
   constraint 'elt = [> `Span]
 
-type ('a, 'attrib, 'elt) t_req = ('a, 'a list, 'attrib, 'elt) t
-type ('a, 'attrib, 'elt) t_opt = ('a option, 'a list, 'attrib, 'elt) t
+type ('a, 'attrib, 'elt) simple_req =
+  ('a, 'a list, [`One of 'a], 'attrib, 'elt) t
 
-let make_elem ?(a = []) () =
-  let input_elem = D.input ~a:[D.a_input_type `Text] () in
+type ('a, 'attrib, 'elt) simple_opt =
+  ('a option, 'a list, [`One of 'a], 'attrib, 'elt) t
+
+type ('a, 'attrib, 'elt) labelled_req =
+  (string * 'a, (string * 'a) list, [`One of 'a], 'attrib, 'elt) t
+
+type ('a, 'attrib, 'elt) labelled_opt =
+  ((string * 'a) option, (string * 'a) list, [`One of 'a], 'attrib, 'elt) t
+
+
+let make_string ?(a = []) ?name param =
+  let input_elem =
+    (match name with
+     | None -> D.input ~a:[D.a_input_type `Text] ()
+     | Some name ->
+        D.Form.input ~a ~input_type:`Text ~name param) in
   let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in
   let main_elem = D.span ~a:(D.a_class ["pan-completion-input"] :: a) [
     input_elem;
@@ -228,82 +286,128 @@ let make_elem ?(a = []) () =
   ] in
   (input_elem, choices_elem, main_elem)
 
-let string : (string, 'attrib, 'elt) t_req =
-  fun ?has_feedback ~complete ~emit ?a choice ->
-  let input_elem, choices_elem, main_elem = make_elem ?a () in
+let make_labelled ?(a = []) ?name ?value param =
+  let input_elem = D.input ~a:[D.a_input_type `Text] () in
+  let choices_elem = D.span ~a:[D.a_class ["pan-choices"]] [] in
+  let main_elem, form_input_elem =
+    (match name with
+     | None ->
+        let main_elem =
+          D.span ~a:(D.a_class ["pan-completion-input"] :: a) [
+            input_elem;
+            D.span ~a:[D.a_class ["pan-dropdown"]] [choices_elem];
+          ] in
+        (main_elem, None)
+     | Some name ->
+        let form_input_elem =
+          D.Form.input ~a ~input_type:`Hidden ~name ?value param in
+        let main_elem =
+          D.span ~a:(D.a_class ["pan-completion-input"] :: a) [
+            input_elem; form_input_elem;
+            D.span ~a:[D.a_class ["pan-dropdown"]] [choices_elem];
+          ] in
+        (main_elem, Some form_input_elem)) in
+  (input_elem, form_input_elem, choices_elem, main_elem)
+
+let string : (string, 'attrib, 'elt) simple_req =
+  fun ?has_feedback ~complete ?name ?emit ?a choice ->
+  let input_elem, choices_elem, main_elem =
+    make_string ?a ?name D.Form.string in
   let h : string handle Eliom_client_value.t =
     [%client
       new string_req_handle ~%has_feedback
-        ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
+        ~%(input_elem : [`Input] elt)
+        ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
-let string_option : (string, 'attrib, 'elt) t_opt =
-  fun ?has_feedback ~complete ~emit ?a choice ->
-  let input_elem, choices_elem, main_elem = make_elem ?a () in
+let string_option : (string, 'attrib, 'elt) simple_opt =
+  fun ?has_feedback ~complete ?name ?emit ?a choice ->
+  let param = D.Form.user (function None -> "" | Some s -> s) in
+  let input_elem, choices_elem, main_elem =
+    make_string ?a ?name D.Form.string in
   let h : string option handle Eliom_client_value.t =
     [%client
       new string_opt_handle ~%has_feedback
-        ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
+        ~%(input_elem : [`Input] elt)
+        ~%(choices_elem : [`Span] elt)
         ~%choice ~%emit ~%complete] in
   (main_elem, h)
 
-let labelled_int : (string * int, 'attrib, 'elt) t_req =
-  fun ?has_feedback ~complete ~emit ?a choice ->
-  let input_elem, choices_elem, main_elem = make_elem ?a () in
+let labelled_int : (int, 'attrib, 'elt) labelled_req =
+  fun ?has_feedback ~complete ?name ?emit ?a choice ->
+  let input_elem, form_input_elem, choices_elem, main_elem =
+    make_labelled ?a ?name ~value:(snd choice) D.Form.int in
   let h : (string * int) handle Eliom_client_value.t =
     [%client
       new labelled_req_handle ~%has_feedback
-        ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete] in
+        ~%(input_elem : [`Input] elt)
+        ~%(form_input_elem : [`Input] elt option)
+        ~%(choices_elem : [`Span] elt)
+        ~%choice ~%emit ~%complete (string_of_int <@ snd)] in
   (main_elem, h)
 
-let labelled_int_option : (string * int, 'attrib, 'elt) t_opt =
-  fun ?has_feedback ~complete ~emit ?a choice ->
-  let input_elem, choices_elem, main_elem = make_elem ?a () in
+let labelled_int_option : (int, 'attrib, 'elt) labelled_opt =
+  fun ?has_feedback ~complete ?name ?emit ?a choice ->
+  let input_elem, form_input_elem, choices_elem, main_elem =
+    make_labelled ?a ?name ?value:(Option.map snd choice) D.Form.int in
   let h : (string * int) option handle Eliom_client_value.t =
     [%client
       new labelled_opt_handle ~%has_feedback
-        ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete] in
+        ~%(input_elem : [`Input] elt)
+        ~%(form_input_elem : [`Input] elt option)
+        ~%(choices_elem : [`Span] elt)
+        ~%choice ~%emit ~%complete (string_of_option (string_of_int <@ snd))] in
   (main_elem, h)
 
-let labelled_int32 : (string * int32, 'attrib, 'elt) t_req =
-  fun ?has_feedback ~complete ~emit ?a choice ->
-  let input_elem, choices_elem, main_elem = make_elem ?a () in
+let labelled_int32 : (int32, 'attrib, 'elt) labelled_req =
+  fun ?has_feedback ~complete ?name ?emit ?a choice ->
+  let input_elem, form_input_elem, choices_elem, main_elem =
+    make_labelled ?a ?name ~value:(snd choice) D.Form.int32 in
   let h : (string * int32) handle Eliom_client_value.t =
     [%client
       new labelled_req_handle ~%has_feedback
-        ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete] in
+        ~%(input_elem : [`Input] elt)
+        ~%(form_input_elem : [`Input] elt option)
+        ~%(choices_elem : [`Span] elt)
+        ~%choice ~%emit ~%complete (Int32.to_string <@ snd)] in
   (main_elem, h)
 
-let labelled_int32_option : (string * int32, 'attrib, 'elt) t_opt =
-  fun ?has_feedback ~complete ~emit ?a choice ->
-  let input_elem, choices_elem, main_elem = make_elem ?a () in
+let labelled_int32_option : (int32, 'attrib, 'elt) labelled_opt =
+  fun ?has_feedback ~complete ?name ?emit ?a choice ->
+  let input_elem, form_input_elem, choices_elem, main_elem =
+    make_labelled ?a ?name ?value:(Option.map snd choice) D.Form.int32 in
   let h : (string * int32) option handle Eliom_client_value.t =
     [%client
       new labelled_opt_handle ~%has_feedback
-        ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete] in
+        ~%(input_elem : [`Input] elt)
+        ~%(form_input_elem : [`Input] elt option)
+        ~%(choices_elem : [`Span] elt)
+        ~%choice ~%emit ~%complete (string_of_option (Int32.to_string <@ snd))] in
   (main_elem, h)
 
-let labelled_int64 : (string * int64, 'attrib, 'elt) t_req =
-  fun ?has_feedback ~complete ~emit ?a choice ->
-  let input_elem, choices_elem, main_elem = make_elem ?a () in
+let labelled_int64 : (int64, 'attrib, 'elt) labelled_req =
+  fun ?has_feedback ~complete ?name ?emit ?a choice ->
+  let input_elem, form_input_elem, choices_elem, main_elem =
+    make_labelled ?a ?name ~value:(snd choice) D.Form.int64 in
   let h : (string * int64) handle Eliom_client_value.t =
     [%client
       new labelled_req_handle ~%has_feedback
-        ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete] in
+        ~%(input_elem : [`Input] elt)
+        ~%(form_input_elem : [`Input] elt option)
+        ~%(choices_elem : [`Span] elt)
+        ~%choice ~%emit ~%complete (Int64.to_string <@ snd)] in
   (main_elem, h)
 
-let labelled_int64_option : (string * int64, 'attrib, 'elt) t_opt =
-  fun ?has_feedback ~complete ~emit ?a choice ->
-  let input_elem, choices_elem, main_elem = make_elem ?a () in
+let labelled_int64_option : (int64, 'attrib, 'elt) labelled_opt =
+  fun ?has_feedback ~complete ?name ?emit ?a choice ->
+  let input_elem, form_input_elem, choices_elem, main_elem =
+    make_labelled ?a ?name ?value:(Option.map snd choice) D.Form.int64 in
   let h : (string * int64) option handle Eliom_client_value.t =
     [%client
       new labelled_opt_handle ~%has_feedback
-        ~%(input_elem : [`Input] elt) ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete] in
+        ~%(input_elem : [`Input] elt)
+        ~%(form_input_elem : [`Input] elt option)
+        ~%(choices_elem : [`Span] elt)
+        ~%choice ~%emit ~%complete (string_of_option (Int64.to_string <@ snd))] in
   (main_elem, h)
