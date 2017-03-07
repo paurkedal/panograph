@@ -14,6 +14,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+(** Input boxes with dynamic completions. *)
+
 [%%shared.start]
 open Eliom_content.Html
 open Panograph_types
