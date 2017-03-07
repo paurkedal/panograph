@@ -174,7 +174,7 @@ object
    | _ -> None
   method private receive_completions cs =
     completions <- cs;
-    None :: List.map Option.some cs
+    List.map Option.some cs
 end
 
 class%client ['a] labelled_req_handle
@@ -242,7 +242,7 @@ object
       with Not_found -> None
   method private receive_completions cs =
     completions <- cs;
-    None :: List.map Option.some cs
+    List.map Option.some cs
 end
 
 
