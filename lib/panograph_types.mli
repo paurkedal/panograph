@@ -24,3 +24,5 @@ type 'a ui_result = ('a, ui_error) result
 type ack =
   | Ack_ok
   | Ack_error of string
+(** @deprecated This is only used for some older widget, and will be phased out.
+    Newer widgets use [result]. *)

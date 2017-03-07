@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -26,6 +26,7 @@ val string_editor :
       ?value: string ->
       (string -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (string -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
@@ -34,6 +35,7 @@ val int_editor :
       ?value: int ->
       (int -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (int -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int32_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
@@ -42,6 +44,7 @@ val int32_editor :
       ?value: int32 ->
       (int32 -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (int32 -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int64_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
@@ -50,6 +53,7 @@ val int64_editor :
       ?value: int64 ->
       (int64 -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (int64 -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val float_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
@@ -58,6 +62,7 @@ val float_editor :
       ?value: float ->
       (float -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (float -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val string_option_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
@@ -66,6 +71,7 @@ val string_option_editor :
       ?value: string option ->
       (string option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (string option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val string_option_textarea :
       ?a: Html_types.textarea_attrib Html.attrib list ->
@@ -83,6 +89,7 @@ val int_option_editor :
       ?value: int option ->
       (int option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (int option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int32_option_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
@@ -91,6 +98,7 @@ val int32_option_editor :
       ?value: int32 option ->
       (int32 option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (int32 option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int64_option_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
@@ -99,6 +107,7 @@ val int64_option_editor :
       ?value: int64 option ->
       (int64 option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (int64 option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val float_option_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
@@ -107,6 +116,7 @@ val float_option_editor :
       ?value: float option ->
       (float option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (float option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val bool_option_selector :
       ?a: [< Html_types.select_attrib] Html.attrib list ->
@@ -116,7 +126,7 @@ val bool_option_selector :
       ?value: bool option ->
       (bool option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.select] Html.elt * (bool option -> unit) Eliom_client_value.t
-(** @deprecated Use {!Panui_basic_selectors}. *)
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int_option_selector :
       ?a: [< Html_types.select_attrib] Html.attrib list ->
@@ -125,7 +135,7 @@ val int_option_selector :
       ?value: int option ->
       (int option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.select] Html.elt * (int option -> unit) Eliom_client_value.t
-(** @deprecated Use {!Panui_basic_selectors}. *)
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int32_option_selector :
       ?a: [< Html_types.select_attrib] Html.attrib list ->
@@ -134,7 +144,7 @@ val int32_option_selector :
       ?value: int32 option ->
       (int32 option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.select] Html.elt * (int32 option -> unit) Eliom_client_value.t
-(** @deprecated Use {!Panui_basic_selectors}. *)
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int64_option_selector :
       ?a: [< Html_types.select_attrib] Html.attrib list ->
@@ -143,14 +153,14 @@ val int64_option_selector :
       ?value: int64 option ->
       (int64 option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.select] Html.elt * (int64 option -> unit) Eliom_client_value.t
-(** @deprecated Use {!Panui_basic_selectors}. *)
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val string_option_menu :
       ?a: [< Html_types.select_attrib] Html.attrib list ->
       values: string list -> ?value: string option ->
       (string option -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.select] Html.elt * (string option -> unit) Eliom_client_value.t
-(** @deprecated Use {!Panui_basic_selectors}. *)
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val bool_checkbox :
       ?a: [< Html_types.input_attrib > `Checked `Input_Type]
