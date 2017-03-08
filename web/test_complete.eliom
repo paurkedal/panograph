@@ -63,7 +63,7 @@ let choices = Prime_list.sample (fun i -> (ordinal i, i)) 100
 let complete pfx =
   Lwt_js.sleep 0.5 >|= fun () ->
   if String.exists (fun c -> not (Char.is_alpha c)) pfx
-  then (Error "non-alpha")
+  then (Panui_result.invalid_input "non-alpha")
   else (Ok (List.filter (fun (s, _) -> String.has_prefix pfx s) choices))
 
 let emit elem (label, value) =
@@ -74,7 +74,7 @@ let emit elem (label, value) =
 let complete_opt pfx =
   Lwt_js.sleep 0.5 >|= fun () ->
   if String.exists (fun c -> not (Char.is_alpha c)) pfx
-    then (Error "non-alpha") else
+    then (Panui_result.invalid_input "non-alpha") else
   let choices =
     if pfx = "" then
       ["", None]
@@ -87,7 +87,7 @@ let complete_opt pfx =
 let complete_int32_opt pfx =
   Lwt_js.sleep 0.5 >|= fun () ->
   if String.exists (fun c -> not (Char.is_alpha c)) pfx
-    then (Error "non-alpha") else
+    then (Panui_result.invalid_input "non-alpha") else
   let choices =
     if pfx = "" then
       []

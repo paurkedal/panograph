@@ -56,9 +56,9 @@ object (self)
            | Ok () ->
               Pandom_style.clear_error input_dom;
               Lwt.return_unit
-           | Error msg ->
+           | Error err ->
               if has_feedback then Pandom_style.clear_dirty input_dom;
-              Pandom_style.set_error msg input_dom;
+              Pandom_style.set_error_v2 err input_dom;
               Lwt.return_unit))
     end
 
@@ -101,8 +101,8 @@ object (self)
         let choices = List.map self#make_choice completions in
         Manip.replaceChildren choices_elem choices;
         Lwt.return_unit
-     | Error msg ->
-        Pandom_style.set_error msg input_dom;
+     | Error err ->
+        Pandom_style.set_error_v2 err input_dom;
         Lwt.return_unit)
 
   method private expect_select =
@@ -252,9 +252,9 @@ type%server 'a handle
 
 type ('a, 'b, 'c, 'attrib, 'elt) t =
     ?has_feedback: bool ->
-    complete: (string -> 'b ui_result Lwt.t) Eliom_client_value.t ->
+    complete: (string -> 'b Panui_result.t Lwt.t) Eliom_client_value.t ->
     ?name: 'c Eliom_parameter.param_name ->
-    ?emit: ('a -> unit ui_result Lwt.t) Eliom_client_value.t ->
+    ?emit: ('a -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
     ?a: 'attrib attrib list ->
     'a -> 'elt elt * 'a handle Eliom_client_value.t
   constraint 'attrib = [< Html_types.common > `Class]

@@ -35,9 +35,9 @@ end
 
 type ('a, 'b, 'c, 'attrib, 'elt) t =
     ?has_feedback: bool ->
-    complete: (string -> 'b ui_result Lwt.t) Eliom_client_value.t ->
+    complete: (string -> 'b Panui_result.t Lwt.t) Eliom_client_value.t ->
     ?name: 'c Eliom_parameter.param_name ->
-    ?emit: ('a -> unit ui_result Lwt.t) Eliom_client_value.t ->
+    ?emit: ('a -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
     ?a: 'attrib attrib list ->
     'a -> 'elt elt * 'a handle Eliom_client_value.t
   constraint 'attrib = [< Html_types.common > `Class]

@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -31,6 +31,8 @@ val clear_hidden : #Dom_html.element Js.t -> unit
 val set_error : string -> #Dom_html.element Js.t -> unit
 (** [set_error msg elem] adjusts [elem] to indicate a failure with a tooltip
     reporting [msg]. *)
+
+val set_error_v2 : Panui_error.t -> #Dom_html.element Js.t -> unit
 
 val clear_error : #Dom_html.element Js.t -> unit
 (** [clear_error elem] clears the failure indicator of [elem], if present, and
