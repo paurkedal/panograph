@@ -37,7 +37,9 @@ Panui_content		{server, client}
 Panui_content_intf	{server, client}
 Panui_content_with_edit	{server, client}
 Panui_dialogs		{client}
+Panui_error		{shared}
 Panui_pinboard		{server, client}
+Panui_result		{shared}
 Panui_scalar		{server, client}
 
 Operated_html5		{client}
