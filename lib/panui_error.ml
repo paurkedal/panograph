@@ -16,12 +16,14 @@
 
 type t = {
   tags: string list;
-  doc: string option;
   msg: string;
+  doc: string option;
 }
 
 let create ?(tags = ["untagged"]) ?doc msg = {tags; doc; msg}
 
-let message err = err.msg
-
 let tags err = err.tags
+
+let doc err = err.doc
+
+let message err = err.msg
