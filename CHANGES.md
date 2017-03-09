@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.5.1] - 2017-03-10
+
+- Added abstract and richer error type in `Panui_error` and `Panui_result`.
+- Added `Panui_complete` to replace `Panui_completion`.
+- Deprecated most of `Panograph_basic_editors`.
+
 ## [0.5.0] - 2016-11-15
 
 - Update to Eliom 6.0.0.
@@ -37,6 +43,7 @@
   replaced by `panograph.client` and `panograph.server`.
 
 [Unreleased]: https://github.com/paurkedal/panograph/compare/0.5.0...HEAD
+[0.5.1]: https://github.com/paurkedal/panograph/compare/0.5.0...0.5.1
 [0.5.0]: https://github.com/paurkedal/panograph/compare/0.4.4...0.5.0
 [0.4.4]: https://github.com/paurkedal/panograph/compare/0.4.3...0.4.4
 [0.4.3]: https://github.com/paurkedal/panograph/compare/0.4.2...0.4.3
