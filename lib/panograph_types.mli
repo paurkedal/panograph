@@ -19,7 +19,9 @@
 type ('a, 'b) either = Inl of 'a | Inr of 'b [@@deriving json]
 
 type ui_error = string
+  [@@ocaml.deprecated "Replaced by Panui_error.t"]
 type 'a ui_result = ('a, ui_error) result
+  [@@ocaml.deprecated "Replaced by Panui_result.t"]
 
 type ack =
   | Ack_ok
