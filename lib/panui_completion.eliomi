@@ -27,3 +27,4 @@ val string_completion_input :
       (string -> unit ui_result Lwt.t) Eliom_client_value.t ->
       [> Html_types.span] Html.elt * (string -> unit) Eliom_client_value.t
 [@@ocaml.deprecated "Use a function from the Panui_complete module instead."]
+[@@ocaml.warning "-3"]

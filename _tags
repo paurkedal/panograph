@@ -5,6 +5,7 @@ true: package(lwt), package(lwt.ppx)
 true: package(prime), package(prime.unstable), package(react)
 true: package(ppx_compose)
 true: package(ppx_deriving.runtime), package(js_of_ocaml.deriving)
+true: warn(-58)
 
 <*/server/*>: thread
 <*/server/*>: package(eliom.server)

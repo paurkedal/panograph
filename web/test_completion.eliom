@@ -19,6 +19,7 @@ open Panui_completion
 open Panograph_prereq
 
 [%%shared
+  [@@@ocaml.warning "-3"] (* Cf panui_completion.eliom *)
   open Panograph_types
   open Unprime_char
   open Unprime_string

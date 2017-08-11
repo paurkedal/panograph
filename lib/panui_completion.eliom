@@ -15,6 +15,10 @@
  *)
 
 [%%shared
+  (* This module is deprecated and ui_result spills into inferred, making it
+   * hard to silence the warning selectively. *)
+  [@@@ocaml.warning "-3"]
+
   open Eliom_content.Html
   open Lwt.Infix
   open Panograph_types
