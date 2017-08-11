@@ -2,13 +2,12 @@ true: bin_annot, eliom_ppx
 false: package(adpkg)
 
 true: package(lwt), package(lwt.ppx)
-true: package(prime), package(react)
+true: package(prime), package(prime.unstable), package(react)
 true: package(ppx_deriving.runtime), package(js_of_ocaml.deriving)
 
 <*/server/*>: thread
 <*/server/*>: package(eliom.server)
 <*/client/*>: package(eliom.client), package(js_of_ocaml.ppx)
-<*/client/*>: package(prime.unstable)
 
 <lib/*/operated_types.*>: package(ppx_deriving), package(ppx_deriving.std), package(js_of_ocaml.deriving.ppx)
 <lib/panograph_i18n.*>: package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
