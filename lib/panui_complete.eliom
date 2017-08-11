@@ -344,7 +344,7 @@ let labelled_int : (int, 'attrib, 'elt) labelled_req =
         ~%(input_elem : [`Input] elt)
         ~%(form_input_elem : [`Input] elt option)
         ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete (string_of_int <@ snd)] in
+        ~%choice ~%emit ~%complete (string_of_int % snd)] in
   (main_elem, h)
 
 let labelled_int_option : (int, 'attrib, 'elt) labelled_opt =
@@ -357,7 +357,7 @@ let labelled_int_option : (int, 'attrib, 'elt) labelled_opt =
         ~%(input_elem : [`Input] elt)
         ~%(form_input_elem : [`Input] elt option)
         ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete (string_of_option (string_of_int <@ snd))] in
+        ~%choice ~%emit ~%complete (string_of_option (string_of_int % snd))] in
   (main_elem, h)
 
 let labelled_int32 : (int32, 'attrib, 'elt) labelled_req =
@@ -370,7 +370,7 @@ let labelled_int32 : (int32, 'attrib, 'elt) labelled_req =
         ~%(input_elem : [`Input] elt)
         ~%(form_input_elem : [`Input] elt option)
         ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete (Int32.to_string <@ snd)] in
+        ~%choice ~%emit ~%complete (Int32.to_string % snd)] in
   (main_elem, h)
 
 let labelled_int32_option : (int32, 'attrib, 'elt) labelled_opt =
@@ -383,7 +383,7 @@ let labelled_int32_option : (int32, 'attrib, 'elt) labelled_opt =
         ~%(input_elem : [`Input] elt)
         ~%(form_input_elem : [`Input] elt option)
         ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete (string_of_option (Int32.to_string <@ snd))] in
+        ~%choice ~%emit ~%complete (string_of_option (Int32.to_string % snd))] in
   (main_elem, h)
 
 let labelled_int64 : (int64, 'attrib, 'elt) labelled_req =
@@ -396,7 +396,7 @@ let labelled_int64 : (int64, 'attrib, 'elt) labelled_req =
         ~%(input_elem : [`Input] elt)
         ~%(form_input_elem : [`Input] elt option)
         ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete (Int64.to_string <@ snd)] in
+        ~%choice ~%emit ~%complete (Int64.to_string % snd)] in
   (main_elem, h)
 
 let labelled_int64_option : (int64, 'attrib, 'elt) labelled_opt =
@@ -409,5 +409,5 @@ let labelled_int64_option : (int64, 'attrib, 'elt) labelled_opt =
         ~%(input_elem : [`Input] elt)
         ~%(form_input_elem : [`Input] elt option)
         ~%(choices_elem : [`Span] elt)
-        ~%choice ~%emit ~%complete (string_of_option (Int64.to_string <@ snd))] in
+        ~%choice ~%emit ~%complete (string_of_option (Int64.to_string % snd))] in
   (main_elem, h)

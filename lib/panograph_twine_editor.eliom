@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -73,7 +73,7 @@
       let remove_dom = To_dom.of_button remove_button in
       let item = D.span [D.span [D.pcdata (Lang.to_string lang)];
                          inp; remove_button] in
-      let next = Option.map (fst <@ snd)
+      let next = Option.map (fst % snd)
                             (Lang_map.succ_binding twe.twe_map lang) in
       let item_dom = To_dom.of_span item in
       Dom.insertBefore twe.twe_container_dom item_dom (Js.Opt.option next);

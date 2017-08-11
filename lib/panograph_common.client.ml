@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -54,10 +54,10 @@ module Basic_shape = struct
     a_title = None;
   }
   let attribs_of_shape s =
-    [] |> Option.fold (fun id -> List.push (Html.F.a_id id)) s.a_id
+    [] |> Option.fold (fun id -> List.cons (Html.F.a_id id)) s.a_id
        |> begin match s.a_class with
           | [] -> ident
-          | cls -> List.push (Html.F.a_class cls)
+          | cls -> List.cons (Html.F.a_class cls)
           end
-       |> Option.fold (fun s -> List.push (Html.F.a_title s)) s.a_title
+       |> Option.fold (fun s -> List.cons (Html.F.a_title s)) s.a_title
 end

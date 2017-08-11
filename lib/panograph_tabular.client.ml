@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -809,13 +809,13 @@ module Tabular = struct
     let add_first tab ?css_class cs_up =
       let cs = Dltree.add_first (make_csn tab css_class) cs_up in
       alloc_cs tab cs;
-      Option.iter (update_cs_attribs tab <@ Dltree.first_leaf) (Dltree.next cs);
+      Option.iter (update_cs_attribs tab % Dltree.first_leaf) (Dltree.next cs);
       cs
 
     let add_last tab ?css_class cs_up =
       let cs = Dltree.add_last (make_csn tab css_class) cs_up in
       alloc_cs tab cs;
-      Option.iter (update_cs_attribs tab <@ Dltree.last_leaf) (Dltree.prev cs);
+      Option.iter (update_cs_attribs tab % Dltree.last_leaf) (Dltree.prev cs);
       cs
 
     let add_before tab ?css_class cs_n =
