@@ -17,14 +17,16 @@
 open Eliom_content.Html
 open Panograph_basic_editors
 open Panograph_prereq
+[@@@ocaml.warning "-3"]
 open Panui_combo_selectors
+[@@@ocaml.warning "+3"]
 open Panui_content
 
 [%%shared
   open Panograph_types
 ]
 [%%client
-  module Dep = Panui_combo_selectors
+  module Dep = Panui_combo_selectors [@@ocaml.warning "-3"]
 
   let ev, emit_ev =
     (React.E.create () : (int32, string) either option React.event * _)
@@ -49,13 +51,13 @@ let handler () () =
   ]) in
   let elem, absorb =
     int32_string_option_combo_selector ~inl_selection:selection
-                                       [%client emit] in
+                                       [%client emit] [@@ocaml.warning "-3"] in
   let emitI =
     [%client function Some x -> emit (Some (Inl x)) | None -> emit None] in
   let emitS =
     [%client function Some x -> emit (Some (Inr x)) | None -> emit None] in
-  let elemI, absorbI = int32_option_editor emitI in
-  let elemS, absorbS = string_option_editor emitS in
+  let elemI, absorbI = int32_option_editor emitI [@@ocaml.warning "-3"] in
+  let elemS, absorbS = string_option_editor emitS [@@ocaml.warning "-3"] in
   let absorbIS : ((int32, string) either option -> unit) Eliom_client_value.t = [%client
     let absorbI : int32 option -> unit = ~%absorbI in
     let absorbS : string option -> unit = ~%absorbS in

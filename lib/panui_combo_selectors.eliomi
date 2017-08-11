@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,7 @@
  *)
 
 [%%shared.start]
+[@@@ocaml.deprecated]
 
 open Eliom_content.Html
 open Html_types
@@ -31,6 +32,7 @@ val int_string_option_combo_selector :
       ?value: (int, string) either option ->
       ((int, string) either option -> ack Lwt.t) Eliom_client_value.t ->
       [> span] elt * ((int, string) either option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated]
 
 val int32_string_option_combo_selector :
       ?a: [< span_attrib > `Class] attrib list ->
@@ -42,6 +44,7 @@ val int32_string_option_combo_selector :
       ?value: (int32, string) either option ->
       ((int32, string) either option -> ack Lwt.t) Eliom_client_value.t ->
       [> span] elt * ((int32, string) either option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated]
 
 val int64_string_option_combo_selector :
       ?a: [< span_attrib > `Class] attrib list ->
@@ -53,3 +56,4 @@ val int64_string_option_combo_selector :
       ?value: (int64, string) either option ->
       ((int64, string) either option -> ack Lwt.t) Eliom_client_value.t ->
       [> span] elt * ((int64, string) either option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated]
