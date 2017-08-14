@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,6 +17,8 @@
 (** Obsoleted by Lwt.Infix
 
     @deprecated Lwt.Infix is available since lwt-2.4.8. *)
+
+[@@@ocaml.deprecated "Use Lwt.Infix"]
 
 open Lwt
 

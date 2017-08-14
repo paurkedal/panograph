@@ -16,6 +16,8 @@
 
 (** Input boxes with dynamic completions (deprecated). *)
 
+[@@@ocaml.deprecated "Use Panui_complete."]
+
 [%%shared.start]
 
 open Eliom_content

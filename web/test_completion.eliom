@@ -14,16 +14,16 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-open Eliom_content.Html
-open Panui_completion
-open Panograph_prereq
-
 [%%shared
   [@@@ocaml.warning "-3"] (* Cf panui_completion.eliom *)
   open Panograph_types
   open Unprime_char
   open Unprime_string
 ]
+
+open Eliom_content.Html
+open Panui_completion
+open Panograph_prereq
 
 [%%client
   module Dep0 = Panui_completion
