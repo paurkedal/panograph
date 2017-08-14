@@ -168,3 +168,4 @@ val bool_checkbox :
       ?value: bool ->
       (bool -> ack Lwt.t) Eliom_client_value.t ->
       [> Html_types.input] Html.elt * (bool -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar.bool"]
