@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.5.2] - 2017-08-11
+
+- Fixed `prime.unstable` dependency in `_tags`.
+- Deprecated `Panui_combo_selectors`.
+- Deprecated `Panograph_basic_editors.bool_checkbox`.
+
 ## [0.5.1] - 2017-03-10
 
 - Added abstract and richer error type in `Panui_error` and `Panui_result`.
