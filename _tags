@@ -19,5 +19,6 @@ true: warn(-58)
 
 <web/*/test_{basic_editors,combo_selectors,operated,scalar,twine_editor}.*>: \
     package(ppx_deriving), package(js_of_ocaml.deriving.ppx)
+<web/*/test_complete.*>: package(ppx_deriving.show)
 
 <tests/*>: package(oUnit)

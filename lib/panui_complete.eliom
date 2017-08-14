@@ -323,7 +323,6 @@ let string : (string, 'attrib, 'elt) simple_req =
 
 let string_option : (string, 'attrib, 'elt) simple_opt =
   fun ?has_feedback ~complete ?name ?emit ?a choice ->
-  let param = D.Form.user (function None -> "" | Some s -> s) in
   let input_elem, choices_elem, main_elem =
     make_string ?a ?name D.Form.string in
   let h : string option handle Eliom_client_value.t =

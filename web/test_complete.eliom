@@ -60,51 +60,33 @@ let rec ordinal = function
 
 let choices = Prime_list.sample (fun i -> (ordinal i, i)) 100
 
-let complete pfx =
+let emit to_string elem value =
+  Manip.removeChildren elem;
+  Manip.appendChild elem (D.span [D.pcdata (to_string value)]);
+  Lwt.return (Ok ())
+
+let string_complete pfx =
+  Lwt_js.sleep 0.5 >|= fun () ->
+  if String.exists (fun c -> not (Char.is_alpha c)) pfx
+  then (Panui_result.invalid_input "non-alpha")
+  else (Ok (List.filter (String.has_prefix pfx) (List.map fst choices)))
+
+let labelled_int_complete pfx =
   Lwt_js.sleep 0.5 >|= fun () ->
   if String.exists (fun c -> not (Char.is_alpha c)) pfx
   then (Panui_result.invalid_input "non-alpha")
   else (Ok (List.filter (fun (s, _) -> String.has_prefix pfx s) choices))
 
-let emit elem (label, value) =
-  Manip.removeChildren elem;
-  Manip.appendChild elem (D.span [D.pcdata (sprintf "%S, %d" label value)]);
-  Lwt.return (Ok ())
-
-let complete_opt pfx =
+let labelled_int32_complete pfx =
   Lwt_js.sleep 0.5 >|= fun () ->
-  if String.exists (fun c -> not (Char.is_alpha c)) pfx
-    then (Panui_result.invalid_input "non-alpha") else
+  if String.exists (fun c -> not (Char.is_alpha c)) pfx then
+    (Panui_result.invalid_input "non-alpha") else
   let choices =
-    if pfx = "" then
-      ["", None]
-    else
-      choices
-        |> List.filter (fun (s, _) -> String.has_prefix pfx s)
-        |> List.map (fun (s, v) -> (s, Some v)) in
+    if pfx = "" then [] else
+    choices
+      |> List.filter (fun (s, _) -> String.has_prefix pfx s)
+      |> List.map (fun (s, v) -> (s, Int32.of_int v)) in
   Ok choices
-
-let complete_int32_opt pfx =
-  Lwt_js.sleep 0.5 >|= fun () ->
-  if String.exists (fun c -> not (Char.is_alpha c)) pfx
-    then (Panui_result.invalid_input "non-alpha") else
-  let choices =
-    if pfx = "" then
-      []
-    else
-      choices
-        |> List.filter (fun (s, _) -> String.has_prefix pfx s)
-        |> List.map (fun (s, v) -> (s, Int32.of_int v)) in
-  Ok choices
-
-let emit_opt elem choice =
-  Manip.removeChildren elem;
-  let text =
-    (match choice with
-     | Some (label, value) -> sprintf "%S, %d" label value
-     | None -> "(none)") in
-  Manip.appendChild elem (D.span [D.pcdata text]);
-  Lwt.return (Ok ())
 
 [%%server.start]
 
@@ -124,28 +106,43 @@ let get_service =
     get_handler
 
 let handler () () =
-  let log_elem = D.span [] in
-  let log_elem_opt = D.span [] in
-  let elem, _ =
+
+  let string_option_log_elem = D.span [] in
+  let string_option_elem, _ =
+    Panui_complete.string_option
+      ~has_feedback:false
+      ~complete:[%client string_complete]
+      ~emit:[%client emit [%show: string option] ~%string_option_log_elem]
+      None in
+
+  let labelled_int_log_elem = D.span [] in
+  let labelled_int_elem, _ =
     Panui_complete.labelled_int
       ~has_feedback:false
-      ~complete:[%client complete]
-      ~emit:[%client emit ~%log_elem] ("zero", 0) in
-  let elem_opt, _ =
+      ~complete:[%client labelled_int_complete]
+      ~emit:[%client emit [%show: string * int] ~%labelled_int_log_elem]
+      ("zero", 0) in
+
+  let labelled_int_option_log_elem = D.span [] in
+  let labelled_int_option_elem, _ =
     Panui_complete.labelled_int_option
       ~has_feedback:false
-      ~complete:[%client complete]
-      ~emit:[%client emit_opt ~%log_elem_opt] None in
+      ~complete:[%client labelled_int_complete]
+      ~emit:[%client
+        emit [%show: (string * int) option] ~%labelled_int_option_log_elem]
+      None in
+
   Lwt.return [
     D.p [
-      elem; log_elem; D.br ();
-      elem_opt; log_elem_opt
+      string_option_elem; string_option_log_elem; D.br ();
+      labelled_int_elem; labelled_int_log_elem; D.br ();
+      labelled_int_option_elem; labelled_int_option_log_elem
     ];
     D.Form.get_form get_service
       (fun arg_name ->
         let elt, h =
           Panui_complete.labelled_int32_option
-            ~complete:[%client complete_int32_opt]
+            ~complete:[%client labelled_int32_complete]
             ~name:arg_name (Some ("one", 1l)) in
         [elt; D.Form.input ~input_type:`Submit D.Form.string]);
   ]
