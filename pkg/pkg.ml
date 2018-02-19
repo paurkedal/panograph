@@ -30,7 +30,9 @@ let build_cmd c os targets =
 
 let build = Pkg.build ~cmd:build_cmd ()
 
-let opams = [Pkg.opam_file ~lint_deps_excluding:(Some ["lib"; "oUnit"]) "opam"]
+let opams = [
+  Pkg.opam_file ~lint_deps_excluding:(Some ["lib"; "oUnit"]) "panograph.opam"
+]
 
 let map_client_server_dir tags dir =
   if Tags.mem "server" tags then Fpath.append dir "server" else
