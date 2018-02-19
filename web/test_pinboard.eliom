@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -32,7 +32,7 @@
     Panui_pinboard.pin ~subject:[pcdata_f "Item %d pinned for %g s" i timeout]
                        ~level:levels.(Random.int (Array.length levels))
                        ~timeout pinboard |> ignore;
-    Lwt_js.sleep (Random.float 1.0) >>
+    Lwt_js.sleep (Random.float 1.0) >>= fun () ->
     populate pinboard (succ i)
 ]
 

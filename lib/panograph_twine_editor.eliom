@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,6 @@
  *)
 
 [%%shared
-  open Eliom_lib
   open Eliom_content
   open Panograph_i18n
   open Panograph_types
@@ -23,6 +22,9 @@
   type twine_editor_out = [`Add of lang * string | `Remove of lang]
                           [@@deriving json]
   type twine_editor_in = twine_editor_out
+]
+[%%client
+  open Eliom_lib
 
   type twine_editor = {
     twe_container_dom : Dom_html.element Js.t;

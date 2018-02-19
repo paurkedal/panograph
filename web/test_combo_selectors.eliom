@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -26,13 +26,14 @@ open Panui_content
   open Panograph_types
 ]
 [%%client
+  open Lwt.Infix
   module Dep = Panui_combo_selectors [@@ocaml.warning "-3"]
 
   let ev, emit_ev =
     (React.E.create () : (int32, string) either option React.event * _)
 
   let emit x =
-    Lwt_js.sleep 0.4 >>
+    Lwt_js.sleep 0.4 >>= fun () ->
     (emit_ev x; Lwt.return Ack_ok)
 ]
 

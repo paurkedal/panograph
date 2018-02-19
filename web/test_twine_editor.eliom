@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -39,8 +39,8 @@ let on_update' p =
     Lwt_log.debug_f "Received add %s => %s" (Lang.to_string lang) msg
   | `Remove lang ->
     Lwt_log.debug_f "Received remove %s" (Lang.to_string lang)
-  end >>
-  Lwt_unix.sleep 1.0 >>
+  end >>= fun () ->
+  Lwt_unix.sleep 1.0 >>= fun () ->
   (emit (Some p); Lwt.return Ack_ok)
 
 let on_update = server_function [%json: twine_editor_out] on_update'

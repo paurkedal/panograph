@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,7 @@
  *)
 
 open Eliom_content.Html
+open Lwt.Infix
 open Unprime_option
 
 let created_count = ref 0
@@ -56,7 +57,7 @@ let rec update stat node =
     D.pcdata ", can reach ";
     D.pcdata (string_of_int reachable_count);
   ];
-  Lwt_js.sleep 0.01 >> update stat node
+  Lwt_js.sleep 0.01 >>= fun () -> update stat node
 
 let render () =
   Pandom_finalizer.enable 100;

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,13 +15,12 @@
  *)
 
 open Eliom_content
+open Lwt.Infix
 open Panograph_intf
 open Panograph_simple
 open Panograph_mapped
 open Panograph_collection
 open Panograph_types
-
-let (>|=) = Lwt.(>|=)
 
 module Int_order = struct
   type t = int
@@ -36,7 +35,10 @@ module Int_ul_MPE =
 let test_int_editor () =
   let ev, send_ev = React.E.create () in
   let open Html in
-  let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
+  let on_patch p =
+    Lwt_js.sleep 1.0 >>= fun () ->
+    send_ev p;
+    Lwt.return Ack_ok in
   let w, ui =
     Int_PE.create ~shape:Int_PE.({default_shape with a_title = Some "test"})
                   ~on_patch 19 in
@@ -46,7 +48,10 @@ let test_int_editor () =
 let test_float_editor () =
   let ev, send_ev = React.E.create () in
   let open Html in
-  let on_patch p = Lwt_js.sleep 1.0 >> (send_ev p; Lwt.return Ack_ok) in
+  let on_patch p =
+    Lwt_js.sleep 1.0 >>= fun () ->
+    send_ev p;
+    Lwt.return Ack_ok in
   let w, ui = Float_PE.create ~on_patch 0.01 in
   Lwt_react.E.keep (Lwt_react.E.map (Float_PE.patch w) ev);
   ui

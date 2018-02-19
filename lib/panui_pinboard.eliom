@@ -1,4 +1,4 @@
-(* Copyright (C) 2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -38,13 +38,13 @@ let create ?(freeze_on_hover = true) ?(freeze_timeout = 0.2) () =
     let hover_mutex = ~%hover_mutex in
     let rec not_hovering () =
       let%lwt _ = Lwt_js_events.mouseover table_dom in
-      Lwt_mutex.lock hover_mutex >>
+      Lwt_mutex.lock hover_mutex >>= fun () ->
       hovering ()
     and hovering () =
       let%lwt _ = Lwt_js_events.mouseout table_dom in
       let%lwt reentered = Lwt.pick [
         Lwt_js_events.mouseover table_dom >|= konst true;
-        Lwt_js.sleep ~%freeze_timeout >> Lwt.return_false;
+        (Lwt_js.sleep ~%freeze_timeout >>= fun () -> Lwt.return_false);
       ] in
       if reentered then hovering () else begin
         Lwt_mutex.unlock hover_mutex;
@@ -73,9 +73,10 @@ let pin ~(subject : [< subject_content] elt list)
     (fun t ->
       Lwt.async begin fun () ->
         Lwt.pick [
-          Lwt_js.sleep t >> Lwt_mutex.with_lock pinboard.hover_mutex Lwt.return;
+          (Lwt_js.sleep t >>= fun () ->
+           Lwt_mutex.with_lock pinboard.hover_mutex Lwt.return);
           waiter
-        ] >>
+        ] >>= fun () ->
         Lwt.return (unpin item pinboard)
       end)
     timeout;

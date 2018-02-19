@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,7 @@ open Panograph_prereq
 
 [%%client
   module Dep0 = Panui_completion
+  open Lwt.Infix
 
   let rec diff = function
     | [_] -> []
@@ -57,7 +58,7 @@ open Panograph_prereq
     String.concat " " (List.map string_of_int zs)
 
   let commit s =
-    Lwt_js.sleep 1.0 >>
+    Lwt_js.sleep 1.0 >>= fun () ->
     try ignore (int_list_of_string s); set_state s; Lwt.return (Ok ())
     with Failure msg -> Lwt.return (Error ("Invalid: " ^ msg))
 
@@ -65,7 +66,7 @@ open Panograph_prereq
     let xs = int_list_of_string s in
     let ys = predict xs in
     let zss = List.map (fun y -> xs @ [y]) ys in
-    Lwt_js.sleep 1.0 >>
+    Lwt_js.sleep 1.0 >>= fun () ->
     Lwt.return (Ok (List.map string_of_int_list zss))
 ]
 

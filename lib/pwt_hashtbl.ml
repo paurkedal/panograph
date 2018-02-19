@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,7 +17,7 @@
 open Lwt
 
 let iter_s f ht =
-  Hashtbl.fold (fun k v intro -> intro >> f k v) ht return_unit
+  Hashtbl.fold (fun k v intro -> intro >>= fun () -> f k v) ht return_unit
 
 let iter_p f ht =
   let thunks = Hashtbl.fold (fun k v acc -> f k v :: acc) ht [] in
