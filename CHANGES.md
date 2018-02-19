@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.5.3] - 2018-02-19
+
+- Updated to work with Eliom 6.3.0.
+
 ## [0.5.2] - 2017-08-11
 
 - Fixed `prime.unstable` dependency in `_tags`.
