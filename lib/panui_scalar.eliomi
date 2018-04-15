@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -23,6 +23,9 @@ open Panograph_types
 
 type ('a, +'opt) opt constraint 'opt = [< `Opt | `Optgroup]
 
+type common_input_attrib =
+  [ Html_types.common | `Autofocus | `Disabled | `Size | `Required ]
+
 [%%server.start]
 
 type 'a handle
@@ -44,6 +47,7 @@ val add_input_with_handle :
       ?opts: ('a, 'opt) opt list ->
       ?emit: ('a -> ack Lwt.t) ->
       ?error: (string option -> unit) ->
+      ?a: [< common_input_attrib] attrib list ->
       'a -> [< `Span | `Div | `Td] elt -> 'a handle
 
 [%%shared.start]
@@ -53,28 +57,30 @@ val optv : ?enabled: bool -> 'a -> ('a, [> `Opt]) opt
 val optgroup : ?enabled: bool -> string ->
                ('a, [`Opt]) opt list -> ('a, [> `Optgroup]) opt
 
-type ('a, 'opt, 'attrib, 'elt) t =
+type ('a, 'opt, 'attrib, 'input_attrib, 'elt) t =
       ?to_string: ('a -> string) Eliom_client_value.t ->
       ?of_string: (string -> 'a) Eliom_client_value.t ->
       ?opts: ('a, 'opt) opt list ->
       ?emit: ('a -> ack Lwt.t) Eliom_client_value.t ->
       ?error: (string option -> unit) Eliom_client_value.t ->
       ?a: 'attrib attrib list ->
+      ?input_a: 'input_attrib attrib list ->
       'a -> 'elt elt * 'a handle Eliom_client_value.t
     constraint 'attrib = [< Html_types.common > `Class]
+    constraint 'input_attrib = [< common_input_attrib]
     constraint 'opt = [< `Opt | `Optgroup]
     constraint 'elt = [> `Span]
 
-val bool : (bool, 'opt, 'attrib, 'elt) t
-val string : (string, 'opt, 'attrib, 'elt) t
-val int : (int, 'opt, 'attrib, 'elt) t
-val int32 : (int32, 'opt, 'attrib, 'elt) t
-val int64 : (int64, 'opt, 'attrib, 'elt) t
-val float : (float, 'opt, 'attrib, 'elt) t
+val bool : (bool, 'opt, 'attrib, 'input_attrib, 'elt) t
+val string : (string, 'opt, 'attrib, 'input_attrib, 'elt) t
+val int : (int, 'opt, 'attrib, 'input_attrib, 'elt) t
+val int32 : (int32, 'opt, 'attrib, 'input_attrib, 'elt) t
+val int64 : (int64, 'opt, 'attrib, 'input_attrib, 'elt) t
+val float : (float, 'opt, 'attrib, 'input_attrib, 'elt) t
 
-val bool_option : (bool option, 'opt, 'attrib, 'elt) t
-val string_option : (string option, 'opt, 'attrib, 'elt) t
-val int_option : (int option, 'opt, 'attrib, 'elt) t
-val int32_option : (int32 option, 'opt, 'attrib, 'elt) t
-val int64_option : (int64 option, 'opt, 'attrib, 'elt) t
-val float_option : (float option, 'opt, 'attrib, 'elt) t
+val bool_option : (bool option, 'opt, 'attrib, 'input_attrib, 'elt) t
+val string_option : (string option, 'opt, 'attrib, 'input_attrib, 'elt) t
+val int_option : (int option, 'opt, 'attrib, 'input_attrib, 'elt) t
+val int32_option : (int32 option, 'opt, 'attrib, 'input_attrib, 'elt) t
+val int64_option : (int64 option, 'opt, 'attrib, 'input_attrib, 'elt) t
+val float_option : (float option, 'opt, 'attrib, 'input_attrib, 'elt) t
