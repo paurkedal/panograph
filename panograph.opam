@@ -15,8 +15,8 @@ depends: [
   "lwt"
   "ocamlbuild" {build}
   "ocamlfind" {build}
-  "ppx_compose" {build}
-  "ppx_deriving" {build}
+  "ppx_compose"
+  "ppx_deriving"
   "prime"
   "react"
   "topkg" {build}
