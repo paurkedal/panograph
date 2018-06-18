@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -64,18 +64,18 @@ struct
 
   let add_elt w ((_, item) as elt) =
     w.w_set <- Set.add elt w.w_set;
-    let before = Option.found (fun () -> snd (Set.elt_succ_e w.w_set elt)) in
+    let before = Option.found (fun () -> snd (Set.elt_succ_exn w.w_set elt)) in
     Container.append ?before w.w_container item
 
   let add_value w v =
-    if Set.contains (Elt_PE.key_of_value v) w.w_set then
+    if Set.mem (Elt_PE.key_of_value v) w.w_set then
       error "Collection_editor: Conflicting add."
     else begin
       let on_elt_patch on_patch p =
         match Elt_PE.key_of_patch_out p with
         | k, None -> on_patch (`Patch p)
         | k, Some k' ->
-          if Set.contains k' w.w_set then
+          if Set.mem k' w.w_set then
             Lwt.return
               (Ack_error "The changed item conflicts with another item.")
           else
@@ -107,7 +107,7 @@ struct
       | k, None -> Elt_PE.patch (fst (Set.find k w.w_set)) p
       | k, Some k' ->
         let (elt, item) = Set.find k w.w_set in
-        if Set.contains k' w.w_set then
+        if Set.mem k' w.w_set then
           error "Collection_editor: Conflict for incoming patch."
         else begin
           Container.remove w.w_container item;

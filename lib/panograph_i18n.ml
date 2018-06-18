@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -90,7 +90,7 @@ module Twine = struct
       if try Lang_map.find l m = sR with Not_found -> true
       then Lang_map.add l s m else m in
     let add l s m =
-      if Lang_map.contains l m then m else Lang_map.add l s m in
+      if Lang_map.mem l m then m else Lang_map.add l s m in
     tw |> Lang_map.fold remove mR
        |> Lang_map.fold modify mM
        |> Lang_map.fold add mA

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -71,7 +71,7 @@ struct
     Container.append ?before w.w_container elt.e_item
 
   let add_binding w (k, v) =
-    if Map.contains k w.w_map then
+    if Map.mem k w.w_map then
       error "Conflicting add to mapped collection."
     else begin
       let e_key = ref k in
@@ -100,7 +100,7 @@ struct
       | None -> Elt_PE.patch (Map.find k w.w_map).e_elt_pe p
       | Some k' ->
         let elt = Map.find k w.w_map in
-        if Map.contains k' w.w_map then
+        if Map.mem k' w.w_map then
           error "Conflict for incomping patch to mapped collection."
         else begin
           Container.remove w.w_container elt.e_item;

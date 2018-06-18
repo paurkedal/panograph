@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -317,7 +317,7 @@ module Tabular = struct
 
   let insert_cell tab rs cs =
     let rs_leaf = Dltree.first_leaf rs in
-    assert (Rs_map.contains rs_leaf tab.tab_tns);
+    assert (Rs_map.mem rs_leaf tab.tab_tns);
     let tn = Rs_map.find rs_leaf tab.tab_tns in
     let tc = insert_cell' tn cs in
     init_cell_attribs rs cs tc;
@@ -325,7 +325,7 @@ module Tabular = struct
 
   let remove_cell tab rs cs =
     let rs_leaf = Dltree.first_leaf rs in
-    assert (Rs_map.contains rs_leaf tab.tab_tns);
+    assert (Rs_map.mem rs_leaf tab.tab_tns);
     let tn = Rs_map.find rs_leaf tab.tab_tns in
     remove_cell' tn cs
 
@@ -698,7 +698,7 @@ module Tabular = struct
     let add_first tab ?css_class rs_u =
       match Dltree.first rs_u with
       | None ->
-        assert (Rs_map.contains rs_u tab.tab_tns);
+        assert (Rs_map.mem rs_u tab.tab_tns);
         let tn = Rs_map.find rs_u tab.tab_tns in
         let rsn = make_rsn css_class in
         let rs = Dltree.add_first rsn rs_u in
@@ -707,7 +707,7 @@ module Tabular = struct
         rs
       | Some rs1' ->
         let rs1 = Dltree.first_leaf rs1' in
-        assert (Rs_map.contains rs1 tab.tab_tns);
+        assert (Rs_map.mem rs1 tab.tab_tns);
         let tn1 = Rs_map.find rs1 tab.tab_tns in
         let rsn0 = make_rsn css_class in
         let rs0 = Dltree.add_first rsn0 rs_u in
@@ -750,16 +750,16 @@ module Tabular = struct
       done;
       begin match Dltree.is_first rs, Dltree.is_last rs with
       | true, true ->
-        assert (Rs_map.contains rs tab.tab_tns);
+        assert (Rs_map.mem rs tab.tab_tns);
         let tn = Rs_map.find rs tab.tab_tns in
         dealloc_rs tab rs;
         tab.tab_tns <- Rs_map.add rs_u tn (Rs_map.remove rs tab.tab_tns);
         Dltree.delete_subtree rs
       | true, false ->
-        assert (Rs_map.contains rs tab.tab_tns);
+        assert (Rs_map.mem rs tab.tab_tns);
         let tn0 = Rs_map.find rs tab.tab_tns in
         let rs1 = Dltree.first_leaf (Option.get (Dltree.next rs)) in
-        assert (Rs_map.contains rs1 tab.tab_tns);
+        assert (Rs_map.mem rs1 tab.tab_tns);
         let tn1 = Rs_map.find rs1 tab.tab_tns in
         dealloc_rs ~transfer:(tn0, tn1) tab rs;
         remove_row tab rs;
@@ -864,9 +864,9 @@ module Tabular = struct
         assert (tc##.colSpan = csn.csn_span);
         init_cell_attribs rs cs tc';
         let rs_leaf = Dltree.first_leaf rs in
-        assert (Rs_map.contains rs_leaf tab.tab_tns);
+        assert (Rs_map.mem rs_leaf tab.tab_tns);
         let tn = Rs_map.find rs_leaf tab.tab_tns in
-        assert (Cs_map.contains cs tn.tn_tcs);
+        assert (Cs_map.mem cs tn.tn_tcs);
         assert (Cs_map.find cs tn.tn_tcs == tc);
         blk.blk_state <- Single tc';
         tn.tn_tcs <- Cs_map.add cs tc' tn.tn_tcs;
