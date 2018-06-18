@@ -30,7 +30,6 @@ Pandom_weakchan		{client}
 Pandom_weaktbl		{client}
 
 Panui_basic_selectors	{server, client}
-Panui_combo_selectors	{server, client}
 Panui_complete		{server, client}
 Panui_completion	{server, client}
 Panui_content		{server, client}

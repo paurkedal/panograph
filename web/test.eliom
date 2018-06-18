@@ -19,7 +19,6 @@ open Eliom_content.Html
 module%client Linked = struct
   module Test_complete = Test_complete
   module Test_completion = Test_completion
-  module Test_combo_selectors = Test_combo_selectors
   module Test_content_with_edit = Test_content_with_edit
   module Test_dialogs = Test_dialogs
   module Test_finalizer = Test_finalizer
@@ -52,7 +51,6 @@ let create_test_c_ul name (f : (unit -> [< `Ul] elt) Eliom_client_value.t) =
   Test_app.create_test name (fun () () -> Lwt.return [C.ul [%client ~%f ()]])
 
 let test_services = Test_app.[
-  create_test "combo_selectors" Test_combo_selectors.handler;
   create_test "complete" Test_complete.handler;
   create_test "completion" Test_completion.handler;
   create_test "content_with_edit" Test_content_with_edit.handler;
