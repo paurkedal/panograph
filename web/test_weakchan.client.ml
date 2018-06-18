@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +33,7 @@ let rec make ks =
   let ul = D.ul [D.li [add_input; add_button]] in
   let on_msg = function
     | `Add k ->
-      let ul' = make (k :: ks) in
+      let ul' = (make (k :: ks) : [`Ul] elt :> [> `Ul] elt) in
       Manip.appendChild ul (D.li [D.b [D.pcdata k]; ul']) in
   ignore (Pandom_weakchan.subscribe_class chan (To_dom.of_ul ul) ks on_msg);
   ul

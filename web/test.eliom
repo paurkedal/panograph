@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -36,16 +36,20 @@ module C : sig
   include module type of C
   val div : [`Div] elt Eliom_client_value.t -> [> `Div] elt
   val table : [`Table] elt Eliom_client_value.t -> [> `Table] elt
+  val ul : [`Ul] elt Eliom_client_value.t -> [> `Ul] elt
 end = struct
   include C
   let div c = (C.node c : [`Div] elt :> [> `Div] elt)
   let table c = (C.node c : [`Table] elt :> [> `Table] elt)
+  let ul c = (C.node c : [`Ul] elt :> [> `Ul] elt)
 end
 
-let create_test_c_div name (f : (unit -> _) Eliom_client_value.t) =
+let create_test_c_div name (f : (unit -> [< `Div] elt) Eliom_client_value.t) =
   Test_app.create_test name (fun () () -> Lwt.return [C.div [%client ~%f ()]])
-let create_test_c_table name (f : (unit -> _) Eliom_client_value.t) =
+let create_test_c_table name (f : (unit -> [< `Table] elt) Eliom_client_value.t) =
   Test_app.create_test name (fun () () -> Lwt.return [C.table [%client ~%f ()]])
+let create_test_c_ul name (f : (unit -> [< `Ul] elt) Eliom_client_value.t) =
+  Test_app.create_test name (fun () () -> Lwt.return [C.ul [%client ~%f ()]])
 
 let test_services = Test_app.[
   create_test "combo_selectors" Test_combo_selectors.handler;
@@ -62,7 +66,7 @@ let test_services = Test_app.[
   create_test "operated" Test_operated.handler;
   create_test "pinboard" Test_pinboard.handler;
   create_test "scalar" Test_scalar.handler;
-  create_test_c_div "weakchan" [%client Test_weakchan.render];
+  create_test_c_ul "weakchan" [%client Test_weakchan.render];
   create_test_c_div "weaktbl" [%client Test_weaktbl.render];
   create_test "twine_editor" Test_twine_editor.handler;
 ]
