@@ -1,7 +1,6 @@
 Pwt			{shared}
 Pwt_emitter		{shared}
 Pwt_hashtbl		{shared}
-Pwt_infix		{shared}
 Pwt_list		{shared}
 Pwt_option		{shared}
 
