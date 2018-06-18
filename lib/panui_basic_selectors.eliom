@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -41,7 +41,7 @@
 
 [%%shared
   let string_option_selector ?a ~selection ?(value : string option option)
-                        (emit : (string option -> ack Lwt.t) Eliom_client_value.t) =
+      (emit : (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : string option Selection.t :> _ elt list) in
     let absorb : (string option -> unit) Eliom_client_value.t = [%client
@@ -53,7 +53,7 @@
     elem, absorb
 
   let bool_option_selector ?a ~selection ?(value : bool option option)
-                           (emit : (bool option -> ack Lwt.t) Eliom_client_value.t) =
+      (emit : (bool option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : bool option Selection.t :> _ elt list) in
     let absorb : (bool option -> unit) Eliom_client_value.t = [%client
@@ -65,7 +65,7 @@
     elem, absorb
 
   let int_option_selector ?a ~selection ?(value : int option option)
-                          (emit : (int option -> ack Lwt.t) Eliom_client_value.t) =
+      (emit : (int option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : int option Selection.t :> _ elt list) in
     let absorb : (int option -> unit) Eliom_client_value.t = [%client
@@ -77,7 +77,7 @@
     elem, absorb
 
   let int32_option_selector ?a ~selection ?(value : int32 option option)
-                            (emit : (int32 option -> ack Lwt.t) Eliom_client_value.t) =
+      (emit : (int32 option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : int32 option Selection.t :> _ elt list) in
     let absorb : (int32 option -> unit) Eliom_client_value.t = [%client
@@ -89,7 +89,7 @@
     elem, absorb
 
   let int64_option_selector ?a ~selection ?(value : int64 option option)
-                            (emit : (int64 option -> ack Lwt.t) Eliom_client_value.t) =
+      (emit : (int64 option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let elem =
       D.select ?a (selection : int64 option Selection.t :> _ elt list) in
     let absorb : (int64 option -> unit) Eliom_client_value.t = [%client

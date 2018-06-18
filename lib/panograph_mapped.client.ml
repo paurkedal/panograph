@@ -55,7 +55,7 @@ struct
     w_shape : shape;
     w_container : Container.t;
     mutable w_map : elt Map.t;
-    w_on_patch : (patch_out -> ack Lwt.t) option;
+    w_on_patch : (patch_out -> unit Panui_result.t Lwt.t) option;
   }
 
   let default_shape = {

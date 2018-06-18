@@ -35,7 +35,7 @@ type 'a handle
 class type ['a] handle = object
   method show : unit
   method hide : unit
-  method edit_on : ('a -> ack Lwt.t) -> unit
+  method edit_on : ('a -> unit Panui_result.t Lwt.t) -> unit
   method edit_off : unit
   method get : 'a
   method set : 'a -> unit
@@ -45,7 +45,7 @@ val add_input_with_handle :
       to_string: ('a -> string) ->
       of_string: (string -> 'a) ->
       ?opts: ('a, 'opt) opt list ->
-      ?emit: ('a -> ack Lwt.t) ->
+      ?emit: ('a -> unit Panui_result.t Lwt.t) ->
       ?error: (string option -> unit) ->
       ?a: [< common_input_attrib] attrib list ->
       'a -> [< `Span | `Div | `Td] elt -> 'a handle
@@ -61,7 +61,7 @@ type ('a, 'opt, 'attrib, 'input_attrib, 'elt) t =
       ?to_string: ('a -> string) Eliom_client_value.t ->
       ?of_string: (string -> 'a) Eliom_client_value.t ->
       ?opts: ('a, 'opt) opt list ->
-      ?emit: ('a -> ack Lwt.t) Eliom_client_value.t ->
+      ?emit: ('a -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
       ?error: (string option -> unit) Eliom_client_value.t ->
       ?a: 'attrib attrib list ->
       ?input_a: 'input_attrib attrib list ->

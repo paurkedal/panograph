@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -30,9 +30,9 @@ open Panui_content_with_edit
   let (b_ev, emit_b) : string React.E.t * _ = React.E.create ()
   let (c_ev, emit_c) : string React.E.t * _ = React.E.create ()
 
-  let emit_a' x = Lwt_js.sleep 0.5 >|= fun () -> emit_a x; Ack_ok
-  let emit_b' x = Lwt_js.sleep 0.5 >|= fun () -> emit_b x; Ack_ok
-  let emit_c' x = Lwt_js.sleep 0.5 >|= fun () -> emit_c x; Ack_ok
+  let emit_a' x = Lwt_js.sleep 0.5 >|= fun () -> emit_a x; Ok ()
+  let emit_b' x = Lwt_js.sleep 0.5 >|= fun () -> emit_b x; Ok ()
+  let emit_c' x = Lwt_js.sleep 0.5 >|= fun () -> emit_c x; Ok ()
 ]
 
 let handler () () =

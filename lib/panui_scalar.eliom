@@ -46,7 +46,7 @@
   class type ['a] handle = object
     method show : unit
     method hide : unit
-    method edit_on : ('a -> ack Lwt.t) -> unit
+    method edit_on : ('a -> unit Panui_result.t Lwt.t) -> unit
     method edit_off : unit
     method get : 'a
     method set : 'a -> unit
@@ -60,7 +60,7 @@
   class ['a] input_handle
       (to_string : 'a -> string)
       (of_string : string -> 'a)
-      (emit : ('a -> ack Lwt.t) option)
+      (emit : ('a -> unit Panui_result.t Lwt.t) option)
       (error : (string option -> unit) option)
       (input_a : [< common_input_attrib] attrib list)
       (init : 'a) el =
@@ -89,7 +89,7 @@
   end
 
   class checkbox_handle
-      (emit : (bool -> ack Lwt.t) option)
+      (emit : (bool -> unit Panui_result.t Lwt.t) option)
       (error : (string option -> unit) option)
       (input_a : [< common_input_attrib] attrib list)
       (init : bool) el =
@@ -125,7 +125,7 @@
       (opts : ('a, 'opt) opt list)
       (to_string : 'a -> string)
       (of_string : string -> 'a)
-      (emit : ('a -> ack Lwt.t) option)
+      (emit : ('a -> unit Panui_result.t Lwt.t) option)
       (error : (string option -> unit) option)
       (input_a : [< common_input_attrib] attrib list)
       (init : 'a) el =
@@ -214,7 +214,7 @@
         ?to_string: ('a -> string) Eliom_client_value.t ->
         ?of_string: (string -> 'a) Eliom_client_value.t ->
         ?opts: ('a, 'opt) opt list ->
-        ?emit: ('a -> ack Lwt.t) Eliom_client_value.t ->
+        ?emit: ('a -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
         ?error: (string option -> unit) Eliom_client_value.t ->
         ?a: 'attrib attrib list ->
         ?input_a: 'inner_attrib attrib list ->

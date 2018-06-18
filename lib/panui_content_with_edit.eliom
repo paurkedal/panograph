@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -64,10 +64,11 @@ let add_edit outer pcdata input_dom emit x =
     input_dom##.disabled := Js._true;
     Lwt.async begin fun () ->
       match%lwt emit (Js.to_string input_dom##.value) with
-      | Ack_ok ->
+      | Ok () ->
         on_cancel ev;
         Lwt.return_unit
-      | Ack_error msg ->
+      | Error err ->
+        let msg = Panui_error.message err in
         input_dom##.classList##add(error_cls);
         input_dom##.title := Js.string msg;
         Lwt.return_unit
@@ -95,7 +96,7 @@ let add_edit_textarea outer pcdata emit x =
 [%%shared
 
 let span_with_input ?(a = [D.a_class ["pan-with-edit"]])
-                    (emit : (string -> ack Lwt.t) Eliom_client_value.t) x =
+    (emit : (string -> unit Panui_result.t Lwt.t) Eliom_client_value.t) x =
   let pcdata = D.pcdata x in
   let outer = D.span ~a [pcdata] in
   let g : (string -> unit) Eliom_client_value.t =
@@ -104,7 +105,7 @@ let span_with_input ?(a = [D.a_class ["pan-with-edit"]])
   g, outer
 
 let p_with_textarea ?(a = [D.a_class ["pan-with-edit"]])
-                    (emit : (string -> ack Lwt.t) Eliom_client_value.t) x =
+    (emit : (string -> unit Panui_result.t Lwt.t) Eliom_client_value.t) x =
   let pcdata = D.pcdata x in
   let outer = D.p ~a [pcdata] in
   let g : (string -> unit) Eliom_client_value.t =

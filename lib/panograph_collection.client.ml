@@ -59,7 +59,7 @@ struct
     w_shape : shape;
     w_container : Container.t;
     mutable w_set : Set.t;
-    w_on_patch : (patch_out -> ack Lwt.t) option;
+    w_on_patch : (patch_out -> unit Panui_result.t Lwt.t) option;
   }
 
   let add_elt w ((_, item) as elt) =
@@ -76,8 +76,8 @@ struct
         | k, None -> on_patch (`Patch p)
         | k, Some k' ->
           if Set.mem k' w.w_set then
-            Lwt.return
-              (Ack_error "The changed item conflicts with another item.")
+            Lwt.return @@ Panui_result.error
+              "The changed item conflicts with another item."
           else
             on_patch (`Patch p) in
       let elt_pe, elt_ui =

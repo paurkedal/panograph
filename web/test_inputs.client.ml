@@ -38,7 +38,7 @@ let test_int_editor () =
   let on_patch p =
     Lwt_js.sleep 1.0 >>= fun () ->
     send_ev p;
-    Lwt.return Ack_ok in
+    Lwt.return_ok () in
   let w, ui =
     Int_PE.create ~shape:Int_PE.({default_shape with a_title = Some "test"})
                   ~on_patch 19 in
@@ -51,7 +51,7 @@ let test_float_editor () =
   let on_patch p =
     Lwt_js.sleep 1.0 >>= fun () ->
     send_ev p;
-    Lwt.return Ack_ok in
+    Lwt.return_ok () in
   let w, ui = Float_PE.create ~on_patch 0.01 in
   Lwt_react.E.keep (Lwt_react.E.map (Float_PE.patch w) ev);
   ui
@@ -60,12 +60,12 @@ let test_int_ul () =
   let ev, send_ev = React.E.create () in
   let on_patch p =
     Lwt.(async (fun () -> Lwt_js.sleep 0.33 >|= fun () -> send_ev p));
-    Lwt.return Ack_ok in
+    Lwt.return_ok () in
   let init = [5; 7; 3; 11; 17; 13] in
   let coll_pe, coll_ui = Int_ul_CPE.create ~on_patch init in
   let on_mapped_patch (`Patch (k, (`Change (v, v')))) =
     send_ev (`Patch (`Change (k, - v')));
-    Lwt.return Ack_ok in
+    Lwt.return_ok () in
   let mapped_pe, mapped_ui =
     Int_ul_MPE.create ~on_patch:on_mapped_patch
                       (List.map (fun k -> k, -k) init) in

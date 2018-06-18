@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -29,5 +29,4 @@ type 'a ui_result = ('a, ui_error) result
 type ack =
   | Ack_ok
   | Ack_error of string
-(** @deprecated This is only used for some older widget, and will be phased out.
-    Newer widgets use [result]. *)
+[@@ocaml.deprecated "Replacet by Panui_result.t"]

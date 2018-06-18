@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -22,9 +22,9 @@ open Panograph_types
 exception Invalid_input of string
 
 val make_button :
-      (unit -> ack Lwt.t) ->
-      [< Html_types.button_content_fun] elt list ->
-      [> `Button] elt
+  (unit -> unit Panui_result.t Lwt.t) ->
+  [< Html_types.button_content_fun] elt list ->
+  [> `Button] elt
 
 module type BASIC_SHAPE_TYPE = sig
   type shape = {

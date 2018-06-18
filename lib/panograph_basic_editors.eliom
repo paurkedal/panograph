@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -56,7 +56,7 @@
       ?(to_string = string_ident_cv)
       ?(of_string = string_ident_cv)
       ?(value : string option)
-      (patch_out : (string -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out : (string -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (string -> unit) Eliom_client_value.t =
       [%client
@@ -70,7 +70,7 @@
       ?(to_string : (int -> string) Eliom_client_value.t = [%client string_of_int])
       ?(of_string : (string -> int) Eliom_client_value.t = [%client int_of_string])
       ?(value : int option)
-      (patch_out : (int -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out : (int -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (int -> unit) Eliom_client_value.t =
       [%client
@@ -84,7 +84,7 @@
       ?(to_string : (int32 -> string) Eliom_client_value.t = [%client Int32.to_string])
       ?(of_string : (string -> int32) Eliom_client_value.t = [%client Int32.of_string])
       ?(value : int32 option)
-      (patch_out : (int32 -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out : (int32 -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (int32 -> unit) Eliom_client_value.t =
       [%client
@@ -98,7 +98,7 @@
       ?(to_string : (int64 -> string) Eliom_client_value.t = [%client Int64.to_string])
       ?(of_string : (string -> int64) Eliom_client_value.t = [%client Int64.of_string])
       ?(value : int64 option)
-      (patch_out : (int64 -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out : (int64 -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (int64 -> unit) Eliom_client_value.t =
       [%client
@@ -112,7 +112,7 @@
       ?(to_string : (float -> string) Eliom_client_value.t = [%client string_of_float])
       ?(of_string : (string -> float) Eliom_client_value.t = [%client float_of_string])
       ?(value : float option)
-      (patch_out : (float -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out : (float -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (float -> unit) Eliom_client_value.t =
       [%client
@@ -126,7 +126,7 @@
       ?(to_string : (string -> string) Eliom_client_value.t = string_ident_cv)
       ?(of_string : (string -> string) Eliom_client_value.t = string_ident_cv)
       ?(value : string option option)
-      (patch_out : (string option -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out : (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (string option -> unit) Eliom_client_value.t =
       [%client
@@ -142,7 +142,7 @@
       ?(to_string : (string -> string) Eliom_client_value.t = string_ident_cv)
       ?(of_string : (string -> string) Eliom_client_value.t = string_ident_cv)
       ?(value : string option option)
-      (patch_out : (string option -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out : (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.textarea ?a (D.pcdata "") in
     let patch_in : (string option -> unit) Eliom_client_value.t =
       [%client
@@ -158,7 +158,7 @@
       ?(to_string : (int -> string) Eliom_client_value.t = [%client string_of_int])
       ?(of_string : (string -> int) Eliom_client_value.t = [%client int_of_string])
       ?(value : int option option)
-      (patch_out : (int option -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out : (int option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (int option -> unit) Eliom_client_value.t =
       [%client
@@ -176,7 +176,7 @@
         ?(of_string : (string -> int32) Eliom_client_value.t =
             [%client Int32.of_string])
         ?(value : int32 option option)
-        (patch_out : (int32 option -> ack Lwt.t) Eliom_client_value.t) =
+        (patch_out : (int32 option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (int32 option -> unit) Eliom_client_value.t =
       [%client
@@ -194,7 +194,7 @@
         ?(of_string : (string -> int64) Eliom_client_value.t =
             [%client Int64.of_string])
         ?(value : int64 option option)
-        (patch_out : (int64 option -> ack Lwt.t) Eliom_client_value.t) =
+        (patch_out : (int64 option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (int64 option -> unit) Eliom_client_value.t =
       [%client
@@ -212,7 +212,7 @@
         ?(of_string : (string -> float) Eliom_client_value.t =
             [%client float_of_string])
         ?(value : float option option)
-        (patch_out : (float option -> ack Lwt.t) Eliom_client_value.t) =
+        (patch_out : (float option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let input = D.input ~a:(D.a_input_type `Text :: a) () in
     let patch_in : (float option -> unit) Eliom_client_value.t =
       [%client
@@ -225,7 +225,7 @@
 
   let bool_option_selector ?a ?none_label ~false_label ~true_label
                            ?(value : bool option option)
-                           (emit : (bool option -> ack Lwt.t) Eliom_client_value.t) =
+                           (emit : (bool option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let none_label =
       match none_label with
       | None -> "<" ^ false_label ^ "|" ^ true_label ^ ">"
@@ -262,7 +262,7 @@
                      List.flatten (List.map mk_optgroup items))
 
   let int_option_selector ?a ?none_label ~items ?(value : int option option)
-                          (emit : (int option -> ack Lwt.t) Eliom_client_value.t) =
+                          (emit : (int option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let elem =
       mk_option_selector string_of_int ?a ?none_label ~items () in
     let absorb : (int option -> unit) Eliom_client_value.t =
@@ -275,7 +275,7 @@
     (elem, absorb)
 
   let int32_option_selector ?a ?none_label ~items ?(value : int32 option option)
-                            (emit : (int32 option -> ack Lwt.t) Eliom_client_value.t) =
+                            (emit : (int32 option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let elem =
       mk_option_selector Int32.to_string ?a ?none_label ~items () in
     let absorb : (int32 option -> unit) Eliom_client_value.t =
@@ -288,7 +288,7 @@
     (elem, absorb)
 
   let int64_option_selector ?a ?none_label ~items ?(value : int64 option option)
-                            (emit : (int64 option -> ack Lwt.t) Eliom_client_value.t) =
+                            (emit : (int64 option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let elem =
       mk_option_selector Int64.to_string ?a ?none_label ~items () in
     let absorb : (int64 option -> unit) Eliom_client_value.t =
@@ -301,7 +301,7 @@
     (elem, absorb)
 
   let string_option_menu ?a ~values ?(value : string option = None)
-        (patch_out : (string option -> ack Lwt.t) Eliom_client_value.t) =
+        (patch_out : (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let make_option label = D.option ~a:[D.a_value label] (D.pcdata label) in
     let options = D.option ~a:[D.a_value "__none__"] (D.pcdata "-") ::
                   List.map make_option values in
@@ -323,15 +323,16 @@
       (* TODO: Use Pandom_interactive.outfit_checkbox if this is kept. *)
       let open Html in
       let input_dom = To_dom.of_input ~%(input : [`Input] elt) in
-      let patch_out = ~%(patch_out : (bool -> ack Lwt.t) Eliom_client_value.t) in
+      let patch_out = ~%(patch_out : (bool -> unit Panui_result.t Lwt.t) Eliom_client_value.t) in
       Lwt_js_events.(async @@ fun () ->
         changes input_dom @@ fun _ _ ->
         Pandom_style.set_dirty input_dom;
         match%lwt patch_out (Js.to_bool input_dom##.checked) with
-        | Ack_ok ->
+        | Ok () ->
           Pandom_style.clear_error input_dom;
           Lwt.return_unit
-        | Ack_error msg ->
+        | Error err ->
+          let msg = Panui_error.message err in
           Pandom_style.set_error msg input_dom;
           Lwt.return_unit);
       let patch_in v =

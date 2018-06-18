@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -60,8 +60,10 @@ module type PATCH_EDITOR = sig
   type patch_out
   type patch_in
 
-  val create : ?shape: shape -> ?on_patch: (patch_out -> ack Lwt.t) ->
-               value -> t * ui
+  val create :
+    ?shape: shape -> ?on_patch: (patch_out -> unit Panui_result.t Lwt.t) ->
+    value -> t * ui
+
   val patch : t -> patch_in -> unit
 end
 

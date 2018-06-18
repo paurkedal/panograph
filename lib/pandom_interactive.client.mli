@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -29,7 +29,7 @@ val outfit_interactive :
       ?error: (string option -> unit) ->
       ?value: 'a ->
       #basicInteractiveElement Js.t ->
-      ('b -> ack Lwt.t) -> ('a -> unit)
+      ('b -> unit Panui_result.t Lwt.t) -> ('a -> unit)
 
 val outfit_input :
       to_string: ('a -> string) ->
@@ -37,7 +37,7 @@ val outfit_input :
       ?error: (string option -> unit) ->
       ?value: 'a ->
       [< Html_types.input] Eliom_content.Html.elt ->
-      ('b -> ack Lwt.t) -> ('a -> unit)
+      ('b -> unit Panui_result.t Lwt.t) -> ('a -> unit)
 
 val outfit_select :
       to_string: ('a -> string) ->
@@ -45,7 +45,7 @@ val outfit_select :
       ?error: (string option -> unit) ->
       ?value: 'a ->
       [< Html_types.select] Eliom_content.Html.elt ->
-      ('b -> ack Lwt.t) -> ('a -> unit)
+      ('b -> unit Panui_result.t Lwt.t) -> ('a -> unit)
 
 val outfit_textarea :
       to_string: ('a -> string) ->
@@ -53,10 +53,10 @@ val outfit_textarea :
       ?error: (string option -> unit) ->
       ?value: 'a ->
       [< Html_types.textarea] Eliom_content.Html.elt ->
-      ('b -> ack Lwt.t) -> ('a -> unit)
+      ('b -> unit Panui_result.t Lwt.t) -> ('a -> unit)
 
 val outfit_checkbox :
       ?error: (string option -> unit) ->
       ?value: bool ->
       [< Html_types.input] Eliom_content.Html.elt ->
-      (bool -> ack Lwt.t) -> (bool -> unit)
+      (bool -> unit Panui_result.t Lwt.t) -> (bool -> unit)

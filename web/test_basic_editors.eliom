@@ -31,21 +31,24 @@ let string_comet = Eliom_comet.Channel.create ~scope:`Site string_stream
 let string_out = server_function [%json: string] @@ fun x ->
   Lwt_log.debug_f "Received string \"%s\"." x >>= fun () ->
   Lwt_unix.sleep 0.3 >>= fun () ->
-  (string_out' (Some (String.uppercase_ascii x)); Lwt.return Ack_ok)
+  string_out' (Some (String.uppercase_ascii x));
+  Lwt.return (Panui_result.ok ())
 
 let int_stream, int_out' = Lwt_stream.create ()
 let int_comet = Eliom_comet.Channel.create ~scope:`Site int_stream
 let int_out = server_function [%json: int] @@ fun x ->
   Lwt_log.debug_f "Received int %d." x >>= fun () ->
   Lwt_unix.sleep 0.3 >>= fun () ->
-  (int_out' (Some (2 * x)); Lwt.return Ack_ok)
+  int_out' (Some (2 * x));
+  Lwt.return (Panui_result.ok ())
 
 let float_stream, float_out' = Lwt_stream.create ()
 let float_comet = Eliom_comet.Channel.create ~scope:`Site float_stream
 let float_out = server_function [%json: float] @@ fun x ->
   Lwt_log.debug_f "Received float %g." x >>= fun () ->
   Lwt_unix.sleep 0.3 >>= fun () ->
-  (float_out' (Some (1.0 /. x)); Lwt.return Ack_ok)
+  float_out' (Some (1.0 /. x));
+  Lwt.return (Panui_result.ok ())
 
 let int_option_stream, int_option_out' = Lwt_stream.create ()
 let int_option_comet = Eliom_comet.Channel.create ~scope:`Site int_option_stream
@@ -55,7 +58,8 @@ let int_option_out = server_function [%json: int option] @@ fun x_opt ->
   | Some x -> Lwt_log.debug_f "Received int option Some %d." x
   end >>= fun () ->
   Lwt_unix.sleep 0.3 >>= fun () ->
-  (int_option_out' (Some (Option.map succ x_opt)); Lwt.return Ack_ok)
+  int_option_out' (Some (Option.map succ x_opt));
+  Lwt.return (Panui_result.ok ())
 
 let bool_option_stream, bool_option_out' = Lwt_stream.create ()
 let bool_option_comet =
@@ -66,7 +70,8 @@ let bool_option_out = server_function [%json: bool option] @@ fun x_opt ->
   | Some x -> Lwt_log.debug_f "Received bool option %b from select." x
   end >>= fun () ->
   Lwt_unix.sleep 0.3 >>= fun () ->
-  (bool_option_out' (Some (Option.map not x_opt)); Lwt.return Ack_ok)
+  bool_option_out' (Some (Option.map not x_opt));
+  Lwt.return (Panui_result.ok ())
 
 let int_option_stream, int_option_out' = Lwt_stream.create ()
 let int_option_comet =
@@ -77,7 +82,8 @@ let int_option_out = server_function [%json: int option] @@ fun x_opt ->
   | Some x -> Lwt_log.debug_f "Received int option %d from select." x
   end >>= fun () ->
   Lwt_unix.sleep 0.3 >>= fun () ->
-  (int_option_out' (Some (Option.map succ x_opt)); Lwt.return Ack_ok)
+  int_option_out' (Some (Option.map succ x_opt));
+  Lwt.return (Panui_result.ok ())
 
 let string_option_menu_stream, string_option_menu_out' = Lwt_stream.create ()
 let string_option_menu_comet =
@@ -90,7 +96,8 @@ let string_option_menu_out =
   end >>= fun () ->
   Lwt_unix.sleep 0.3 >>= fun () ->
   let swap = function "Sun" -> "Earth" | "Earth" -> "Sun" | x -> x in
-  (string_option_menu_out' (Some (Option.map swap x_opt)); Lwt.return Ack_ok)
+  string_option_menu_out' (Some (Option.map swap x_opt));
+  Lwt.return (Panui_result.ok ())
 
 let string_option_textarea_stream, string_option_textarea_out' = Lwt_stream.create ()
 let string_option_textarea_comet =
@@ -103,7 +110,8 @@ let string_option_textarea_out =
   end >>= fun () ->
   Lwt_unix.sleep 0.3 >>= fun () ->
   let tr x = String.uppercase_ascii x in
-  (string_option_textarea_out' (Some (Option.map tr x_opt)); Lwt.return Ack_ok)
+  string_option_textarea_out' (Some (Option.map tr x_opt));
+  Lwt.return (Panui_result.ok ())
 
 let handler () () =
   let open Html in

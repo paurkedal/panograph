@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -25,33 +25,33 @@ val string_option_selector :
       ?a: select_attrib attrib list ->
       selection: string option Selection.t ->
       ?value: string option ->
-      (string option -> ack Lwt.t) Eliom_client_value.t ->
+      (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
       [> select] elt * (string option -> unit) Eliom_client_value.t
 
 val bool_option_selector :
       ?a: select_attrib attrib list ->
       selection: bool option Selection.t ->
       ?value: bool option ->
-      (bool option -> ack Lwt.t) Eliom_client_value.t ->
+      (bool option -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
       [> select] elt * (bool option -> unit) Eliom_client_value.t
 
 val int_option_selector :
       ?a: Html_types.select_attrib attrib list ->
       selection: int option Selection.t ->
       ?value: int option ->
-      (int option -> ack Lwt.t) Eliom_client_value.t ->
+      (int option -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
       [> select] elt * (int option -> unit) Eliom_client_value.t
 
 val int32_option_selector :
       ?a: Html_types.select_attrib attrib list ->
       selection: int32 option Selection.t ->
       ?value: int32 option ->
-      (int32 option -> ack Lwt.t) Eliom_client_value.t ->
+      (int32 option -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
       [> select] elt * (int32 option -> unit) Eliom_client_value.t
 
 val int64_option_selector :
       ?a: Html_types.select_attrib attrib list ->
       selection: int64 option Selection.t ->
       ?value: int64 option ->
-      (int64 option -> ack Lwt.t) Eliom_client_value.t ->
+      (int64 option -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
       [> select] elt * (int64 option -> unit) Eliom_client_value.t

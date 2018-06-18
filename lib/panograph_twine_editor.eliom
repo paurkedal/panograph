@@ -29,7 +29,7 @@
   type twine_editor = {
     twe_container_dom : Dom_html.element Js.t;
     twe_error_dom : Dom_html.element Js.t;
-    twe_patch_out : twine_editor_out -> ack Lwt.t;
+    twe_patch_out : twine_editor_out -> unit Panui_result.t Lwt.t;
     mutable twe_map : (Dom_html.element Js.t * Dom_html.inputElement Js.t)
                       Lang_map.t;
   }
@@ -39,7 +39,8 @@
   open Unprime
   open Unprime_option
 
-  let set_error twe msg =
+  let set_error twe err =
+    let msg = Panui_error.message err in
     twe.twe_error_dom##.innerHTML := Js.string "";
     Dom.appendChild twe.twe_error_dom
                     (Dom_html.document##createTextNode(Js.string msg));
@@ -53,8 +54,9 @@
 
   let patch_out twe p =
     twe.twe_patch_out p >|=
-    function Ack_ok -> clear_error twe
-           | Ack_error msg -> set_error twe msg
+    (function
+     | Ok () -> clear_error twe
+     | Error err -> set_error twe err)
 
   let remove_translation twe lang =
     let item_dom, _ = Lang_map.find lang twe.twe_map in
@@ -99,7 +101,8 @@
 
 [%%shared
   let twine_editor ?value:(tw : Twine.t = Twine.make [])
-                   (patch_out : (twine_editor_out -> ack Lwt.t) Eliom_client_value.t) =
+      (patch_out :
+        (twine_editor_out -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
     let open Html in
     let add_input =
       D.input ~a:[D.a_input_type `Text; D.a_class ["lang"];

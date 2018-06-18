@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -28,7 +28,7 @@ type twine_editor_out = [`Add of lang * string | `Remove of lang]
 
 type twine_editor_in = twine_editor_out
 
-val twine_editor : ?value: twine ->
-                   (twine_editor_out -> ack Lwt.t) Eliom_client_value.t ->
-                   [> Html_types.span] Html.elt *
-                   (twine_editor_in -> unit) Eliom_client_value.t
+val twine_editor :
+  ?value: twine ->
+  (twine_editor_out -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
+  [> Html_types.span] Html.elt * (twine_editor_in -> unit) Eliom_client_value.t

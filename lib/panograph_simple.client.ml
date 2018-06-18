@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -132,8 +132,8 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
         try
           set_dirty w;
           match%lwt on_patch (`Change (w.w_value, get w)) with
-          | Ack_ok -> Lwt.return_unit
-          | Ack_error msg -> set_error w msg; Lwt.return_unit
+          | Ok () -> Lwt.return_unit
+          | Error err -> set_error w (Panui_error.message err); Lwt.return_unit
         with
         | Invalid_input msg ->
           clear_dirty w; set_error w msg; Lwt.return_unit

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -29,8 +29,9 @@ let make_button f content =
   let button_dom = To_dom.of_button button in
   let on_click _ _ =
     match%lwt f () with
-    | Ack_ok -> Lwt.return_unit
-    | Ack_error msg -> Pandom_style.flash_error msg button_dom in
+    | Ok () -> Lwt.return_unit
+    | Error err ->
+      Pandom_style.flash_error (Panui_error.message err) button_dom in
   Lwt.async (fun () -> Lwt_js_events.clicks button_dom on_click);
   button
 

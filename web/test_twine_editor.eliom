@@ -41,7 +41,8 @@ let on_update' p =
     Lwt_log.debug_f "Received remove %s" (Lang.to_string lang)
   end >>= fun () ->
   Lwt_unix.sleep 1.0 >>= fun () ->
-  (emit (Some p); Lwt.return Ack_ok)
+  emit (Some p);
+  Lwt.return (Panui_result.ok ())
 
 let on_update = server_function [%json: twine_editor_out] on_update'
 

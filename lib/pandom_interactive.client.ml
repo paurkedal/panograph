@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -35,14 +35,15 @@ let outfit_interactive ~to_string ~of_string ?error ?value input_dom emit =
     set_dirty input_dom;
     match%lwt
       try emit (of_string (Js.to_string input_dom##.value)) with
-      | Invalid_input msg -> Lwt.return (Ack_error msg)
+      | Invalid_input msg -> Lwt.return (Panui_result.error msg)
       | Invalid_argument _ | Failure _ ->
-        Lwt.return (Ack_error "Invalid input.")
+        Lwt.return (Panui_result.error "Invalid input.")
     with
-    | Ack_ok ->
+    | Ok () ->
       clear_error input_dom;
       Lwt.return_unit
-    | Ack_error msg ->
+    | Error err ->
+      let msg = Panui_error.message err in
       clear_dirty input_dom;
       set_error msg input_dom;
       Lwt.return_unit
@@ -77,10 +78,11 @@ let outfit_checkbox ?error ?value checkbox emit =
     clear_error input_dom;
     set_dirty input_dom;
     match%lwt emit (Js.to_bool input_dom##.checked) with
-    | Ack_ok ->
+    | Ok () ->
       clear_error input_dom;
       Lwt.return_unit
-    | Ack_error msg ->
+    | Error err ->
+      let msg = Panui_error.message err in
       clear_dirty input_dom;
       set_error msg input_dom;
       Lwt.return_unit
