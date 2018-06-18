@@ -1,4 +1,4 @@
-(* Copyright (C) 2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2017--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,10 @@ type 'a t = ('a, Panui_error.t) result
 val ok : 'a -> 'a t
 
 val error : ?tags: string list -> ?doc: string -> string -> 'a t
+
+val error_f :
+  ?tags: string list -> ?doc: string ->
+  ('a, Format.formatter, unit, 'b t) format4 -> 'a
 
 val catch : ?tags: string list -> ?doc: string -> msg: string ->
             ?report: (exn -> unit) ->

@@ -1,4 +1,4 @@
-(* Copyright (C) 2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2017--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,8 @@ type 'a t = ('a, Panui_error.t) result
 let ok x = Ok x
 
 let error ?tags ?doc msg = Error (Panui_error.create ?tags ?doc msg)
+
+let error_f ?tags ?doc = Format.kasprintf (error ?tags ?doc)
 
 let catch ?tags ?doc ~msg ?report f =
   try Ok (f ()) with exn ->
