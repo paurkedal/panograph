@@ -3,7 +3,6 @@ Test_app
 Test_basic_editors
 Test_dialogs
 Test_complete
-Test_completion
 Test_content_with_edit
 Test_operated
 Test_pinboard
