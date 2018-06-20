@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.6.0] - 2018-06-21
+
+- Breaking: Replace `ack` type with `Panui_result.t`.
+- Add `?input_a` option to `Panui_scalar` functions.
+- Add `Panui_result.error_f`.
+- Remove deprecated modules `Panui_combo_selectors`, `Panui_completion`,
+  `Pwt_infix` and deprecated functions from `Pwt_list`.
+
 ## [0.5.3] - 2018-02-19
 
 - Updated to work with Eliom 6.3.0.
@@ -52,7 +60,9 @@
 - Findlib packages `panograph-client` and `panograph-server` have been
   replaced by `panograph.client` and `panograph.server`.
 
-[Unreleased]: https://github.com/paurkedal/panograph/compare/0.5.0...HEAD
+[0.6.0]: https://github.com/paurkedal/panograph/compare/0.5.3...v0.6.0
+[0.5.3]: https://github.com/paurkedal/panograph/compare/0.5.2...0.5.3
+[0.5.2]: https://github.com/paurkedal/panograph/compare/0.5.1...0.5.2
 [0.5.1]: https://github.com/paurkedal/panograph/compare/0.5.0...0.5.1
 [0.5.0]: https://github.com/paurkedal/panograph/compare/0.4.4...0.5.0
 [0.4.4]: https://github.com/paurkedal/panograph/compare/0.4.3...0.4.4
