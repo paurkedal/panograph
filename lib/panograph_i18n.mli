@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -16,13 +16,11 @@
 
 (** Internationalization and localization. *)
 
-type lang = int [@@deriving json]
+type lang = Iso639.Lang.t [@@deriving json]
 
 module Lang : sig
   type t = lang
 
-  val of_int : int -> lang
-  val to_int : lang -> int
   val of_string : string -> lang
   val to_string : lang -> string
   val equal : lang -> lang -> bool

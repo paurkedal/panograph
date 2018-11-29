@@ -22,34 +22,42 @@ open Unprime_string
 
 let invalid_arg_f fmt = ksprintf invalid_arg fmt
 
-type lang = int [@@deriving json]
+type lang = Iso639.Lang.t
+
+module Json_lang = Deriving_Json.Convert (struct
+  type a = string
+  type b = lang
+  let t = Deriving_Json.Json_string.t
+  let from_ = Iso639.Lang.of_string_exn
+  let to_ = Iso639.Lang.to_string
+end)
+let lang_json = Json_lang.t
+let lang_to_json = Json_lang.write
+let lang_of_json = Json_lang.read
 
 module Lang = struct
 
   type t = lang
 
-  let of_int = ident
-  let to_int = ident
+  let of_string_opt s =
+    (match String.length s with
+     | 2 -> Iso639.Lang.of_iso639p1 s
+     | 3 -> Iso639.Lang.of_string s
+     | _ -> None)
 
   let of_string s =
-    let int_of_letter c = Char.code (Char.lowercase_ascii c) - 0x60 in
-    let len = String.length s in
-    if len < 2 || len > 4 || not (String.for_all Char.is_alpha s) then
-      invalid_arg_f "lang_of_string: %s is not an ISO 639 language code." s;
-    let _, lang =
-      String.fold (fun c (k, lang) -> (k - 6, lang lor int_of_letter c lsl k))
-                  s (18, 0) in
-    lang
+    (match of_string_opt s with
+     | Some lang -> lang
+     | None ->
+        invalid_arg_f "lang_of_string: %s is not an ISO 639 language code." s)
 
   let to_string lang =
-    let letter_of_int i = Char.chr (i + 0x60) in
-    let len =
-      if lang land 0xfff = 0 then if lang land 0x03ffff = 0 then 1 else 2
-                             else if lang land 0x00003f = 0 then 3 else 4 in
-    String.sample (fun i -> letter_of_int (lang lsr (18 - 6 * i) land 0x3f)) len
+    (match Iso639.Lang.to_iso639p1 lang with
+     | Some s -> s
+     | None -> Iso639.Lang.to_string lang)
 
-  let equal = (=)
-  let compare = compare
+  let equal = Iso639.Lang.equal
+  let compare = Iso639.Lang.compare
 end
 
 module Lang_map = Prime_enummap.Make (Lang)

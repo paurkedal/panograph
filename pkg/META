@@ -2,7 +2,7 @@ description = "Assortment of widgets for Eliom"
 version = "%%VERSION_NUM%%"
 
 requires = "
-  lwt, js_of_ocaml.deriving, ppx_deriving.runtime,
+  lwt, iso639, js_of_ocaml.deriving, ppx_deriving.runtime,
   prime, prime.unstable, react
 "
 archive(byte) = "panograph.cma"

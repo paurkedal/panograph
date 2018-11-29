@@ -9,6 +9,7 @@ depends: [
   "ocaml"
   "adpkg" {build}
   "eliom" {>= "6.3" & < "7.0"}
+  "iso639"
   "js_of_ocaml"
   "js_of_ocaml-ppx"
   "lwt"
