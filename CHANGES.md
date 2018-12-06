@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.7.0] - 2018-12-07
+
+- Switch `Panograph_i18n.lang` to `Iso639.Lang.t`.
+
 ## [0.6.0] - 2018-06-21
 
 - Breaking: Replace `ack` type with `Panui_result.t`.
