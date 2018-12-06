@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -31,19 +31,6 @@ let rec search_p f = function
   | x :: xs ->
     let m = search_s f xs in
     bind (f x) (function Some _ as r -> return r | None -> m)
-
-let rec fmap_s f = function
-  | [] -> return []
-  | x :: xs ->
-    let%lwt yo = f x in
-    let%lwt ys = fmap_s f xs in
-    return (match yo with None -> ys | Some y -> y :: ys)
-
-let rec fmap_p f = function
-  | [] -> return []
-  | x :: xs ->
-    let%lwt yo = f x and ys = fmap_p f xs in
-    return (match yo with None -> ys | Some y -> y :: ys)
 
 let flatten_map_s f xs =
   let rec loop acc = function
