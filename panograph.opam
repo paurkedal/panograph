@@ -25,3 +25,4 @@ depends: [
 ]
 build: ["ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%"]
 dev-repo: "git+https://github.com/paurkedal/panograph.git"
+synopsis: "An Assortment of Eliom Widgets"

@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.8.0] - 2019-01-24
+
+- Update to `js_of_ocaml` 3.3 and Eliom 6.6.
+
 ## [0.7.0] - 2018-12-07
 
 - Switch `Panograph_i18n.lang` to `Iso639.Lang.t`.
@@ -64,6 +68,8 @@
 - Findlib packages `panograph-client` and `panograph-server` have been
   replaced by `panograph.client` and `panograph.server`.
 
+[0.8.0]: https://github.com/paurkedal/panograph/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/paurkedal/panograph/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/paurkedal/panograph/compare/0.5.3...v0.6.0
 [0.5.3]: https://github.com/paurkedal/panograph/compare/0.5.2...0.5.3
 [0.5.2]: https://github.com/paurkedal/panograph/compare/0.5.1...0.5.2
