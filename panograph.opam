@@ -13,6 +13,8 @@ depends: [
   "js_of_ocaml"
   "js_of_ocaml-ppx"
   "lwt"
+  "lwt_log"
+  "lwt_ppx"
   "ocamlbuild" {build}
   "ocamlfind" {build}
   "ppx_compose"

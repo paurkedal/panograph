@@ -1,7 +1,7 @@
 true: bin_annot, eliom_ppx
 false: package(adpkg)
 
-true: package(lwt), package(lwt.ppx), package(iso639)
+true: package(lwt), package(lwt_log), package(lwt_ppx), package(iso639)
 true: package(prime), package(prime.unstable), package(react)
 true: package(ppx_compose)
 true: package(ppx_deriving.runtime), package(js_of_ocaml.deriving)
