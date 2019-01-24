@@ -25,7 +25,7 @@
 [%%client
   let pcdata_f fmt = Printf.kprintf F.txt fmt
 
-  let levels = Lwt_log.[|Debug; Info; Notice; Warning; Error; Fatal|]
+  let levels = Lwt_log_js.[|Debug; Info; Notice; Warning; Error; Fatal|]
 
   let rec populate pinboard i =
     let timeout = Random.float 4.0 in
