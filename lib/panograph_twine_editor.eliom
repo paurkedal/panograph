@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -25,6 +25,7 @@
 ]
 [%%client
   open Eliom_lib
+  open Js_of_ocaml
 
   type twine_editor = {
     twe_container_dom : Dom_html.element Js.t;
@@ -36,6 +37,7 @@
 ]
 
 [%%client
+  open Js_of_ocaml
   open Unprime
   open Unprime_option
 
@@ -73,9 +75,9 @@
       let inp = D.input ~a:[D.a_input_type `Text; D.a_value msg] () in
       let inp_dom = To_dom.of_input inp in
       let remove_button =
-        D.button ~a:[D.a_button_type `Button] [D.pcdata "−"] in
+        D.button ~a:[D.a_button_type `Button] [D.txt "−"] in
       let remove_dom = To_dom.of_button remove_button in
-      let item = D.span [D.span [D.pcdata (Lang.to_string lang)];
+      let item = D.span [D.span [D.txt (Lang.to_string lang)];
                          inp; remove_button] in
       let next = Option.map (fst % snd)
                             (Lang_map.succ_binding twe.twe_map lang) in
@@ -107,7 +109,7 @@
     let add_input =
       D.input ~a:[D.a_input_type `Text; D.a_class ["lang"];
                   D.a_size 2; D.a_maxlength 2] () in
-    let add_button = D.button ~a:[D.a_button_type `Button] [D.pcdata "+"] in
+    let add_button = D.button ~a:[D.a_button_type `Button] [D.txt "+"] in
     let add_span = D.span ~a:[D.a_class ["ui"]] [add_input; add_button] in
     let trans_span = D.span ~a:[D.a_class ["main"]] [] in
     let error_span = D.span ~a:[D.a_class ["error"]] [] in

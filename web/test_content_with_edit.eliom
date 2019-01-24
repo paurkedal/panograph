@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -45,6 +45,6 @@ let handler () () =
     Lwt_react.E.keep (React.E.trace ~%set_c c_ev)
   ];
   Lwt.return [
-    D.p [elem_a; D.pcdata ", "; elem_b];
+    D.p [elem_a; D.txt ", "; elem_b];
     elem_c;
   ]

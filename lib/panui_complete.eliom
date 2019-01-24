@@ -1,4 +1,4 @@
-(* Copyright (C) 2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2017--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -22,6 +22,9 @@
   open Printf
   open Unprime
   open Unprime_option
+]
+[%%client
+  open Js_of_ocaml
 ]
 
 class type%client ['a] handle = object
@@ -84,7 +87,7 @@ object (self)
        | label -> (label, [])) in
     let choice_elem =
       D.span ~a:[D.a_class ("pan-choice" :: label_class)]
-             [D.pcdata label_text] in
+             [D.txt label_text] in
     let choice_dom = To_dom.of_span choice_elem in
     let on_choice_click _ _ =
       expecting_select <- false;

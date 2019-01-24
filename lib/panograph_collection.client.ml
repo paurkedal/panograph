@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -21,8 +21,8 @@ open Eliom_content
 open Eliom_lib
 open Unprime_option
 
-let label_for_remove = [Html.F.(b [pcdata "−"])]
-let label_for_add = [Html.F.(b [pcdata "+"])]
+let label_for_remove = [Html.F.(b [txt "−"])]
+let label_for_add = [Html.F.(b [txt "+"])]
 
 module Collection_PE
         (Elt_PE : RETRACTABLE_PATCH_EDITOR)

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -158,7 +158,7 @@ let handler () () =
     Lwt_stream.iter ~%string_option_textarea_in ~%string_option_textarea_comet];
 
   Lwt.return [
-    D.h2 [D.pcdata "Server Side Inputs"];
+    D.h2 [D.txt "Server Side Inputs"];
     D.ul [
       D.li [string_ed];
       D.li [int_ed];

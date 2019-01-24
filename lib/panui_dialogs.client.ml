@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,8 @@ open Html_types
 open Lwt.Infix
 open Unprime
 
-let ok_label = [D.pcdata "Ok"]
-let cancel_label = [D.pcdata "Cancel"]
+let ok_label = [D.txt "Ok"]
+let cancel_label = [D.txt "Cancel"]
 
 let close_all_r = ref (fun () -> ())
 let modal_veil = D.div ~a:[D.a_class ["pan-dialog-veil"];

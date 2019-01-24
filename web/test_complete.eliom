@@ -1,4 +1,4 @@
-(* Copyright (C) 2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2017--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -62,7 +62,7 @@ let choices = Prime_list.sample (fun i -> (ordinal i, i)) 100
 
 let emit to_string elem value =
   Manip.removeChildren elem;
-  Manip.appendChild elem (D.span [D.pcdata (to_string value)]);
+  Manip.appendChild elem (D.span [D.txt (to_string value)]);
   Lwt.return (Ok ())
 
 let string_complete pfx =
@@ -95,7 +95,7 @@ let get_handler arg () =
     (match arg with
      | None -> "unspecified"
      | Some arg -> Int32.to_string arg) in
-  Lwt.return [F.p [F.pcdata "Post result: "; F.pcdata result]]
+  Lwt.return [F.p [F.txt "Post result: "; F.txt result]]
 
 let get_service =
   let open Eliom_service in

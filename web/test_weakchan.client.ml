@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,7 @@
  *)
 
 open Eliom_content.Html
+open Js_of_ocaml
 open Printf
 
 let classify ks = String.concat "_" (List.rev ks)
@@ -29,12 +30,12 @@ let rec make ks =
     Pandom_weakchan.send chan ks (`Add k) in
   let add_button =
     D.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
-             [D.pcdata "add"] in
+             [D.txt "add"] in
   let ul = D.ul [D.li [add_input; add_button]] in
   let on_msg = function
     | `Add k ->
       let ul' = (make (k :: ks) : [`Ul] elt :> [> `Ul] elt) in
-      Manip.appendChild ul (D.li [D.b [D.pcdata k]; ul']) in
+      Manip.appendChild ul (D.li [D.b [D.txt k]; ul']) in
   ignore (Pandom_weakchan.subscribe_class chan (To_dom.of_ul ul) ks on_msg);
   ul
 

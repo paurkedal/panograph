@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,8 @@
  *)
 
 (** Stylistic tweaks of elements *)
+
+open Js_of_ocaml
 
 val hidden_class : Js.js_string Js.t
 

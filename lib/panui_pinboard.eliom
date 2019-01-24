@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -62,7 +62,7 @@ let unpin item pinboard = Manip.removeChild pinboard.table item
 
 let pin ~(subject : [< subject_content] elt list)
         ?(level = Lwt_log_js.Info) ?timeout pinboard =
-  let unpin_button = D.button [D.pcdata "✗"] in
+  let unpin_button = D.button [D.txt "✗"] in
   let item = D.tr [
     D.td ~a:[D.a_class [Lwt_log_js.string_of_level level]] [unpin_button];
     D.td subject

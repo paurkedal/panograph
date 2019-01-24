@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -146,7 +146,7 @@ module Ul_mapped_container = struct
     ui, ui
 
   let create_item ?(shape = default_shape) (key_ui, elt_ui) =
-    Html.D.(li [key_ui; pcdata ": "; elt_ui])
+    Html.D.(li [key_ui; txt ": "; elt_ui])
 
   let append ?before ul li = Html.Manip.appendChild ?before ul li
   let remove ul li = Html.Manip.removeChild ul li

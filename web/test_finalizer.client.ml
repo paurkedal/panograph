@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,7 @@
  *)
 
 open Eliom_content.Html
+open Js_of_ocaml
 open Lwt.Infix
 open Unprime_option
 
@@ -50,12 +51,12 @@ let rec update stat node =
     Dom_html.document##(getElementsByClassName(Js.string "-pan-finalized-"))
                      ##.length in
   Manip.replaceChildren stat [
-    D.pcdata "Created ";
-    D.pcdata (string_of_int !created_count);
-    D.pcdata ", finalized ";
-    D.pcdata (string_of_int !finalized_count);
-    D.pcdata ", can reach ";
-    D.pcdata (string_of_int reachable_count);
+    D.txt "Created ";
+    D.txt (string_of_int !created_count);
+    D.txt ", finalized ";
+    D.txt (string_of_int !finalized_count);
+    D.txt ", can reach ";
+    D.txt (string_of_int reachable_count);
   ];
   Lwt_js.sleep 0.01 >>= fun () -> update stat node
 

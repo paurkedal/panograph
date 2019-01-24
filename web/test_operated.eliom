@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -37,6 +37,9 @@
   module String_map = Prime_enummap.Make (String)
   module Main_p = Presenting_map.Make (String_map) (String_set_p)
 ]
+[%%client
+  open Js_of_ocaml
+]
 
 let s_r = Eliom_reference.Volatile.eref ~scope:`Site @@
   List.fold
@@ -72,17 +75,17 @@ let%client patch
         Lwt.async (fun () -> patch (Map_at (k, Set_add s))) in
       let add_button =
         D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
-                     [D.pcdata "+"] in
-      [D.li [input; D.pcdata " "; add_button]] in
+                     [D.txt "+"] in
+      [D.li [input; D.txt " "; add_button]] in
     let make_li x =
       let delete _ =
         Lwt.async (fun () -> patch (Map_at (k, Set_remove x))) in
       let delete_button =
         D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick delete]
-                     [D.pcdata "−"] in
-      absurd, [D.li [D.pcdata x; D.pcdata " "; delete_button]] in
+                     [D.txt "−"] in
+      absurd, [D.li [D.txt x; D.txt " "; delete_button]] in
     let patch_ul, ul = O.ul ~intro make_li p in
-    patch_ul, [D.dt [D.pcdata k]; D.dd [ul]]
+    patch_ul, [D.dt [D.txt k]; D.dd [ul]]
 
   let make_dl p =
     let intro =
@@ -93,7 +96,7 @@ let%client patch
         Lwt.async (fun () -> patch (Map_add (k, String_set.empty))) in
       let add_button =
         D.Raw.button ~a:[D.a_button_type `Button; D.a_onclick on_add]
-                     [D.pcdata "+"] in
+                     [D.txt "+"] in
       [D.dt [input]; D.dd [add_button]] in
     O.dl ~intro make_item p
 ]

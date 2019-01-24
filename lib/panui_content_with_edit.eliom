@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,7 @@ open Panograph_types
 ]
 
 [%%client
+open Js_of_ocaml
 let dirty_cls = Js.string "dirty"
 let editing_cls = Js.string "editing"
 let error_cls = Js.string "error"
@@ -28,12 +29,12 @@ let error_cls = Js.string "error"
 
 [%%client
 
-let add_edit outer pcdata input_dom emit x =
-  let pcdata_dom = To_dom.of_pcdata pcdata in
+let add_edit outer txt input_dom emit x =
+  let pcdata_dom = To_dom.of_pcdata txt in
   let outer_dom = To_dom.of_element outer in
 
   let mkbutton f label =
-    D.button ~a:[D.a_button_type `Button; D.a_onclick f] [D.pcdata label] in
+    D.button ~a:[D.a_button_type `Button; D.a_onclick f] [D.txt label] in
 
   let rec add_edit_button () =
     let edit_button = mkbutton on_edit "edit" in
@@ -83,13 +84,13 @@ let add_edit outer pcdata input_dom emit x =
   set_value x;
   set_value
 
-let add_edit_input outer pcdata emit x =
+let add_edit_input outer txt emit x =
   let inp = D.input ~a:[F.a_input_type `Text] () in
-  add_edit outer pcdata (To_dom.of_input inp) emit x
+  add_edit outer txt (To_dom.of_input inp) emit x
 
-let add_edit_textarea outer pcdata emit x =
-  let inp = D.textarea (D.pcdata x) in
-  add_edit outer pcdata (To_dom.of_textarea inp) emit x
+let add_edit_textarea outer txt emit x =
+  let inp = D.textarea (D.txt x) in
+  add_edit outer txt (To_dom.of_textarea inp) emit x
 
 ]
 
@@ -97,19 +98,19 @@ let add_edit_textarea outer pcdata emit x =
 
 let span_with_input ?(a = [D.a_class ["pan-with-edit"]])
     (emit : (string -> unit Panui_result.t Lwt.t) Eliom_client_value.t) x =
-  let pcdata = D.pcdata x in
-  let outer = D.span ~a [pcdata] in
+  let txt = D.txt x in
+  let outer = D.span ~a [txt] in
   let g : (string -> unit) Eliom_client_value.t =
-    [%client add_edit_input ~%(outer : [`Span] elt) ~%(pcdata : [`PCDATA] elt)
+    [%client add_edit_input ~%(outer : [`Span] elt) ~%(txt : [`PCDATA] elt)
                             ~%emit ~%x] in
   g, outer
 
 let p_with_textarea ?(a = [D.a_class ["pan-with-edit"]])
     (emit : (string -> unit Panui_result.t Lwt.t) Eliom_client_value.t) x =
-  let pcdata = D.pcdata x in
-  let outer = D.p ~a [pcdata] in
+  let txt = D.txt x in
+  let outer = D.p ~a [txt] in
   let g : (string -> unit) Eliom_client_value.t =
-    [%client add_edit_textarea ~%(outer : [`P] elt) ~%(pcdata : [`PCDATA] elt)
+    [%client add_edit_textarea ~%(outer : [`P] elt) ~%(txt : [`PCDATA] elt)
                                ~%emit ~%x] in
   g, outer
 

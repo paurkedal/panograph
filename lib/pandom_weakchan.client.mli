@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,8 @@
  *)
 
 (** Messaging system with listeners bound to DOM elements. *)
+
+open Js_of_ocaml
 
 type ('k, 'a) t
 (** A channel dispatching on ['k] and delivering messages of type ['a]. *)

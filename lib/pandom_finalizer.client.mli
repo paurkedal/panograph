@@ -1,4 +1,4 @@
-(* Copyright (C) 2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,8 @@
  *)
 
 (** Finalizers for DOM Elements using the document as GC root. *)
+
+open Js_of_ocaml
 
 val add : (unit -> unit) -> #Dom_html.element Js.t -> unit
 (** [add f elt] causes [f ()] to be called from the next call to [run ()]

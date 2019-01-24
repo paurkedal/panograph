@@ -40,6 +40,10 @@ let () = Ocamlbuild_plugin.dispatch @@ fun hook ->
   match hook with
   | Before_options -> Options.make_links := false
   | After_rules ->
+    (match Sys.getenv "TERM" with
+     | exception Not_found -> ()
+     | "" | "dumb" -> ()
+     | _ -> flag ["ocaml"; "compile"] (S [A"-color"; A"always"]));
     local_rules ();
     Pathname.define_context "tests" ["lib"];
     Pathname.define_context "web/type" ["lib"; "lib/server"];

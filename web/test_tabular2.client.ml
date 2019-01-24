@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,7 @@
  *)
 
 open Eliom_content
+open Js_of_ocaml
 open Panograph_tabular
 open Printf
 open Unprime
@@ -54,7 +55,7 @@ let tile ns ms =
           let open Html in
           let sr = String.concat "." (List.map string_of_int pr) in
           let sc = String.concat "." (List.map string_of_int pc) in
-          let label = [F.pcdata sr; F.pcdata ", "; F.pcdata sc] in
+          let label = [F.txt sr; F.txt ", "; F.txt sc] in
           Tabular.draw_td tab rs cs label)
         cs)
     rs;

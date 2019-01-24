@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,7 @@
  *)
 
 open Eliom_content.Html
+open Js_of_ocaml
 open Panograph_common
 open Panograph_i18n
 open Panograph_intf
@@ -44,11 +45,11 @@ module Simple_SV (Value : SIMPLE_VALUE) = struct
   let default_shape = make_default_shape ("SV" :: Value.css_classes)
 
   let create ?(shape = default_shape) v =
-    let c = D.pcdata (Value.to_string v) in
+    let c = D.txt (Value.to_string v) in
     let p = D.span ~a:(attribs_of_shape shape) [c] in
     (p, c), p
 
-  let set (p, c) v = Manip.replaceChildren p [D.pcdata (Value.to_string v)]
+  let set (p, c) v = Manip.replaceChildren p [D.txt (Value.to_string v)]
 end
 
 module Simple_shape = struct

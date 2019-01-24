@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@
 ]
 
 [%%client
-  let pcdata_f fmt = Printf.kprintf F.pcdata fmt
+  let pcdata_f fmt = Printf.kprintf F.txt fmt
 
   let levels = Lwt_log.[|Debug; Info; Notice; Warning; Error; Fatal|]
 

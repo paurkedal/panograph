@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -51,7 +51,7 @@
     let unsafe ?(disabled = false) label value =
       let a = [Html.a_value value] in
       let a = if disabled then Html.a_disabled () :: a else a in
-      Html.option ~a (Html.pcdata label)
+      Html.option ~a (Html.txt label)
 
     let conv to_string ?disabled label x = unsafe ?disabled label (to_string x)
     let string = conv ident

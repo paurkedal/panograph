@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -19,6 +19,8 @@
     JavaScript does not have weak references, but we can attach a value to a DOM
     element and find it later whenever the element is still in the current
     document. *)
+
+open Js_of_ocaml
 
 type ('e, 'a) t constraint 'e = #Dom_html.element Js.t
 

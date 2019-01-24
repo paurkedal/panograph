@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,7 @@
 ]
 
 [%%client
+  open Js_of_ocaml
   open Pandom_interactive
   open Panograph_common
 
@@ -143,7 +144,7 @@
       ?(of_string : (string -> string) Eliom_client_value.t = string_ident_cv)
       ?(value : string option option)
       (patch_out : (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
-    let input = D.textarea ?a (D.pcdata "") in
+    let input = D.textarea ?a (D.txt "") in
     let patch_in : (string option -> unit) Eliom_client_value.t =
       [%client
         let to_string = string_of_option ~%to_string in
@@ -231,9 +232,9 @@
       | None -> "<" ^ false_label ^ "|" ^ true_label ^ ">"
       | Some label -> label in
     let elem = D.select ?a [
-      D.option ~a:[D.a_value ""] (D.pcdata none_label);
-      D.option ~a:[D.a_value "false"] (D.pcdata false_label);
-      D.option ~a:[D.a_value "true"] (D.pcdata true_label);
+      D.option ~a:[D.a_value ""] (D.txt none_label);
+      D.option ~a:[D.a_value "false"] (D.txt false_label);
+      D.option ~a:[D.a_value "true"] (D.txt true_label);
     ] in
     let absorb : (bool option -> unit) Eliom_client_value.t =
       [%client
@@ -252,13 +253,13 @@
       let s = conv value in
       let a = if enabled then [D.a_value s]
                          else [D.a_value s; D.a_disabled ()] in
-      D.option ~a (D.pcdata label) in
+      D.option ~a (D.txt label) in
     let mk_optgroup (label_opt, subitems) =
       let suboptions = List.map mk_option subitems in
       match label_opt with
       | None -> suboptions
       | Some label -> [D.optgroup ~label suboptions] in
-    D.select ?a (D.option ~a:[D.a_value ""] (D.pcdata none_label) ::
+    D.select ?a (D.option ~a:[D.a_value ""] (D.txt none_label) ::
                      List.flatten (List.map mk_optgroup items))
 
   let int_option_selector ?a ?none_label ~items ?(value : int option option)
@@ -302,8 +303,8 @@
 
   let string_option_menu ?a ~values ?(value : string option = None)
         (patch_out : (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) =
-    let make_option label = D.option ~a:[D.a_value label] (D.pcdata label) in
-    let options = D.option ~a:[D.a_value "__none__"] (D.pcdata "-") ::
+    let make_option label = D.option ~a:[D.a_value label] (D.txt label) in
+    let options = D.option ~a:[D.a_value "__none__"] (D.txt "-") ::
                   List.map make_option values in
     let select = D.select ?a options in
     let patch_in : (string option -> unit) Eliom_client_value.t =

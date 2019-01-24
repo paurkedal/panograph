@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -46,7 +46,7 @@ let create_page ~path ~meth ~title inner =
     (fun get post ->
       inner get post >|= fun contents ->
       Eliom_tools.D.html ~title ~css:default_css
-        (D.body (D.h1 [D.pcdata title] :: contents)))
+        (D.body (D.h1 [D.txt title] :: contents)))
 
 let create_test ~name ?title inner =
   let open Eliom_service in

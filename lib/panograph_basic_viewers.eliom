@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@
 
 [%%client
   let with_setter elem (to_string : 'a -> string) (value : 'a option) =
-    let set x = Manip.replaceChildren elem [D.pcdata (to_string x)] in
+    let set x = Manip.replaceChildren elem [D.txt (to_string x)] in
     Option.iter set value; set
 
   let with_opt_setter elem (to_string : 'a -> string)
@@ -34,7 +34,7 @@
         Manip.removeChildren elem
       | Some x ->
         Manip.Class.remove elem "none";
-        Manip.replaceChildren elem [D.pcdata (to_string x)] in
+        Manip.replaceChildren elem [D.txt (to_string x)] in
     Option.iter set value; set
 ]
 

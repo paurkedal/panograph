@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -26,31 +26,31 @@
 
 let handler () () =
   let open_acknowledge =
-    D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Acknowledge"] in
+    D.Raw.button ~a:[F.a_button_type `Button] [D.txt "Acknowledge"] in
   let open_confirm =
-    D.Raw.button ~a:[F.a_button_type `Button] [D.pcdata "Confirm"] in
+    D.Raw.button ~a:[F.a_button_type `Button] [D.txt "Confirm"] in
   ignore_cv [%client
     Lwt.async begin fun () ->
       Lwt_js_events.clicks
         (To_dom.of_button ~%(open_acknowledge : [`Button] elt)) @@ fun _ _ ->
-      let%lwt () = acknowledge_lwt [D.p [D.pcdata "Seen it?"]] in
-      Manip.appendToBody (D.div [D.pcdata "It's seen."]);
+      let%lwt () = acknowledge_lwt [D.p [D.txt "Seen it?"]] in
+      Manip.appendToBody (D.div [D.txt "It's seen."]);
       Lwt.return_unit
     end;
     Lwt.async begin fun () ->
       Lwt_js_events.clicks
         (To_dom.of_button ~%(open_confirm : [`Button] elt)) @@ fun _ _ ->
-      let%lwt ans = confirm_lwt [D.p [D.pcdata "Do it?"]] in
-      if ans then Manip.appendToBody (D.div [D.pcdata "It's done."])
-             else Manip.appendToBody (D.div [D.pcdata "It's not done."]);
+      let%lwt ans = confirm_lwt [D.p [D.txt "Do it?"]] in
+      if ans then Manip.appendToBody (D.div [D.txt "It's done."])
+             else Manip.appendToBody (D.div [D.txt "It's not done."]);
       Lwt.return_unit
     end
   ];
   Lwt.return [
     D.p [
-      D.pcdata "In user interface design, a modal window is a graphical control element subordinate to an application's main window which creates a mode where the main window can't be used. The modal window is a child window that requires users to interact with it before it can return to operating the parent application, thus preventing the workflow on the application main window. Modal windows are often called heavy windows or modal dialogs because the window is often used to display a dialog box.";
-      D.i [D.pcdata " -- Wikipedia"]
+      D.txt "In user interface design, a modal window is a graphical control element subordinate to an application's main window which creates a mode where the main window can't be used. The modal window is a child window that requires users to interact with it before it can return to operating the parent application, thus preventing the workflow on the application main window. Modal windows are often called heavy windows or modal dialogs because the window is often used to display a dialog box.";
+      D.i [D.txt " -- Wikipedia"]
     ];
     D.p [open_acknowledge; open_confirm];
-    D.h2 [D.pcdata "Log"];
+    D.h2 [D.txt "Log"];
   ]

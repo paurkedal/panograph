@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -69,7 +69,7 @@ let test_services = Test_app.[
 
 let main_handler () () =
   let test_service_item (name, service) =
-    F.li [F.a ~service [F.pcdata name] ()] in
+    F.li [F.a ~service [F.txt name] ()] in
   Lwt.return [F.ul (List.map test_service_item test_services)]
 
 let main_service =

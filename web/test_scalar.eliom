@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -131,15 +131,15 @@ let handler () () =
     Lwt.async @@ fun () -> Lwt_stream.iter ~%h#set ~%int_option_comet ];
 
   Lwt.return [
-    D.h2 [D.pcdata "Server Side Inputs"];
+    D.h2 [D.txt "Server Side Inputs"];
     D.ul [
-      D.li [D.pcdata "string: "; string_ed];
-      D.li [D.pcdata "int: "; int_ed];
-      D.li [D.pcdata "int select: "; int_select_ed];
-      D.li [D.pcdata "float: "; float_ed];
-      D.li [D.pcdata "bool: "; bool1_ed];
-      D.li [D.pcdata "bool: "; bool2_ed];
-      D.li [D.pcdata "bool option: "; bool_option_ed];
-      D.li [D.pcdata "int option: "; int_option_ed];
+      D.li [D.txt "string: "; string_ed];
+      D.li [D.txt "int: "; int_ed];
+      D.li [D.txt "int select: "; int_select_ed];
+      D.li [D.txt "float: "; float_ed];
+      D.li [D.txt "bool: "; bool1_ed];
+      D.li [D.txt "bool: "; bool2_ed];
+      D.li [D.txt "bool option: "; bool_option_ed];
+      D.li [D.txt "int option: "; int_option_ed];
     ]
   ]
