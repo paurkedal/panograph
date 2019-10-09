@@ -11,6 +11,7 @@ depends: [
   "eliom" {>= "6.6" & < "7.0~"}
   "iso639"
   "js_of_ocaml" {>= "3.3"}
+  "js_of_ocaml-lwt"
   "js_of_ocaml-ppx"
   "lwt"
   "lwt_log"

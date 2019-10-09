@@ -15,6 +15,8 @@
  *)
 
 open Eliom_content.Html
+open Js_of_ocaml
+open Js_of_ocaml_lwt
 open Html_types
 open Lwt.Infix
 open Unprime

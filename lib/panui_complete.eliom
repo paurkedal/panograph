@@ -25,6 +25,7 @@
 ]
 [%%client
   open Js_of_ocaml
+  open Js_of_ocaml_lwt
 ]
 
 class type%client ['a] handle = object

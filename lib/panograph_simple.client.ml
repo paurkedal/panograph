@@ -16,6 +16,7 @@
 
 open Eliom_content.Html
 open Js_of_ocaml
+open Js_of_ocaml_lwt
 open Panograph_common
 open Panograph_i18n
 open Panograph_intf

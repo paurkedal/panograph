@@ -25,6 +25,7 @@
 
 [%%client
   open Js_of_ocaml
+  open Js_of_ocaml_lwt
   open Pandom_interactive
   open Panograph_common
 

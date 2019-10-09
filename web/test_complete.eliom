@@ -19,6 +19,7 @@ open Eliom_content.Html
 open Panograph_types
 
 [%%client.start]
+open Js_of_ocaml_lwt
 open Lwt.Infix
 open Unprime_char
 open Unprime_string

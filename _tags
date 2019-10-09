@@ -10,6 +10,7 @@ true: warn(-58)
 <*/server/*>: thread
 <*/server/*>: package(eliom.server)
 <*/client/*>: package(eliom.client), package(js_of_ocaml.ppx)
+<*/client/*>: package(js_of_ocaml-lwt)
 
 <lib/*/operated_types.*>: package(ppx_deriving), package(ppx_deriving.std), package(js_of_ocaml-ppx.deriving)
 <lib/panograph_i18n.*>: package(ppx_deriving), package(js_of_ocaml-ppx.deriving)

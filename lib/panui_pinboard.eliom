@@ -14,6 +14,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open%client Js_of_ocaml_lwt
+
 [%%shared.start]
 open Eliom_content.Html
 open Lwt.Infix

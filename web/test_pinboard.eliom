@@ -23,6 +23,8 @@
 ]
 
 [%%client
+  open Js_of_ocaml_lwt
+
   let pcdata_f fmt = Printf.kprintf F.txt fmt
 
   let levels = Lwt_log_js.[|Debug; Info; Notice; Warning; Error; Fatal|]

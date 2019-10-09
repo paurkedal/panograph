@@ -15,6 +15,7 @@
  *)
 
 open Js_of_ocaml
+open Js_of_ocaml_lwt
 open Lwt.Infix
 open Unprime_string
 

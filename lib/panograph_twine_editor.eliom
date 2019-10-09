@@ -26,6 +26,7 @@
 [%%client
   open Eliom_lib
   open Js_of_ocaml
+  open Js_of_ocaml_lwt
 
   type twine_editor = {
     twe_container_dom : Dom_html.element Js.t;

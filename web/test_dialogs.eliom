@@ -21,6 +21,7 @@
   open Eliom_content.Html
 ]
 [%%client
+  open Js_of_ocaml_lwt
   open Panui_dialogs
 ]
 

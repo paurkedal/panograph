@@ -24,6 +24,7 @@ open Panui_content_with_edit
 ]
 
 [%%client
+  open Js_of_ocaml_lwt
   module Dep_content_with_edit = Panui_content_with_edit
 
   let (a_ev, emit_a) : string React.E.t * _ = React.E.create ()
