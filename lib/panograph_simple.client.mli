@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,7 @@ open Panograph_intf
 module type SIMPLE_VALUE = sig
   include STRINGABLE
   val css_classes : string list
+  val compare : t -> t -> int
 end
 
 module type SIMPLE_SNAPSHOT_VIEWER = sig

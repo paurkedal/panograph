@@ -26,6 +26,7 @@ open Unprime_option
 module type SIMPLE_VALUE = sig
   include STRINGABLE
   val css_classes : string list
+  val compare : t -> t -> int
 end
 
 module type SIMPLE_SNAPSHOT_VIEWER = sig
@@ -148,8 +149,8 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
   let key_of_value x = x
   let key_of_patch_in (`Change (x, x')) = if x = x' then x, None else x, Some x'
   let key_of_patch_out = key_of_patch_in
-  let compare_key k w = Pervasives.compare k w.w_value
-  let compare wA wB = Pervasives.compare wA.w_value wB.w_value
+  let compare_key k w = Value.compare k w.w_value
+  let compare wA wB = Value.compare wA.w_value wB.w_value
 end
 
 module Simple_SE (Value : SIMPLE_VALUE) = struct
@@ -196,6 +197,7 @@ module String_str = struct
   let of_string = ident
   let to_string = ident
   let css_classes = ["string"]
+  let compare = String.compare
 end
 
 module Int_str = struct
@@ -203,6 +205,7 @@ module Int_str = struct
   let of_string = int_of_string
   let to_string = string_of_int
   let css_classes = ["int"]
+  let compare = Int.compare
 end
 
 module Float_str = struct
@@ -210,6 +213,7 @@ module Float_str = struct
   let of_string = float_of_string
   let to_string = string_of_float
   let css_classes = ["float"]
+  let compare = Float.compare
 end
 
 module Option_str (X : SIMPLE_VALUE) = struct
@@ -217,6 +221,11 @@ module Option_str (X : SIMPLE_VALUE) = struct
   let of_string = function "" -> None | s -> Some (X.of_string s)
   let to_string = function None -> "" | Some x -> X.to_string x
   let css_classes = "option" :: X.css_classes
+  let compare x y =
+    (match x, y with
+     | None, None -> 0
+     | None, _ -> -1 | _, None -> 1
+     | Some x, Some y -> X.compare x y)
 end
 
 module String_option_str = Option_str (String_str)
