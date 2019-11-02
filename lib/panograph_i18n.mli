@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -43,3 +43,5 @@ module Twine : sig
   val sym_diff : t -> t -> sym_patch
   val sym_patch : ?strategy: [`Theirs | `Ours] -> sym_patch -> t -> t
 end
+
+val check_utf8_exn : string -> unit

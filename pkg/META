@@ -3,7 +3,7 @@ version = "%%VERSION_NUM%%"
 
 requires = "
   lwt, iso639, js_of_ocaml.deriving, ppx_deriving.runtime,
-  prime, prime.unstable, react
+  prime, prime.unstable, react, uucp, uutf
 "
 archive(byte) = "panograph.cma"
 archive(native) = "panograph.cmxa"

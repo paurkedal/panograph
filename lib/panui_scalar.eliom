@@ -43,6 +43,13 @@
 [%%client
   open Js_of_ocaml
   open Pandom_interactive
+  open Panograph_common
+  open Panograph_i18n
+
+  let checked_utf8 s =
+    (match check_utf8_exn s with
+     | () -> s
+     | exception (Failure msg) -> raise (Invalid_input msg))
 
   class type ['a] handle = object
     method show : unit
@@ -248,7 +255,7 @@
 
   let string : (string, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client ident])
-        ?(of_string = [%client ident])
+        ?(of_string = [%client checked_utf8])
         ?opts
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "string"]]) ?(input_a = []) init ->
@@ -335,7 +342,7 @@
 
   let string_option : (string option, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_option ident])
-        ?(of_string = [%client option_of_string ident])
+        ?(of_string = [%client option_of_string checked_utf8])
         ?opts
         ?emit ?error
         ?(a = [D.a_class ["pan-scalar"; "string"; "option"]]) ?(input_a = [])

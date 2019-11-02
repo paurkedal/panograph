@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -108,3 +108,28 @@ module Twine = struct
     | `Theirs -> sym_patch_theirs
     | `Ours -> sym_patch_ours
 end
+
+let check_utf8_exn =
+  let check_code_point char_pos byte_pos = function
+   | `Uchar c ->
+      let fail what =
+        ksprintf failwith
+          "Unicode %s code point U+%04x at position %d is not allowed."
+          what (Uchar.to_int c) char_pos
+      in
+      (match Uchar.to_int c with
+       | 0x0009 | 0x000a | 0x000d -> char_pos + 1
+       | 0xfffc -> fail "object replacement character"
+       | 0xfffd -> fail "replacement character"
+       | _ ->
+          (match Uucp.Gc.general_category c with
+           | `Cc -> fail "control"
+           | `Cf -> fail "format"
+           | `Cs -> fail "surrogate"
+           | `Co -> fail "private use"
+           | `Cn -> fail "unassigned"
+           | _ -> char_pos + 1))
+   | `Malformed _ ->
+      ksprintf failwith "Malformed UTF-8 sequence starting at byte %d." byte_pos
+  in
+  fun s -> ignore (Uutf.String.fold_utf_8 check_code_point 0 s)

@@ -23,6 +23,8 @@ depends: [
   "prime"
   "react"
   "topkg" {build}
+  "uucp"
+  "uutf"
 ]
 build: ["ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%"]
 dev-repo: "git+https://github.com/paurkedal/panograph.git"

@@ -3,6 +3,7 @@ false: package(adpkg)
 
 true: package(lwt), package(lwt_log.core), package(lwt_ppx), package(iso639)
 true: package(prime), package(prime.unstable), package(react)
+true: package(uucp), package(uutf)
 true: package(ppx_compose)
 true: package(ppx_deriving.runtime), package(js_of_ocaml.deriving)
 true: warn(-58)
