@@ -13,14 +13,14 @@ true: warn(-58)
 <*/client/*>: package(eliom.client), package(js_of_ocaml.ppx)
 <*/client/*>: package(js_of_ocaml-lwt)
 
-<lib/*/operated_types.*>: package(ppx_deriving), package(ppx_deriving.std), package(js_of_ocaml-ppx.deriving)
-<lib/panograph_i18n.*>: package(ppx_deriving), package(js_of_ocaml-ppx.deriving)
-<lib/panograph_types.*>: package(ppx_deriving), package(js_of_ocaml-ppx.deriving)
-<lib/presentation_types.*>: package(ppx_deriving), package(js_of_ocaml-ppx.deriving)
-<lib/*/panograph_twine_editor.*>: package(ppx_deriving), package(js_of_ocaml-ppx.deriving)
+<lib/*/operated_types.*>: package(ppx_deriving), package(ppx_deriving.std), package(js_of_ocaml-ppx_deriving_json)
+<lib/panograph_i18n.*>: package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
+<lib/panograph_types.*>: package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
+<lib/presentation_types.*>: package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
+<lib/*/panograph_twine_editor.*>: package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
 
 <web/*/test_{basic_editors,combo_selectors,operated,scalar,twine_editor}.*>: \
-    package(ppx_deriving), package(js_of_ocaml-ppx.deriving)
+    package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
 <web/*/test_complete.*>: package(ppx_deriving.show)
 
 <tests/*>: package(oUnit)

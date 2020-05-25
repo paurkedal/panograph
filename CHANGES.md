@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.8.2] - 2020-05-25
+
+- Supplement `js_of_ocaml-ppx` with a dependency on
+  `js_of_ocaml-ppx_deriving_json` due to the 3.6 release.
+
 ## [0.8.1] - 2019-11-06
 
 - Add Unicode sanity checks for `Panui_scalar` text inputs.

@@ -12,7 +12,7 @@ depends: [
   "iso639"
   "js_of_ocaml" {>= "3.3"}
   "js_of_ocaml-lwt"
-  "js_of_ocaml-ppx"
+  "js_of_ocaml-ppx_deriving_json"
   "lwt"
   "lwt_log"
   "lwt_ppx"
