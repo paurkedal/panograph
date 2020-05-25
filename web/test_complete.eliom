@@ -1,4 +1,4 @@
-(* Copyright (C) 2017--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2017--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -68,19 +68,19 @@ let emit to_string elem value =
 
 let string_complete pfx =
   Lwt_js.sleep 0.5 >|= fun () ->
-  if String.exists (fun c -> not (Char.is_alpha c)) pfx
+  if String.exists (fun c -> not (Char.is_ascii_alpha c)) pfx
   then (Panui_result.invalid_input "non-alpha")
   else (Ok (List.filter (String.has_prefix pfx) (List.map fst choices)))
 
 let labelled_int_complete pfx =
   Lwt_js.sleep 0.5 >|= fun () ->
-  if String.exists (fun c -> not (Char.is_alpha c)) pfx
+  if String.exists (fun c -> not (Char.is_ascii_alpha c)) pfx
   then (Panui_result.invalid_input "non-alpha")
   else (Ok (List.filter (fun (s, _) -> String.has_prefix pfx s) choices))
 
 let labelled_int32_complete pfx =
   Lwt_js.sleep 0.5 >|= fun () ->
-  if String.exists (fun c -> not (Char.is_alpha c)) pfx then
+  if String.exists (fun c -> not (Char.is_ascii_alpha c)) pfx then
     (Panui_result.invalid_input "non-alpha") else
   let choices =
     if pfx = "" then [] else
