@@ -10,9 +10,11 @@ depends: [
   "adpkg" {build}
   "eliom" {>= "6.6" & < "7.0~"}
   "iso639"
-  "js_of_ocaml" {>= "3.3"}
-  "js_of_ocaml-lwt"
-  "js_of_ocaml-ppx_deriving_json"
+  "js_of_ocaml" {>= "3.5.1"}
+  "js_of_ocaml-compiler" {>= "3.5.1"}
+  "js_of_ocaml-lwt" {>= "3.5.1"}
+  "js_of_ocaml-ppx" {>= "3.5.1"}
+  "js_of_ocaml-ppx_deriving_json" {>= "3.5.1"}
   "lwt"
   "lwt_log"
   "lwt_ppx"
