@@ -1,3 +1,7 @@
+## v0.8.3 - 2020-10-18
+
+- Also support `js_of_ocaml` 3.7.
+
 ## v0.8.2 - 2020-05-25
 
 - Supplement `js_of_ocaml-ppx` with a dependency on
