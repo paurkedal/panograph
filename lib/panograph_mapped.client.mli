@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -27,9 +27,9 @@ module Mapped_PE
         (Container : CONTAINER with type item_ui = Key_SV.ui * Elt_PE.ui) :
 sig
   type shape = {
-    key_sv_shape : Key_SV.shape;
-    elt_pe_shape : Elt_PE.shape;
-    container_shape : Container.shape;
+    key_sv_shape: Key_SV.shape;
+    elt_pe_shape: Elt_PE.shape;
+    container_shape: Container.shape;
   }
   include PATCH_EDITOR
     with type shape := shape

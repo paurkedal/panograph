@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -29,11 +29,11 @@
   open Js_of_ocaml_lwt
 
   type twine_editor = {
-    twe_container_dom : Dom_html.element Js.t;
-    twe_error_dom : Dom_html.element Js.t;
-    twe_patch_out : twine_editor_out -> unit Panui_result.t Lwt.t;
-    mutable twe_map : (Dom_html.element Js.t * Dom_html.inputElement Js.t)
-                      Lang_map.t;
+    twe_container_dom: Dom_html.element Js.t;
+    twe_error_dom: Dom_html.element Js.t;
+    twe_patch_out: twine_editor_out -> unit Panui_result.t Lwt.t;
+    mutable twe_map: (Dom_html.element Js.t * Dom_html.inputElement Js.t)
+                     Lang_map.t;
   }
 ]
 

@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -30,32 +30,35 @@ module Mapped_PE
         (Container : CONTAINER with type item_ui = Key_SV.ui * Elt_PE.ui) =
 struct
   type shape = {
-    key_sv_shape : Key_SV.shape;
-    elt_pe_shape : Elt_PE.shape;
-    container_shape : Container.shape;
+    key_sv_shape: Key_SV.shape;
+    elt_pe_shape: Elt_PE.shape;
+    container_shape: Container.shape;
   }
   type ui = Container.ui
   type value = (Key_SV.value * Elt_PE.value) list
-  type patch_out = [`Patch of Key_SV.value * Elt_PE.patch_out]
-  type patch_in = [ `Add of Key_SV.value * Elt_PE.value
-                  | `Remove of Key_SV.value
-                  | `Patch of Key_SV.value * Key_SV.value option
-                            * Elt_PE.patch_in ]
+
+  type patch_out =
+    [`Patch of Key_SV.value * Elt_PE.patch_out]
+
+  type patch_in =
+    [ `Add of Key_SV.value * Elt_PE.value
+    | `Remove of Key_SV.value
+    | `Patch of Key_SV.value * Key_SV.value option * Elt_PE.patch_in ]
 
   module Map = Prime_enummap.Make (Key)
 
   type elt = {
-    e_key : Key_SV.value ref;
-    e_key_sv : Key_SV.t;
-    e_elt_pe : Elt_PE.t;
-    e_item : Container.item;
+    e_key: Key_SV.value ref;
+    e_key_sv: Key_SV.t;
+    e_elt_pe: Elt_PE.t;
+    e_item: Container.item;
   }
 
   type t = {
-    w_shape : shape;
-    w_container : Container.t;
-    mutable w_map : elt Map.t;
-    w_on_patch : (patch_out -> unit Panui_result.t Lwt.t) option;
+    w_shape: shape;
+    w_container: Container.t;
+    mutable w_map: elt Map.t;
+    w_on_patch: (patch_out -> unit Panui_result.t Lwt.t) option;
   }
 
   let default_shape = {

@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -22,9 +22,9 @@ let magic = "-pan-finalized-"
 let magic_js = Js.string magic
 
 type t = {
-  finalize : unit -> unit;
-  mutable mark : bool;
-  mutable next : t;
+  finalize: unit -> unit;
+  mutable mark: bool;
+  mutable next: t;
 }
 
 let rec chain = {

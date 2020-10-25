@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2017  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -27,18 +27,22 @@ module Collection_PE
                                 and type static_ui = Elt_SE.ui * controls_ui) :
 sig
   type shape = {
-    elt_pe_shape : Elt_PE.shape;
-    elt_se_shape : Elt_SE.shape;
-    container_shape : Container.shape;
+    elt_pe_shape: Elt_PE.shape;
+    elt_se_shape: Elt_SE.shape;
+    container_shape: Container.shape;
   }
   include PATCH_EDITOR
     with type shape := shape
      and type ui = Container.ui
      and type value = Elt_PE.value list
-     and type patch_out = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
-                          | `Patch of Elt_PE.patch_out ]
-     and type patch_in = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
-                         | `Patch of Elt_PE.patch_in ]
+     and type patch_out =
+      [ `Add of Elt_PE.value
+      | `Remove of Elt_PE.key
+      | `Patch of Elt_PE.patch_out ]
+     and type patch_in =
+      [ `Add of Elt_PE.value
+      | `Remove of Elt_PE.key
+      | `Patch of Elt_PE.patch_in ]
 end
 
 module Ul_collection_container : sig

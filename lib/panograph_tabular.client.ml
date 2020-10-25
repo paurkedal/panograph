@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -62,19 +62,19 @@ module Tabular = struct
     | Refined of int * int
 
   type block = {
-    mutable blk_state : blockstate;
-    blk_rs : rowspan_node Dltree.t;
-    blk_cs : colspan_node Dltree.t;
+    mutable blk_state: blockstate;
+    blk_rs: rowspan_node Dltree.t;
+    blk_cs: colspan_node Dltree.t;
   }
   and rowspan_node = {
-    mutable rsn_span : int;
-    rsn_blocks : (int, block) Hashtbl.t;
-    rsn_css_class : string option;
+    mutable rsn_span: int;
+    rsn_blocks: (int, block) Hashtbl.t;
+    rsn_css_class: string option;
   }
   and colspan_node = {
-    csn_id : int;                       (* Unique to each span. *)
-    mutable csn_span : int;
-    csn_css_class : string option;
+    csn_id: int; (* Unique to each span. *)
+    mutable csn_span: int;
+    csn_css_class: string option;
   }
 
   module Rs_order = struct
@@ -91,16 +91,16 @@ module Tabular = struct
   module Cs_map = Prime_enummap.Make (Cs_order)
 
   type tr_node = {
-    tn_tr : Dom_html.tableRowElement Js.t;
-    mutable tn_tcs : Dom_html.tableCellElement Js.t Cs_map.t;
+    tn_tr: Dom_html.tableRowElement Js.t;
+    mutable tn_tcs: Dom_html.tableCellElement Js.t Cs_map.t;
   }
 
   type t = {
-    tab_table : Dom_html.tableElement Js.t;
-    tab_root_rs : rowspan_node Dltree.t;
-    tab_root_cs : colspan_node Dltree.t;
-    mutable tab_tns : tr_node Rs_map.t;
-    mutable tab_next_col_id : int;
+    tab_table: Dom_html.tableElement Js.t;
+    tab_root_rs: rowspan_node Dltree.t;
+    tab_root_cs: colspan_node Dltree.t;
+    mutable tab_tns: tr_node Rs_map.t;
+    mutable tab_next_col_id: int;
   }
 
   let has_subblock ?skip_rs ?skip_cs lr lc rs cs =

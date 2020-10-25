@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -38,17 +38,17 @@ let make_button f content =
 
 module type BASIC_SHAPE_TYPE = sig
   type shape = {
-    a_id : string option;
-    a_class : string list;
-    a_title : string option;
+    a_id: string option;
+    a_class: string list;
+    a_title: string option;
   }
 end
 
 module Basic_shape = struct
   type shape = {
-    a_id : string option;
-    a_class : string list;
-    a_title : string option;
+    a_id: string option;
+    a_class: string list;
+    a_title: string option;
   }
   let make_default_shape default_class = {
     a_id = None;

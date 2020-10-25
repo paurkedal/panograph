@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -31,16 +31,22 @@ module Collection_PE
                                 and type static_ui = Elt_SE.ui * controls_ui) =
 struct
   type shape = {
-    elt_pe_shape : Elt_PE.shape;
-    elt_se_shape : Elt_SE.shape;
-    container_shape : Container.shape;
+    elt_pe_shape: Elt_PE.shape;
+    elt_se_shape: Elt_SE.shape;
+    container_shape: Container.shape;
   }
   type ui = Container.ui
   type value = Elt_PE.value list
-  type patch_out = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
-                   | `Patch of Elt_PE.patch_out ]
-  type patch_in = [ `Add of Elt_PE.value | `Remove of Elt_PE.key
-                  | `Patch of Elt_PE.patch_in ]
+
+  type patch_out =
+    [ `Add of Elt_PE.value
+    | `Remove of Elt_PE.key
+    | `Patch of Elt_PE.patch_out ]
+
+  type patch_in =
+    [ `Add of Elt_PE.value
+    | `Remove of Elt_PE.key
+    | `Patch of Elt_PE.patch_in ]
 
   let default_shape = {
     elt_pe_shape = Elt_PE.default_shape;
@@ -56,10 +62,10 @@ struct
   end)
 
   type t = {
-    w_shape : shape;
-    w_container : Container.t;
-    mutable w_set : Set.t;
-    w_on_patch : (patch_out -> unit Panui_result.t Lwt.t) option;
+    w_shape: shape;
+    w_container: Container.t;
+    mutable w_set: Set.t;
+    w_on_patch: (patch_out -> unit Panui_result.t Lwt.t) option;
   }
 
   let add_elt w ((_, item) as elt) =

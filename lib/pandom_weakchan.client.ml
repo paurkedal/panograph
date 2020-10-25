@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -18,8 +18,8 @@ open Js_of_ocaml
 open Printf
 
 type ('k, 'a) t = {
-  prefix : string;
-  classify : 'k -> string;
+  prefix: string;
+  classify: 'k -> string;
 }
 
 type subscription = unit -> unit

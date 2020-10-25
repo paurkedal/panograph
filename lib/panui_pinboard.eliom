@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -26,8 +26,8 @@ open Unprime_option
 type item = Html_types.tr elt
 
 type t = {
-  table : 'a. ([> Html_types.table] as 'a) elt;
-  hover_mutex : Lwt_mutex.t Eliom_client_value.t;
+  table: 'a. ([> Html_types.table] as 'a) elt;
+  hover_mutex: Lwt_mutex.t Eliom_client_value.t;
 }
 
 type subject_content = Html_types.flow5

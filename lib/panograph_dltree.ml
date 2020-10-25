@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -21,13 +21,13 @@ let ord_step = 1 lsl (if max_int lsr 60 <> 0 then 24 else 12)
 module Dltree = struct
 
   type 'a t = {
-    mutable up : 'a t;
-    mutable down : 'a t;
-    mutable prev : 'a t;
-    mutable next : 'a t;
-    mutable value : 'a;
-    level : int;
-    mutable ord : int;
+    mutable up: 'a t;
+    mutable down: 'a t;
+    mutable prev: 'a t;
+    mutable next: 'a t;
+    mutable value: 'a;
+    level: int;
+    mutable ord: int;
   }
 
   let is_root c = c.up == c
@@ -70,15 +70,17 @@ module Dltree = struct
   let rec fold ?(depth = 1) f u =
     if depth = 0 then f u else
     let rec loop = function
-      | None -> ident
-      | Some c -> fun acc -> loop (next c) (fold ~depth:(depth - 1) f c acc) in
+     | None -> ident
+     | Some c -> fun acc -> loop (next c) (fold ~depth:(depth - 1) f c acc)
+    in
     loop (first u)
 
   let rec iter ?(depth = 1) f u =
     if depth = 0 then f u else
     let rec loop = function
-      | None -> ()
-      | Some c -> iter ~depth:(depth - 1) f c; loop (next c) in
+     | None -> ()
+     | Some c -> iter ~depth:(depth - 1) f c; loop (next c)
+    in
     loop (first u)
 
   let iteri ?depth f u =
@@ -87,37 +89,42 @@ module Dltree = struct
   let rec iterp' ~depth ~path f u =
     if depth = 0 then f (List.rev path) u else
     let rec loop i = function
-      | None -> ()
-      | Some c ->
+     | None -> ()
+     | Some c ->
         iterp' ~depth:(depth - 1) ~path:(i :: path) f c;
-        loop (i + 1) (next c) in
+        loop (i + 1) (next c)
+    in
     loop 0 (first u)
   let iterp ~depth f u = iterp' ~depth ~path:[] f u
 
   let rec exists ?(depth = 1) f u =
     if depth = 0 then f u else
     let rec loop = function
-      | None -> false
-      | Some c -> exists ~depth:(depth - 1) f c || loop (next c) in
+     | None -> false
+     | Some c -> exists ~depth:(depth - 1) f c || loop (next c)
+    in
     loop (first u)
 
   let rec for_all ?(depth = 1) f u =
     if depth = 0 then f u else
     let rec loop = function
-      | None -> true
-      | Some c -> for_all ~depth:(depth - 1) f c && loop (next c) in
+     | None -> true
+     | Some c -> for_all ~depth:(depth - 1) f c && loop (next c)
+    in
     loop (first u)
 
   let fold_ancestors f c =
     let rec loop = function
-      | None -> ident
-      | Some c -> fun acc -> loop (up c) (f c acc) in
+     | None -> ident
+     | Some c -> fun acc -> loop (up c) (f c acc)
+    in
     loop (up c)
 
   let iter_ancestors f c =
     let rec loop = function
-      | None -> ()
-      | Some c -> f c; loop (up c) in
+     | None -> ()
+     | Some c -> f c; loop (up c)
+    in
     loop (up c)
 
   (* TODO: Also check ord against min_int and max_int. *)
@@ -150,7 +157,8 @@ module Dltree = struct
       let h = u.down in
       let rec reorder ord c =
         c.ord <- ord;
-        if c.next != h then reorder (ord + ord_step) c.next in
+        if c.next != h then reorder (ord + ord_step) c.next
+      in
       reorder 0 h
     end;
     let ord = (p.ord + n.ord) asr 1 in

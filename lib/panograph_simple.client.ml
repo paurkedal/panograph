@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -56,7 +56,7 @@ end
 
 module Simple_shape = struct
   type t = {
-    input_a : Html_types.input_attrib attrib list;
+    input_a: Html_types.input_attrib attrib list;
   }
   let make ?(a = []) () = {input_a = a}
 end
@@ -89,9 +89,9 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
 
   type ui = Html_types.flow5 elt
   type t = {
-    w_dom : Dom_html.inputElement Js.t;
-    w_saved_title : string;
-    mutable w_value : value; (* as received *)
+    w_dom: Dom_html.inputElement Js.t;
+    w_saved_title: string;
+    mutable w_value: value; (* as received *)
   }
 
   let default_shape = make_default_shape ("PE" :: Value.css_classes)
@@ -160,8 +160,8 @@ module Simple_SE (Value : SIMPLE_VALUE) = struct
   type value = Value.t
   type ui = Html_types.flow5 elt
   type t = {
-    w_dom : Dom_html.inputElement Js.t;
-    w_saved_title : string;
+    w_dom: Dom_html.inputElement Js.t;
+    w_saved_title: string;
   }
 
   let default_shape = make_default_shape ("SE" :: Value.css_classes)
