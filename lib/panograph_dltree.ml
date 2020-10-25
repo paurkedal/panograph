@@ -16,7 +16,7 @@
 
 open Unprime
 
-let ord_step = 1 lsl (if max_int lsr 60 <> 0 then 24 else 12)
+let ord_step = 256
 
 module Dltree = struct
 
@@ -138,6 +138,8 @@ module Dltree = struct
     end else begin
       let n = u.down in
       let p = n.prev in
+      if n.prev.ord + ord_step < n.prev.ord then
+        failwith "Panograph_dltree.add_last: overflow.";
       let rec c = {up = u; down = c; prev = p; next = n; value;
                    level = n.level; ord = n.prev.ord + ord_step} in
       n.prev.next <- c;
@@ -147,6 +149,8 @@ module Dltree = struct
 
   let add_first x u =
     let c = add_last x u in
+    if c.next.ord - ord_step > c.next.ord then
+        failwith "Panograph_dltree.add_first: overflow.";
     u.down <- c;
     c.ord <- c.next.ord - ord_step;
     c

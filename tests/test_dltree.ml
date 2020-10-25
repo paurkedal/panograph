@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -137,12 +137,18 @@ let rec pick_random c =
 
 let add_random a =
   let c = pick_random a in
-  match Random.int (if Dltree.is_root c then 2 else 4) with
-  | 0 -> test_add_first 0 c
-  | 1 -> test_add_last 0 c
-  | 2 -> test_add_before 0 c
-  | 3 -> test_add_after 0 c
-  | _ -> assert false
+  let op =
+    (match Random.int (if Dltree.is_root c then 2 else 4) with
+     | 0 -> test_add_first
+     | 1 -> test_add_last
+     | 2 -> test_add_before
+     | 3 -> test_add_after
+     | _ -> assert false)
+  in
+  let count = Random.int (1 lsl (max 0 (Random.int 114 - 100))) in
+  for _ = 0 to count do
+    ignore (op 0 c : int Dltree.t)
+  done
 
 let remove_random a =
   let c = pick_random a in
@@ -151,7 +157,7 @@ let remove_random a =
 let mutate c =
   if Random.int 8 = 0
   then remove_random c
-  else ignore (add_random c : int Dltree.t)
+  else add_random c
 
 let rec enumerate i c =
   Dltree.set !i c; incr i;
