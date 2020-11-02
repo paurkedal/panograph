@@ -1,3 +1,7 @@
+## v0.8.4 - 2020-11-02
+
+- Handle and avoid integer overflow in `Panograph_dltree`.
+
 ## v0.8.3 - 2020-10-18
 
 - Also support `js_of_ocaml` 3.7.
