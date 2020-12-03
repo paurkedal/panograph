@@ -1,4 +1,4 @@
-(* Copyright (C) 2017--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2017--2020  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -43,3 +43,5 @@ val convert_input : ?tags: string list -> ?doc: string -> ?msg: string ->
 
 val require_input : ?tags: string list -> ?doc: string -> ?msg: string ->
                     'a option -> 'a t
+
+val of_msg : ('a, [< `Msg of string]) result -> 'a t
