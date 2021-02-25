@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -65,14 +65,24 @@
     method hide = Manip.Class.add el "pan-hidden"
   end
 
+  type input_or_select_parent = [
+    | `Abbr | `Article | `Aside | `Blockquote | `B | `Body
+    | `Caption | `Cite | `Code
+    | `Dd | `Del | `Details | `Dfn | `Div | `Dt | `Em
+    | `Figcaption | `Figure | `Form
+    | `H1 | `H2 | `H3 | `H4 | `H5 | `H6
+    | `I | `Ins | `Li | `Main | `Mark | `Nav | `P | `Pre | `Q
+    | `Samp | `Section | `Small | `Span | `Strong | `Sub | `Summary | `Sup
+    | `Td | `Th | `Time | `U | `Var
+  ]
+
   class ['a] input_handle
-      (to_string : 'a -> string)
-      (of_string : string -> 'a)
-      (emit : ('a -> unit Panui_result.t Lwt.t) option)
-      (error : (string option -> unit) option)
-      (input_a : [< common_input_attrib] attrib list)
-      (init : 'a) el =
-    let input_a = (input_a :> Html_types.input_attrib attrib list) in
+      ~(to_string : 'a -> string)
+      ~(of_string : string -> 'a)
+      ?(emit : ('a -> unit Panui_result.t Lwt.t) option)
+      ?(error : (string option -> unit) option)
+      ?(a : [< Html_types.input_attrib] attrib list = [])
+      (init : 'a) (el : [< input_or_select_parent] elt) =
   object (self)
     inherit common_handle el
 
@@ -80,7 +90,7 @@
     val mutable absorb = fun _ -> ()
 
     method edit_on f =
-      let inp = D.input ~a:(F.a_input_type `Text :: input_a) () in
+      let inp = D.input ~a:(F.a_input_type `Text :: a) () in
       absorb <- outfit_input ~to_string ~of_string ?error ~value inp f;
       Manip.replaceChildren el [inp]
 
@@ -97,11 +107,10 @@
   end
 
   class checkbox_handle
-      (emit : (bool -> unit Panui_result.t Lwt.t) option)
-      (error : (string option -> unit) option)
-      (input_a : [< common_input_attrib] attrib list)
-      (init : bool) el =
-    let input_a = (input_a :> Html_types.input_attrib attrib list) in
+      ?(emit : (bool -> unit Panui_result.t Lwt.t) option)
+      ?(error : (string option -> unit) option)
+      ?(a : [< Html_types.input_attrib] attrib list = [])
+      (init : bool) (el : [< input_or_select_parent] elt) =
   object (self)
     inherit common_handle el
 
@@ -109,8 +118,8 @@
     val mutable absorb = fun _ -> ()
 
     method edit_on f =
-      let a = if init then (D.a_checked () :: input_a) else input_a in
-      let inp = D.input ~a:(D.a_input_type `Checkbox :: a) () in
+      let a = if init then (D.a_checked () :: a) else a in
+      let inp = D.input ~a:(F.a_input_type `Checkbox :: a) () in
       absorb <- outfit_checkbox ?error ~value inp f;
       Manip.replaceChildren el [inp]
 
@@ -130,13 +139,13 @@
   end
 
   class ['a] select_handle
-      (opts : ('a, 'opt) opt list)
-      (to_string : 'a -> string)
-      (of_string : string -> 'a)
-      (emit : ('a -> unit Panui_result.t Lwt.t) option)
-      (error : (string option -> unit) option)
-      (input_a : [< common_input_attrib] attrib list)
-      (init : 'a) el =
+      ~(to_string : 'a -> string)
+      ~(of_string : string -> 'a)
+      ~(opts : ('a, 'opt) opt list)
+      ?(emit : ('a -> unit Panui_result.t Lwt.t) option)
+      ?(error : (string option -> unit) option)
+      ?(a : [< Html_types.select_attrib] attrib list option)
+      (init : 'a) (el : [< input_or_select_parent] elt) =
     let label_by_value = Hashtbl.create 11 in
     let unknown_option =
       D.option ~a:[D.a_value "__pan_unknown__"; D.a_class ["pan-error"]]
@@ -157,7 +166,7 @@
           let a = if enabled then [] else [D.a_disabled ()] in
           D.optgroup ~label ~a (List.map mk0 opts) in
       List.map mk1 opts in
-    let select = D.select ~a:input_a options in
+    let select = D.select ?a options in
   object (self)
     inherit common_handle el
 
@@ -208,13 +217,25 @@
       match emit with None -> self#edit_off | Some f -> self#edit_on f
   end
 
-  let make_handle = function
-    | None -> new input_handle
-    | Some opts -> new select_handle opts
+  let inject_input ~to_string ~of_string ?emit ?error ?a =
+    let a = (a :> Html_types.input_attrib attrib list option) in
+    new input_handle ~to_string ~of_string ?emit ?error ?a
 
-  let add_input_with_handle ~to_string ~of_string ?opts ?emit ?error ?(a = [])
-                            init el =
-    make_handle opts to_string of_string emit error a init el
+  let inject_checkbox ?emit ?error ?a init el =
+    let a = (a :> Html_types.input_attrib attrib list option) in
+    new checkbox_handle ?emit ?error ?a init el
+
+  let inject_select = new select_handle
+
+  let inject_input_or_select
+        ~to_string ~of_string ?opts ?emit ?error ?a init el =
+    (match opts with
+     | None ->
+        inject_input ~to_string ~of_string ?emit ?error ?a init el
+     | Some opts ->
+        new select_handle ~opts ~to_string ~of_string ?emit ?error ?a init el)
+
+  let add_input_with_handle = inject_input_or_select
 ]
 
 [%%shared
@@ -232,186 +253,216 @@
       constraint 'opt = [< `Opt | `Optgroup]
       constraint 'elt = [> `Span]
 
+  let bool_opts =
+    [opt "true" true; opt "false" false]
+
+  let bool_option_opts =
+    [opt "" None; opt "true" (Some true); opt "false" (Some false)]
+
   let bool : (bool, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?to_string ?of_string ?opts ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "bool"]]) ?(input_a = []) init ->
+        ?(a = [D.a_class ["pan-scalar"; "bool"]]) ?input_a init ->
     let el = D.span ~a [D.txt (string_of_bool init)] in
     let h : bool handle Eliom_client_value.t =
       match to_string, of_string, opts with
       | None, None, None ->
         [%client
-          new checkbox_handle ~%emit ~%error ~%input_a ~%init
-                              ~%(el : [`Span] elt)]
+          inject_checkbox
+            ?emit:~%emit ?error:~%error ?a:~%input_a
+            ~%init ~%(el : [`Span] elt)]
       | _ ->
         let to_string = Option.get_or [%client string_of_bool] to_string in
         let of_string = Option.get_or [%client bool_of_string] of_string in
-        let opts = Option.get_or [opt "true" true; opt "false" false] opts in
+        let opts = Option.get_or bool_opts opts in
         [%client
-          make_handle (Some ~%(opts :> (bool, [`Opt | `Optgroup]) opt list))
-                      ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                      ~%(el : [`Span] elt)
-        ] in
-    el, h
+          inject_select
+            ~opts:~%(opts :> (bool, [`Opt | `Optgroup]) opt list)
+            ~to_string:~%to_string ~of_string:~%of_string
+            ?emit:~%emit ?error:~%error ?a:~%input_a
+            ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let string : (string, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client ident])
         ?(of_string = [%client checked_utf8])
-        ?opts
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "string"]]) ?(input_a = []) init ->
+        ?opts ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "string"]]) ?input_a init ->
     let el = D.span ~a [D.txt init] in
     let h : string handle Eliom_client_value.t =
       [%client
-        make_handle ~%(opts :> (string, [`Opt | `Optgroup]) opt list option)
-                    ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                    ~%(el : [`Span] elt)
-      ] in
-    el, h
+        inject_input_or_select
+          ?opts:~%(opts :> (string, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let int : (int, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_int])
         ?(of_string = [%client int_of_string])
-        ?opts
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "int"]]) ?(input_a = []) init ->
+        ?opts ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int"]]) ?input_a init ->
     let el = D.span ~a [D.txt (string_of_int init)] in
-    let h : int handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (int, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : int handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (int, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let int32 : (int32, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client Int32.to_string])
         ?(of_string = [%client Int32.of_string])
-        ?opts
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "int32"]]) ?(input_a = []) init ->
+        ?opts ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int32"]]) ?input_a init ->
     let el = D.span ~a [D.txt (Int32.to_string init)] in
-    let h : int32 handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : int32 handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let int64 : (int64, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client Int64.to_string])
         ?(of_string = [%client Int64.of_string])
-        ?opts
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "int64"]]) ?(input_a = []) init ->
+        ?opts ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int64"]]) ?input_a init ->
     let el = D.span ~a [D.txt (Int64.to_string init)] in
-    let h : int64 handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : int64 handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let float : (float, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_float])
         ?(of_string = [%client float_of_string])
-        ?opts
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "float"]]) ?(input_a = []) init ->
+        ?opts ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "float"]]) ?input_a init ->
     let el = D.span ~a [D.txt (string_of_float init)] in
-    let h : float handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : float handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)] in
+    (el, h)
 
   let bool_option : (bool option, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_option string_of_bool])
         ?(of_string = [%client option_of_string bool_of_string])
-        ?(opts = [opt "" None; opt "true" (Some true);
-                               opt "false" (Some false)])
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "bool"; "option"]]) ?(input_a = [])
+        ?(opts = bool_option_opts) ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "bool"; "option"]]) ?input_a
         init ->
     let el = D.span ~a [D.txt (string_of_option string_of_bool init)] in
-    let h : bool option handle Eliom_client_value.t = [%client
-      make_handle (Some ~%(opts :> (_, [`Opt | `Optgroup]) opt list))
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                              ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : bool option handle Eliom_client_value.t =
+      [%client
+        inject_select
+          ~opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let string_option : (string option, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_option ident])
         ?(of_string = [%client option_of_string checked_utf8])
         ?opts
         ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "string"; "option"]]) ?(input_a = [])
+        ?(a = [D.a_class ["pan-scalar"; "string"; "option"]]) ?input_a
         init ->
     let el = D.span ~a [D.txt (string_of_option ident init)] in
-    let h : string option handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : string option handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let int_option : (int option, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_option string_of_int])
         ?(of_string = [%client option_of_string int_of_string])
         ?opts
         ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "int"; "option"]]) ?(input_a = [])
+        ?(a = [D.a_class ["pan-scalar"; "int"; "option"]]) ?input_a
         init ->
     let el = D.span ~a [D.txt (string_of_option string_of_int init)] in
-    let h : int option handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : int option handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let int32_option : (int32 option, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_option Int32.to_string])
         ?(of_string = [%client option_of_string Int32.of_string])
-        ?opts
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "int32"; "option"]]) ?(input_a = [])
+        ?opts ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int32"; "option"]]) ?input_a
         init ->
     let el = D.span ~a [D.txt (string_of_option Int32.to_string init)] in
-    let h : int32 option handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : int32 option handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt) ]
+    in
+    (el, h)
 
   let int64_option : (int64 option, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_option Int64.to_string])
         ?(of_string = [%client option_of_string Int64.of_string])
-        ?opts
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "int64"; "option"]]) ?(input_a = [])
+        ?opts ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "int64"; "option"]]) ?input_a
         init ->
     let el = D.span ~a [D.txt (string_of_option Int64.to_string init)] in
-    let h : int64 option handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : int64 option handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 
   let float_option : (float option, 'opt, 'attrib, 'inner_attrib, 'elt) t =
     fun ?(to_string = [%client string_of_option string_of_float])
         ?(of_string = [%client option_of_string float_of_string])
-        ?opts
-        ?emit ?error
-        ?(a = [D.a_class ["pan-scalar"; "float"; "option"]]) ?(input_a = [])
+        ?opts ?emit ?error
+        ?(a = [D.a_class ["pan-scalar"; "float"; "option"]]) ?input_a
         init ->
     let el = D.span ~a [D.txt (string_of_option string_of_float init)] in
-    let h : float option handle Eliom_client_value.t = [%client
-      make_handle ~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
-                  ~%to_string ~%of_string ~%emit ~%error ~%input_a ~%init
-                  ~%(el : [`Span] elt)
-    ] in
-    el, h
+    let h : float option handle Eliom_client_value.t =
+      [%client
+        inject_input_or_select
+          ?opts:~%(opts :> (_, [`Opt | `Optgroup]) opt list option)
+          ~to_string:~%to_string ~of_string:~%of_string
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
 ]

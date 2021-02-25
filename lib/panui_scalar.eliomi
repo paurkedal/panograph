@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -41,6 +41,45 @@ class type ['a] handle = object
   method set : 'a -> unit
 end
 
+type input_or_select_parent = [
+  | `Abbr | `Article | `Aside | `Blockquote | `B | `Body
+  | `Caption | `Cite | `Code
+  | `Dd | `Del | `Details | `Dfn | `Div | `Dt | `Em
+  | `Figcaption | `Figure | `Form
+  | `H1 | `H2 | `H3 | `H4 | `H5 | `H6
+  | `I | `Ins | `Li | `Main | `Mark | `Nav | `P | `Pre | `Q
+  | `Samp | `Section | `Small | `Span | `Strong | `Sub | `Summary | `Sup
+  | `Td | `Th | `Time | `U | `Var
+]
+
+val inject_input :
+  to_string: ('a -> string) ->
+  of_string: (string -> 'a) ->
+  ?emit: ('a -> unit Panui_result.t Lwt.t) ->
+  ?error: (string option -> unit) ->
+  ?a: [< Html_types.input_attrib] attrib list ->
+  'a -> [< input_or_select_parent] elt ->
+  'a handle
+
+val inject_select :
+  to_string: ('a -> string) ->
+  of_string: (string -> 'a) ->
+  opts: ('a, 'opt) opt list ->
+  ?emit: ('a -> unit Panui_result.t Lwt.t) ->
+  ?error: (string option -> unit) ->
+  ?a: [< Html_types.select_attrib] attrib list ->
+  'a -> [< input_or_select_parent] elt ->
+  'a handle
+
+val inject_input_or_select :
+  to_string: ('a -> string) ->
+  of_string: (string -> 'a) ->
+  ?opts: ('a, 'opt) opt list ->
+  ?emit: ('a -> unit Panui_result.t Lwt.t) ->
+  ?error: (string option -> unit) ->
+  ?a: [< common_input_attrib] attrib list ->
+  'a -> [< input_or_select_parent] elt -> 'a handle
+
 val add_input_with_handle :
       to_string: ('a -> string) ->
       of_string: (string -> 'a) ->
@@ -49,6 +88,7 @@ val add_input_with_handle :
       ?error: (string option -> unit) ->
       ?a: [< common_input_attrib] attrib list ->
       'a -> [< `Span | `Div | `Td] elt -> 'a handle
+[@@deprecated "Renamed to inject_input_or_select."]
 
 [%%shared.start]
 
