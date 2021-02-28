@@ -61,6 +61,16 @@ val inject_input :
   'a -> [< input_or_select_parent] elt ->
   'a handle
 
+val inject_textarea :
+  to_string: ('a -> string) ->
+  of_string: (string -> 'a) ->
+  ?to_html: ('a -> [< Html_types.div_content] elt list) ->
+  ?emit: ('a -> unit Panui_result.t Lwt.t) ->
+  ?error: (string option -> unit) ->
+  ?a: [< Html_types.textarea_attrib] attrib list ->
+  'a -> [< input_or_select_parent] elt ->
+  'a handle
+
 val inject_select :
   to_string: ('a -> string) ->
   of_string: (string -> 'a) ->
@@ -124,3 +134,27 @@ val int_option : (int option, 'opt, 'attrib, 'input_attrib, 'elt) t
 val int32_option : (int32 option, 'opt, 'attrib, 'input_attrib, 'elt) t
 val int64_option : (int64 option, 'opt, 'attrib, 'input_attrib, 'elt) t
 val float_option : (float option, 'opt, 'attrib, 'input_attrib, 'elt) t
+
+val textarea :
+  ?to_string: (string -> string) Eliom_client_value.t ->
+  ?of_string: (string -> string) Eliom_client_value.t ->
+  ?to_html:
+    (string -> [< Html_types.div_content] elt list Eliom_client_value.t) ->
+  ?emit: (string -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
+  ?error: (string option -> unit) Eliom_client_value.t ->
+  ?a: [< Html_types.div_attrib > `Class] attrib list ->
+  ?input_a: [< Html_types.textarea_attrib] attrib list ->
+  string -> [> Html_types.div] elt * string handle Eliom_client_value.t
+
+val textarea_option :
+  ?to_string: (string option -> string) Eliom_client_value.t ->
+  ?of_string: (string -> string option) Eliom_client_value.t ->
+  ?to_html:
+    (string option ->
+      [< Html_types.div_content] elt list Eliom_client_value.t) ->
+  ?emit: (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
+  ?error: (string option -> unit) Eliom_client_value.t ->
+  ?a: [< Html_types.div_attrib > `Class] attrib list ->
+  ?input_a: [< Html_types.textarea_attrib] attrib list ->
+  string option ->
+  [> Html_types.div] elt * string option handle Eliom_client_value.t

@@ -16,6 +16,7 @@
 
 [%%shared
   open Eliom_content.Html
+  open Panograph_i18n
   open Panograph_prereq
   open Panograph_types
   open Unprime
@@ -44,12 +45,17 @@
   open Js_of_ocaml
   open Pandom_interactive
   open Panograph_common
-  open Panograph_i18n
 
   let checked_utf8 s =
     (match check_utf8_exn s with
      | () -> s
      | exception (Failure msg) -> raise (Invalid_input msg))
+
+  let render_text text =
+    (try check_utf8_exn text with Failure msg -> raise (Invalid_input msg));
+    String.split_on_char '\n' text
+      |> List.map (fun line -> [F.txt line; F.br ()])
+      |> List.flatten
 
   class type ['a] handle = object
     method show : unit
@@ -96,6 +102,42 @@
 
     method edit_off =
       absorb <- (fun x -> Manip.replaceChildren el [D.txt (to_string x)]);
+      absorb value
+
+    method get = value
+
+    method set x = value <- x; absorb x
+
+    initializer
+      match emit with None -> self#edit_off | Some f -> self#edit_on f
+  end
+
+  class ['a] textarea_handle
+    ~(to_string : 'a -> string)
+    ~(of_string : string -> 'a)
+    ?(to_html : (('a -> [< Html_types.div_content] elt list) option))
+    ?(emit : ('a -> unit Panui_result.t Lwt.t) option)
+    ?(error : (string option -> unit) option)
+    ?(a : [< Html_types.textarea_attrib] attrib list option)
+    (init : 'a) (el : [< input_or_select_parent] elt) =
+  object (self)
+    inherit common_handle el
+
+    val mutable value = init
+    val mutable absorb = fun _ -> ()
+
+    method edit_on f =
+      let inp = D.textarea ?a (D.txt (to_string init)) in
+      absorb <- outfit_textarea ~to_string ~of_string ?error ~value inp f;
+      Manip.replaceChildren el [inp]
+
+    method edit_off =
+      absorb <-
+        (match to_html with
+         | Some to_html -> fun x ->
+            Manip.replaceChildren el (to_html x)
+         | None -> fun x ->
+            Manip.replaceChildren el (render_text (to_string x)));
       absorb value
 
     method get = value
@@ -220,6 +262,8 @@
   let inject_input ~to_string ~of_string ?emit ?error ?a =
     let a = (a :> Html_types.input_attrib attrib list option) in
     new input_handle ~to_string ~of_string ?emit ?error ?a
+
+  let inject_textarea = new textarea_handle
 
   let inject_checkbox ?emit ?error ?a init el =
     let a = (a :> Html_types.input_attrib attrib list option) in
@@ -463,6 +507,58 @@
           ~to_string:~%to_string ~of_string:~%of_string
           ?emit:~%emit ?error:~%error ?a:~%input_a
           ~%init ~%(el : [`Span] elt)]
+    in
+    (el, h)
+
+  let textarea :
+        ?to_string: (string -> string) Eliom_client_value.t ->
+        ?of_string: (string -> string) Eliom_client_value.t ->
+        ?to_html:
+          (string ->
+            [< Html_types.div_content] elt list Eliom_client_value.t) ->
+        ?emit: ((string -> unit Panui_result.t Lwt.t) Eliom_client_value.t) ->
+        ?error: ((string option -> unit) Eliom_client_value.t) ->
+        ?a: [< Html_types.div_attrib > `Class] attrib list ->
+        ?input_a: [< Html_types.textarea_attrib] attrib list ->
+        string -> [> `Div] elt * string handle Eliom_client_value.t =
+    fun ?(to_string = [%client ident])
+        ?(of_string = [%client checked_utf8])
+        ?to_html
+        ?emit ?error ?(a = [D.a_class ["pan-scalar"]]) ?input_a init ->
+    let el = D.div ~a [] in
+    let h : 'a handle Eliom_client_value.t =
+      [%client
+        inject_textarea
+          ~to_string:~%to_string ~of_string:~%of_string ?to_html:~%to_html
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Div] elt)]
+    in
+    (el, h)
+
+  let textarea_option :
+        ?to_string: (string option -> string) Eliom_client_value.t ->
+        ?of_string: (string -> string option) Eliom_client_value.t ->
+        ?to_html:
+          (string option ->
+            [< Html_types.div_content] elt list Eliom_client_value.t) ->
+        ?emit:
+          ((string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t) ->
+        ?error: ((string option -> unit) Eliom_client_value.t) ->
+        ?a: [< Html_types.div_attrib > `Class] attrib list ->
+        ?input_a: [< Html_types.textarea_attrib] attrib list ->
+        string option ->
+        [> `Div] elt * string option handle Eliom_client_value.t =
+    fun ?(to_string = [%client string_of_option ident])
+        ?(of_string = [%client option_of_string checked_utf8])
+        ?to_html
+        ?emit ?error ?(a = [D.a_class ["pan-scalar"]]) ?input_a init ->
+    let el = D.div ~a [] in
+    let h : 'a handle Eliom_client_value.t =
+      [%client
+        inject_textarea
+          ~to_string:~%to_string ~of_string:~%of_string ?to_html:~%to_html
+          ?emit:~%emit ?error:~%error ?a:~%input_a
+          ~%init ~%(el : [`Div] elt)]
     in
     (el, h)
 ]
