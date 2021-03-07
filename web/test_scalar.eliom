@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,7 +17,6 @@
 open Eliom_client
 open Eliom_content
 open Lwt.Infix
-open Panograph_basic_editors
 open Panograph_prereq
 open Panograph_types
 open Unprime_option
@@ -80,6 +79,14 @@ let int_option_out = server_function [%json: int option] @@ fun x_opt ->
   int_option_out' (Some (Option.map succ x_opt));
   Lwt.return (Panui_result.ok ())
 
+let textarea_stream, textarea_out' = Lwt_stream.create ()
+let textarea_comet = Eliom_comet.Channel.create ~scope:`Site textarea_stream
+let textarea_out = server_function [%json: string] @@ fun x ->
+  Lwt_log.debug_f "Received string \"%s\"." x >>= fun () ->
+  Lwt_unix.sleep 0.3 >>= fun () ->
+  textarea_out' (Some (String.uppercase_ascii x));
+  Lwt.return (Panui_result.ok ())
+
 let handler () () =
   let open Html in
 
@@ -130,8 +137,15 @@ let handler () () =
       (int option -> unit Panui_result.t Lwt.t) -> unit) ~%int_option_out;
     Lwt.async @@ fun () -> Lwt_stream.iter ~%h#set ~%int_option_comet ];
 
+  let textarea_ed, h = Panui_scalar.textarea "" in
+  ignore_cv [%client
+    (~%h#edit_on : (string -> unit Panui_result.t Lwt.t) -> unit)
+      ~%textarea_out;
+    Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%textarea_comet) ];
+
   Lwt.return [
     D.h2 [D.txt "Server Side Inputs"];
+    D.h3 [D.txt "On-Liners"];
     D.ul [
       D.li [D.txt "string: "; string_ed];
       D.li [D.txt "int: "; int_ed];
@@ -141,5 +155,7 @@ let handler () () =
       D.li [D.txt "bool: "; bool2_ed];
       D.li [D.txt "bool option: "; bool_option_ed];
       D.li [D.txt "int option: "; int_option_ed];
-    ]
+    ];
+    D.h3 [D.txt "Text Area"];
+    textarea_ed;
   ]
