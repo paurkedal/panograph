@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,13 +17,13 @@
 open Eliom_client
 open Eliom_content
 open Lwt.Infix
-open Panograph_basic_editors
+open Panograph_basic_editors [@@ocaml.warning "-3"]
 open Panograph_prereq
 open Panograph_types
 open Unprime_option
 
 [%%client
-  module Dep_pbe = Panograph_basic_editors
+  module Dep_pbe = Panograph_basic_editors [@@ocaml.warning "-3"]
 ]
 
 let string_stream, string_out' = Lwt_stream.create ()
@@ -153,7 +153,8 @@ let handler () () =
     Lwt_stream.iter ~%string_option_menu_in ~%string_option_menu_comet];
 
   let string_option_textarea, string_option_textarea_in =
-    string_option_textarea [%client ~%string_option_textarea_out] in
+    string_option_textarea [%client ~%string_option_textarea_out]
+      [@@ocaml.warning "-3"] in
   ignore_cv [%client Lwt.async @@ fun () ->
     Lwt_stream.iter ~%string_option_textarea_in ~%string_option_textarea_comet];
 

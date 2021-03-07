@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,7 @@
  *)
 
 [%%shared.start]
+[@@@ocaml.deprecated "Use Panui_scalar"]
 
 open Eliom_content
 open Panograph_types
@@ -81,6 +82,7 @@ val string_option_textarea :
       (string option -> unit Panui_result.t Lwt.t) Eliom_client_value.t ->
       [> Html_types.textarea] Html.elt
         * (string option -> unit) Eliom_client_value.t
+[@@ocaml.deprecated "Use Panui_scalar"]
 
 val int_option_editor :
       ?a: [< Html_types.input_attrib > `Input_Type] Html.attrib list ->
