@@ -87,6 +87,9 @@ let textarea_out = server_function [%json: string] @@ fun x ->
   textarea_out' (Some (String.uppercase_ascii x));
   Lwt.return (Panui_result.ok ())
 
+let int_select_opts =
+  Panui_scalar.[opt "Zero" 0; opt "One" 1; opt "Two" 2; opt "Three" 3]
+
 let handler () () =
   let open Html in
 
@@ -100,13 +103,13 @@ let handler () () =
     (~%h#edit_on : (int -> unit Panui_result.t Lwt.t) -> unit) ~%int_out;
                 Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%int_comet) ];
 
-  let int_select_ed, h =
-    let opts = Panui_scalar.[opt "Zero" 0; opt "One" 1;
-                             opt "Two" 2; opt "Three" 3] in
-    Panui_scalar.int ~opts 0 in
+  let int_select_ed, h = Panui_scalar.int ~opts:int_select_opts 0 in
   ignore_cv [%client
     (~%h#edit_on : (int -> unit Panui_result.t Lwt.t) -> unit) ~%int_out;
                 Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%int_comet) ];
+
+  let int_select_view, h = Panui_scalar.int ~opts:int_select_opts 0 in
+  ignore_cv [%client Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%int_comet)];
 
   let float_ed, h = Panui_scalar.float 0.0 in
   ignore_cv [%client
@@ -131,10 +134,18 @@ let handler () () =
     Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%bool_option_comet)
   ];
 
+  let bool_option_view, h = Panui_scalar.bool_option None in
+  ignore_cv [%client
+    Lwt.async (fun () -> Lwt_stream.iter ~%h#set ~%bool_option_comet) ];
+
   let int_option_ed, h = Panui_scalar.int_option None in
   ignore_cv [%client
     (~%h#edit_on :
       (int option -> unit Panui_result.t Lwt.t) -> unit) ~%int_option_out;
+    Lwt.async @@ fun () -> Lwt_stream.iter ~%h#set ~%int_option_comet ];
+
+  let int_option_view, h = Panui_scalar.int_option None in
+  ignore_cv [%client
     Lwt.async @@ fun () -> Lwt_stream.iter ~%h#set ~%int_option_comet ];
 
   let textarea_ed, h = Panui_scalar.textarea "" in
@@ -150,11 +161,14 @@ let handler () () =
       D.li [D.txt "string: "; string_ed];
       D.li [D.txt "int: "; int_ed];
       D.li [D.txt "int select: "; int_select_ed];
+      D.li [D.txt "int select: "; int_select_view];
       D.li [D.txt "float: "; float_ed];
       D.li [D.txt "bool: "; bool1_ed];
       D.li [D.txt "bool: "; bool2_ed];
       D.li [D.txt "bool option: "; bool_option_ed];
+      D.li [D.txt "bool option: "; bool_option_view];
       D.li [D.txt "int option: "; int_option_ed];
+      D.li [D.txt "int option: "; int_option_view];
     ];
     D.h3 [D.txt "Text Area"];
     textarea_ed;

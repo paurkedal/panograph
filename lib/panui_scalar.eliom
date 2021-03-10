@@ -188,74 +188,120 @@
       ?(error : (string option -> unit) option)
       ?(a : [< Html_types.select_attrib] attrib list option)
       (init : 'a) (el : [< input_or_select_parent] elt) =
-    let label_by_value = Hashtbl.create 11 in
-    let unknown_option =
-      D.option ~a:[D.a_value "__pan_unknown__"; D.a_class ["pan-error"]]
-               (D.txt "unknown") in
-    let options =
-      let mk_option label enabled value =
-        let label = match label with Some s -> s | None -> to_string value in
-        Hashtbl.add label_by_value value label;
-        let a = [D.a_value (to_string value)] in
-        let a = if enabled then a else D.a_disabled () :: a in
-        D.option ~a (D.txt label) in
-      let mk0 = function
-        | Opt (label, enabled, value) -> mk_option label enabled value
-        | Optgroup _ -> assert false in
-      let mk1 = function
-        | Opt (label, enabled, value) -> mk_option label enabled value
-        | Optgroup (label, enabled, opts) ->
-          let a = if enabled then [] else [D.a_disabled ()] in
-          D.optgroup ~label ~a (List.map mk0 opts) in
-      List.map mk1 opts in
-    let select = D.select ?a options in
   object (self)
     inherit common_handle el
+
+    val label_by_value : ('a, string) Hashtbl.t = Hashtbl.create 11
 
     val mutable value = init
     val mutable absorb = fun _ -> ()
 
-    method private set_unknown =
-      Manip.insertFirstChild select unknown_option;
-      Pandom_style.set_error
-        "The currently selected option is no longer available."
-        (To_dom.of_select select);
-      (To_dom.of_select select)##.value := Js.string "__pan_unknown__"
+    val mutable active_unknown_option = None
+    val mutable active_select = None
 
-    method private clear_unknown =
-      Pandom_style.clear_error (To_dom.of_select select);
-      Manip.removeChild select unknown_option
+    method private init_label_by_value =
+      let mk_option label value =
+        Hashtbl.add label_by_value value
+          (match label with Some label -> label | None -> to_string value)
+      in
+      let mk0 = function
+        | Opt (label, _, value) -> mk_option label value
+        | Optgroup _ -> assert false
+      in
+      let mk1 = function
+        | Opt (label, _, value) -> mk_option label value
+        | Optgroup (_, _, opts) -> List.iter mk0 opts
+      in
+      List.iter mk1 opts
+
+    method private enable_select =
+      let make_options () =
+        let mk_option label enabled value =
+          let label = match label with Some s -> s | None -> to_string value in
+          let a = [D.a_value (to_string value)] in
+          let a = if enabled then a else D.a_disabled () :: a in
+          D.option ~a (D.txt label)
+        in
+        let mk0 = function
+          | Opt (label, enabled, value) -> mk_option label enabled value
+          | Optgroup _ -> assert false
+        in
+        let mk1 = function
+          | Opt (label, enabled, value) -> mk_option label enabled value
+          | Optgroup (label, enabled, opts) ->
+            let a = if enabled then [] else [D.a_disabled ()] in
+            D.optgroup ~label ~a (List.map mk0 opts)
+        in
+        List.map mk1 opts
+      in
+      (match active_select with
+       | Some select -> select
+       | None ->
+          let select = D.select ?a (make_options ()) in
+          active_select <- Some select;
+          select)
+
+    method private disable_select =
+      active_unknown_option <- None;
+      active_select <- None
+
+    method private enable_select_unknown x =
+      (match active_select, active_unknown_option with
+       | Some select, None ->
+          let unknown_option =
+            D.option ~a:[D.a_value "__pan_unknown__"; D.a_class ["pan-error"]]
+              (D.txt ("invalid (" ^ to_string x ^ ")"))
+          in
+          active_unknown_option <- Some unknown_option;
+          Manip.insertFirstChild select unknown_option;
+          Pandom_style.set_error
+            "The currently selected option is no longer available."
+            (To_dom.of_select select);
+          (To_dom.of_select select)##.value := Js.string "__pan_unknown__"
+       | Some _, Some _ -> ()
+       | None, _ -> assert false)
+
+    method private disable_select_unknown =
+      (match active_select, active_unknown_option with
+       | Some select, Some unknown_option ->
+          active_unknown_option <- None;
+          Pandom_style.clear_error (To_dom.of_select select);
+          Manip.removeChild select unknown_option
+       | Some _, None -> ()
+       | None, _ -> assert false)
 
     method edit_on f =
-      absorb <- outfit_select ~to_string ~of_string ?error ~value select f;
-      if not (Hashtbl.mem label_by_value value) then self#set_unknown;
-      Manip.replaceChildren el [select]
+      let select = self#enable_select in
+      let absorb' = outfit_select ~to_string ~of_string ?error select f in
+      absorb <- begin fun x ->
+        self#disable_select_unknown;
+        if Hashtbl.mem label_by_value x then
+          absorb' x
+        else
+          self#enable_select_unknown x
+      end;
+      Manip.replaceChildren el [select];
+      absorb value
 
     method edit_off =
+      self#disable_select;
       absorb <- begin fun x ->
-        try
-          let label = Hashtbl.find label_by_value value in
-          Manip.replaceChildren el [D.txt label]
-        with Not_found ->
-          Manip.replaceChildren el
-            [D.span ~a:[F.a_class ["pan-error"]] [D.txt "unknown"]]
+        let content = match Hashtbl.find_opt label_by_value x with
+         | Some label -> [D.txt label]
+         | None ->
+            [D.span ~a:[D.a_class ["pan-error"]]
+              [D.txt ("invalid (" ^ to_string x ^ ")")]]
+        in
+        Manip.replaceChildren el content
       end;
       absorb value
 
     method get = value
 
-    method set x =
-      if Hashtbl.mem label_by_value x then
-        begin
-          if not (Hashtbl.mem label_by_value value) then
-            self#clear_unknown;
-          absorb x
-        end
-      else
-        self#set_unknown;
-      value <- x;
+    method set x = absorb x; value <- x
 
     initializer
+      self#init_label_by_value;
       match emit with None -> self#edit_off | Some f -> self#edit_on f
   end
 
