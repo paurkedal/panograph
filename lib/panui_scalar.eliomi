@@ -135,7 +135,7 @@ val int32_option : (int32 option, 'opt, 'attrib, 'input_attrib, 'elt) t
 val int64_option : (int64 option, 'opt, 'attrib, 'input_attrib, 'elt) t
 val float_option : (float option, 'opt, 'attrib, 'input_attrib, 'elt) t
 
-val textarea :
+val string_textarea :
   ?to_string: (string -> string) Eliom_client_value.t ->
   ?of_string: (string -> string) Eliom_client_value.t ->
   ?to_html:
@@ -146,7 +146,7 @@ val textarea :
   ?input_a: [< Html_types.textarea_attrib] attrib list ->
   string -> [> Html_types.div] elt * string handle Eliom_client_value.t
 
-val textarea_option :
+val string_option_textarea :
   ?to_string: (string option -> string) Eliom_client_value.t ->
   ?of_string: (string -> string option) Eliom_client_value.t ->
   ?to_html:

@@ -148,7 +148,7 @@ let handler () () =
   ignore_cv [%client
     Lwt.async @@ fun () -> Lwt_stream.iter ~%h#set ~%int_option_comet ];
 
-  let textarea_ed, h = Panui_scalar.textarea "" in
+  let textarea_ed, h = Panui_scalar.string_textarea "" in
   ignore_cv [%client
     (~%h#edit_on : (string -> unit Panui_result.t Lwt.t) -> unit)
       ~%textarea_out;

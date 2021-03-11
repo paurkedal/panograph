@@ -556,7 +556,7 @@
     in
     (el, h)
 
-  let textarea :
+  let string_textarea :
         ?to_string: (string -> string) Eliom_client_value.t ->
         ?of_string: (string -> string) Eliom_client_value.t ->
         ?to_html:
@@ -581,7 +581,7 @@
     in
     (el, h)
 
-  let textarea_option :
+  let string_option_textarea :
         ?to_string: (string option -> string) Eliom_client_value.t ->
         ?of_string: (string -> string option) Eliom_client_value.t ->
         ?to_html:
