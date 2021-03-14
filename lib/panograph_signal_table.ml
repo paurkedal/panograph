@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -27,55 +27,57 @@ module type S = sig
   val size : 'a t -> int
 end
 
-type ex_spair =
-  Ex_spair : 'a React.S.t * ('a -> unit) -> ex_spair
-
-let dummy = Ex_spair (React.S.const (), (fun () -> assert false))
-
-let enclose x () = ignore x
+exception Retained : 'a -> exn
 
 module Make (Key : Hashtbl.HashedType) = struct
 
   type key = Key.t
 
-  module Node = struct
-    type t = Key.t * ex_spair
-    let hash (key, _) = Key.hash key
-    let equal (k1, _) (k2, _) = Key.equal k1 k2
-  end
+  type 'a node =
+    | Key of Key.t
+    | Node of Key.t * 'a React.S.t * (?step: React.step -> 'a -> unit)
 
-  module Wt = Weak.Make (Node)
+  let node_key = function
+   | Key k -> k
+   | Node (k, _, _) -> k
 
-  type 'a t = Wt.t
+  type _ t =
+    Pack : (module Weak.S with type data = 'a node and type t = 'wt) * 'wt ->
+           'a t
 
-  let create = Wt.create
+  let create (type a) n : a t =
+    let module Wt =
+      Weak.Make (struct
+        type t = a node
+        let hash node = Key.hash (node_key node)
+        let equal node1 node2 = Key.equal (node_key node1) (node_key node2)
+      end)
+    in
+    Pack ((module Wt), Wt.create n)
 
-  let signal (wt : 'a t) key x : 'a React.S.t =
-    let (_, Ex_spair (signal, _)) =
-      try
-        Wt.find wt (key, dummy)
-      with Not_found ->
-        let signal, set = React.S.create x in
-        let node = (key, Ex_spair (signal, set)) in
-        let `R _ = React.S.retain signal (enclose node) in
-        Wt.add wt node; node in
-    Obj.magic signal
+  let signal (type a) (Pack ((module Wt), wt) : a t) key value =
+    (match Wt.find wt (Key key) with
+     | Key _ -> assert false
+     | Node (_, sn, _) -> sn
+     | exception Not_found ->
+        let sn, send = React.S.create value in
+        let node = Node (key, sn, send) in
+        let `R _ = React.S.retain sn (fun () -> raise (Retained node)) in
+        Wt.add wt node; sn)
 
-  let signal_opt (wt : 'a t) key : 'a React.S.t option =
-    try
-      let (_, Ex_spair (signal, _)) = Wt.find wt (key, dummy) in
-      Some (Obj.magic signal : 'a React.S.t)
-    with Not_found ->
-      None
+  let signal_opt (type a) (Pack ((module Wt), wt) : a t) key =
+    (match Wt.find wt (Key key) with
+     | Key _ -> assert false
+     | Node (_, sn, _) -> Some sn
+     | exception Not_found -> None)
 
   let value_opt (wt : 'a t) key = Option.map React.S.value (signal_opt wt key)
 
-  let set (wt : 'a t) key (x : 'a) =
-    try
-      let (_, Ex_spair (_, set)) = Wt.find wt (key, dummy) in
-      (Obj.magic set : 'a -> unit) x
-    with Not_found ->
-      ()
+  let set (type a) (Pack ((module Wt), wt) : a t)  key value =
+    (match Wt.find wt (Key key) with
+     | Key _ -> assert false
+     | Node (_, _, set) -> set value
+     | exception Not_found -> ())
 
-  let size = Wt.count
+  let size (type a) (Pack ((module Wt), wt) : a t) = Wt.count wt
 end
