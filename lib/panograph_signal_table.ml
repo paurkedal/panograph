@@ -23,7 +23,7 @@ module type S = sig
   val signal : 'a t -> key -> 'a -> 'a React.S.t
   val signal_opt : 'a t -> key -> 'a React.S.t option
   val value_opt : 'a t -> key -> 'a option
-  val set : 'a t -> key -> 'a -> unit
+  val set : 'a t -> key -> ?step: React.Step.t -> 'a -> unit
   val size : 'a t -> int
 end
 
@@ -73,10 +73,10 @@ module Make (Key : Hashtbl.HashedType) = struct
 
   let value_opt (wt : 'a t) key = Option.map React.S.value (signal_opt wt key)
 
-  let set (type a) (Pack ((module Wt), wt) : a t)  key value =
+  let set (type a) (Pack ((module Wt), wt) : a t) key ?step value =
     (match Wt.find wt (Key key) with
      | Key _ -> assert false
-     | Node (_, _, set) -> set value
+     | Node (_, _, set) -> set ?step value
      | exception Not_found -> ())
 
   let size (type a) (Pack ((module Wt), wt) : a t) = Wt.count wt

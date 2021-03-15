@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@ module type S = sig
   val signal : 'a t -> key -> 'a -> 'a React.S.t
   val signal_opt : 'a t -> key -> 'a React.S.t option
   val value_opt : 'a t -> key -> 'a option
-  val set : 'a t -> key -> 'a -> unit
+  val set : 'a t -> key -> ?step: React.Step.t -> 'a -> unit
   val size : 'a t -> int
 end
 

@@ -1,4 +1,4 @@
-(* Copyright (C) 2015  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +33,7 @@ module type S = sig
   (** [event_opt wt k] is [Some (event wt k)] if [k] is already associated
       with an event, otherwise [None]. *)
 
-  val emit : 'a t -> key -> 'a -> unit
+  val emit : 'a t -> key -> ?step: React.Step.t -> 'a -> unit
   (** [emit wt k x] sends [x] to the event at [k] in [wt] if present,
       otherwise does nothing. *)
 

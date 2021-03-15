@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2016  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -20,7 +20,7 @@ module type S = sig
   val create : int -> 'a t
   val event : 'a t -> key -> 'a React.E.t
   val event_opt : 'a t -> key -> 'a React.E.t option
-  val emit : 'a t -> key -> 'a -> unit
+  val emit : 'a t -> key -> ?step: React.Step.t -> 'a -> unit
   val size : 'a t -> int
 end
 
@@ -62,10 +62,10 @@ module Make (Key : Hashtbl.HashedType) = struct
     with Not_found ->
       None
 
-  let emit (type a) (Pack ((module Wt), wt) : a t) key (x : a) =
+  let emit (type a) (Pack ((module Wt), wt) : a t) key ?step (x : a) =
     try
       let _, _, emit = Wt.find wt (key, React.E.never, never_emit) in
-      emit x
+      emit ?step x
     with Not_found -> ()
 
   let size (type a) (Pack ((module Wt), wt) : a t) = Wt.count wt
