@@ -1,3 +1,14 @@
+## v0.9.0 - 2021-03-15
+
+- Add `Panui_result.of_msg`.
+- Add better DOM management primitives to `Panui_scalar`.
+- Add `string_textarea` and `string_option_textarea` to `Panui_scalar`.
+- Add `?step` argument to `emit` and `set` functions in
+  `Panograph_event_table` and `Panograph_signal_table`.
+- Rewrite `Panograph_signal_table` to avoid `Obj.magic`.
+- Fix delay issue for read-only selection.
+- Deprecate the rest of `Panograph_basic_editors`.
+
 ## v0.8.4 - 2020-11-02
 
 - Handle and avoid integer overflow in `Panograph_dltree`.
