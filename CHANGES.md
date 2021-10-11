@@ -1,3 +1,8 @@
+## v0.10.0 - 2021-10-11
+
+- Drop charset check when rendering text; checking input is sufficient.
+- Remove deprecated `Panograph_basic_editors` other non-recent deprecations.
+
 ## v0.9.0 - 2021-03-15
 
 - Add `Panui_result.of_msg`.
