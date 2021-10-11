@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2019  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -21,7 +21,6 @@ module%client Linked = struct
   module Test_content_with_edit = Test_content_with_edit
   module Test_dialogs = Test_dialogs
   module Test_finalizer = Test_finalizer
-  module Test_basic_editors = Test_basic_editors
   module Test_twine_editor = Test_twine_editor
   module Test_operated = Test_operated
   module Test_pinboard = Test_pinboard
@@ -58,7 +57,6 @@ let test_services = Test_app.[
   create_test_c_table "tabular1" [%client Test_tabular1.render];
   create_test_c_table "tabular2" [%client Test_tabular2.render];
   create_test_c_table "tabular3" [%client Test_tabular3.render];
-  create_test "basic_editors" Test_basic_editors.handler;
   create_test "operated" Test_operated.handler;
   create_test "pinboard" Test_pinboard.handler;
   create_test "scalar" Test_scalar.handler;

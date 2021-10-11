@@ -4,7 +4,6 @@ Pwt_hashtbl		{shared}
 Pwt_list		{shared}
 Pwt_option		{shared}
 
-Panograph_basic_editors {server, client}
 Panograph_basic_viewers {server, client}
 Panograph_collection	{client}
 Panograph_common	{client}
