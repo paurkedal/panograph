@@ -52,7 +52,6 @@
      | exception (Failure msg) -> raise (Invalid_input msg))
 
   let render_text text =
-    (try check_utf8_exn text with Failure msg -> raise (Invalid_input msg));
     String.split_on_char '\n' text
       |> List.map (fun line -> [F.txt line; F.br ()])
       |> List.flatten
