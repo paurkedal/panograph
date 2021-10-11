@@ -1,4 +1,4 @@
-(* Copyright (C) 2014--2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2014--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,16 +17,4 @@
 (** Common type definitions. *)
 
 type ('a, 'b) either = Inl of 'a | Inr of 'b [@@deriving json]
-
-type ui_error = string
-  [@@ocaml.deprecated "Replaced by Panui_error.t"]
-
-[@@@ocaml.warning "-3"]
-type 'a ui_result = ('a, ui_error) result
-  [@@ocaml.deprecated "Replaced by Panui_result.t"]
-[@@@ocaml.warning "+3"]
-
-type ack =
-  | Ack_ok
-  | Ack_error of string
-[@@ocaml.deprecated "Replacet by Panui_result.t"]
+(* TODO: Deprecate. *)
