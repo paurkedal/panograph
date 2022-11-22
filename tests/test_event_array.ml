@@ -30,7 +30,7 @@ let check watches =
     assert (React.S.value watches.(i).count_sn = watches.(i).count_ck)
   done
 
-let run () =
+let run _ctxt =
   let d_max = 6 in
   let n_watch = 2 lsl d_max in
   let depth_sn, set_depth = React.S.create 4 in

@@ -415,14 +415,14 @@ module Tabular = struct
     let rsn, csn = Dltree.(get rs, get cs) in
     try Some (Hashtbl.find rsn.rsn_blocks csn.csn_id)
     with Not_found ->
-      Option.search (cover_at_rs rs) (Dltree.up cs)
+      Option.find_map (cover_at_rs rs) (Dltree.up cs)
 
   (* Find the inner cover of (rs, cs) spanning exactly cs. *)
   let rec cover_at_cs rs cs =
     let rsn, csn = Dltree.(get rs, get cs) in
     try Some (Hashtbl.find rsn.rsn_blocks csn.csn_id)
     with Not_found ->
-      Option.search (fun rs -> cover_at_cs rs cs) (Dltree.up rs)
+      Option.find_map (fun rs -> cover_at_cs rs cs) (Dltree.up rs)
 
   let is_alloc tab rs cs =
     let rsn, csn = Dltree.get rs, Dltree.get cs in

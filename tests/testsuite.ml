@@ -15,7 +15,7 @@
  * <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.
  *)
 
-open OUnit
+open OUnit2
 
 let suite = "panograph" >::: [
   "test_dltree" >:: Test_dltree.run;

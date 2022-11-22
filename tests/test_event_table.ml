@@ -40,7 +40,7 @@ let test1 et =
   React.E.stop a_ev; (* retained *)
   React.E.stop b_ev  (* retained *)
 
-let run () =
+let run _ctxt =
   let et = Et.create 23 in
   assert (Et.size et = 0);
   Et.emit et "a" 0;
