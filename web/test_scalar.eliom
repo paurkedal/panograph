@@ -19,12 +19,10 @@ open Eliom_client
 open Eliom_content
 open Lwt.Infix
 open Panograph_prereq
-open Panograph_types
 open Unprime_option
 
 [%%client
   module Dep_sca = Panui_scalar
-  open Panograph_types
 ]
 
 let string_stream, string_out' = Lwt_stream.create ()

@@ -30,7 +30,6 @@ module type PRESENTABLE_MAP = sig
 end
 
 module Make (Map : PRESENTABLE_MAP) (Elt : PRESENTATION) = struct
-  type key = Map.key
   type t = Elt.t Map.t
   type dt = (Map.key, Elt.t, Elt.dt) map_patch
   type p = (Map.key * Elt.p) list

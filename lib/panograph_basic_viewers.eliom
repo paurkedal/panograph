@@ -17,12 +17,12 @@
 
 [%%shared
   open Eliom_content.Html
-  open Eliom_lib
-  open Unprime
-  open Unprime_option
 ]
 
 [%%client
+  open Unprime
+  open Unprime_option
+
   let with_setter elem (to_string : 'a -> string) (value : 'a option) =
     let set x = Manip.replaceChildren elem [D.txt (to_string x)] in
     Option.iter set value; set

@@ -17,9 +17,7 @@
 
 [%%shared
   open Eliom_content.Html
-  open Panograph_i18n
   open Panograph_prereq
-  open Panograph_types
   open Unprime
   open Unprime_option
 ]
@@ -46,6 +44,7 @@
   open Js_of_ocaml
   open Pandom_interactive
   open Panograph_common
+  open Panograph_i18n
 
   let checked_utf8 s =
     (match check_utf8_exn s with
@@ -66,7 +65,7 @@
     method set : 'a -> unit
   end
 
-  class common_handle el = object (self)
+  class common_handle el = object
     method show = Manip.Class.remove el "pan-hidden"
     method hide = Manip.Class.add el "pan-hidden"
   end

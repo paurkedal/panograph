@@ -16,7 +16,6 @@
  *)
 
 [%%shared.start]
-open Eliom_lib
 
 let ignore_cv (x : unit Eliom_client_value.t) = ignore x
 

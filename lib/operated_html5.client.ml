@@ -16,9 +16,7 @@
  *)
 
 open Eliom_content
-open Html_types
 open Js_of_ocaml
-open Operated_types
 open Unprime_enumlist
 
 module O = struct
@@ -36,7 +34,7 @@ module O = struct
       if pos = Enumlist.length !state then Js.Opt.empty else
       match Enumlist.get !state pos with
       | _, [] -> find_next (pos + 1)
-      | _, item :: items -> Js.Opt.return (To_dom.of_element item) in
+      | _, item :: _items -> Js.Opt.return (To_dom.of_element item) in
     let insert_at pos item =
       let item_dom = To_dom.of_element item in
       Dom.insertBefore container_dom item_dom (find_next pos) in

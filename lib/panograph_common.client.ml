@@ -17,8 +17,6 @@
 
 open Eliom_content
 open Js_of_ocaml_lwt
-open Panograph_intf
-open Panograph_types
 open Unprime
 open Unprime_list
 open Unprime_option

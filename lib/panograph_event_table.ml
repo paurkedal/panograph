@@ -27,7 +27,7 @@ end
 
 exception Retained : 'a -> exn
 
-let never_emit ?step x = assert false
+let never_emit ?step:_ _ = assert false
 
 module Make (Key : Hashtbl.HashedType) = struct
   type key = Key.t

@@ -21,7 +21,6 @@ open Js_of_ocaml_lwt
 open Panograph_common
 open Panograph_i18n
 open Panograph_intf
-open Panograph_types
 open Unprime
 open Unprime_option
 
@@ -52,7 +51,7 @@ module Simple_SV (Value : SIMPLE_VALUE) = struct
     let p = D.span ~a:(attribs_of_shape shape) [c] in
     (p, c), p
 
-  let set (p, c) v = Manip.replaceChildren p [D.txt (Value.to_string v)]
+  let set (p, _c) v = Manip.replaceChildren p [D.txt (Value.to_string v)]
 end
 
 module Simple_shape = struct
@@ -122,7 +121,7 @@ module Simple_PE (Value : SIMPLE_VALUE) = struct
     w.w_dom##.value := Js.string (Value.to_string x);
     clear_dirty w
 
-  let get {w_dom} = Value.of_string (Js.to_string w_dom##.value)
+  let get {w_dom; _} = Value.of_string (Js.to_string w_dom##.value)
 
   let create ?(shape = default_shape) ?on_patch init =
     let inp =

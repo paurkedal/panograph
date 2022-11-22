@@ -19,7 +19,6 @@
 
 open Eliom_content.Html
 open Html_types
-open Panograph_types
 open Panui_content
 
 val string_option_selector :

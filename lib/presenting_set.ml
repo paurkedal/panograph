@@ -16,7 +16,6 @@
  *)
 
 open Operated_types
-open Presentation_sigs
 open Presentation_types
 open Unprime
 

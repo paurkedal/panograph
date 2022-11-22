@@ -20,7 +20,6 @@
 [%%shared.start]
 
 open Eliom_content.Html
-open Panograph_types
 
 type ('a, +'opt) opt constraint 'opt = [< `Opt | `Optgroup]
 

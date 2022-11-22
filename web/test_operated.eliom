@@ -17,15 +17,11 @@
 
 [%%server
   open Eliom_client
+  open Unprime_list
 ]
 [%%shared
   open Eliom_content
-  open Operated_types
-  open Presentation_sigs
   open Presentation_types
-  open Unprime
-  open Unprime_list
-  open Unprime_option
 
   module String_set = struct
     include Prime_enumset.Make (String)
@@ -40,6 +36,7 @@
 ]
 [%%client
   open Js_of_ocaml
+  open Unprime
 ]
 
 let s_r = Eliom_reference.Volatile.eref ~scope:`Site @@

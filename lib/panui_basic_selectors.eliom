@@ -17,13 +17,12 @@
 
 [%%shared
   open Eliom_content.Html
-  open Panograph_prereq
-  open Panograph_types
   open Panui_content
-  open Unprime
 ]
 [%%client
   open Pandom_interactive
+  open Panograph_prereq
+  open Unprime
 ]
 
 [%%client

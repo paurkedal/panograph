@@ -17,7 +17,6 @@
 
 open Eliom_content.Html
 open Js_of_ocaml
-open Printf
 
 let classify ks = String.concat "_" (List.rev ks)
 let chan = Pandom_weakchan.create classify

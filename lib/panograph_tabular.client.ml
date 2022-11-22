@@ -15,10 +15,11 @@
  * <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.
  *)
 
+[@@@warning "-27"] (* TODO *)
+
 open Eliom_content
 open Js_of_ocaml
 open Panograph_dltree
-open Unprime
 open Unprime_option
 
 module type SPAN_TREE = sig
@@ -190,9 +191,11 @@ module Tabular = struct
         for_subblocks lr lc rs cs validate_block in
     validate_block 0 0 tab.tab_root_rs tab.tab_root_cs
 
+(*
   let switch_class b cls tc =
     if b then tc##.classList##add(Js.string cls)
          else tc##.classList##remove(Js.string cls)
+*)
 
   let update_cell_rs_attribs rs tc =
     tc##.rowSpan := (Dltree.get rs).rsn_span;
@@ -394,6 +397,7 @@ module Tabular = struct
       cov_blk.blk_state <- Refining (cov_lr, cov_lc, cov_tc);
       Option.iter (maybe_move_cell cov_tc cov_cs) transfer
 
+(*
   (* Refined | Refining -> Single *)
   let unrefine tab cov_rs cov_cs =
     let cov_rsn, cov_csn = Dltree.(get cov_rs, get cov_cs) in
@@ -409,6 +413,7 @@ module Tabular = struct
     match cov_blk.blk_state with
     | Refining (cov_lr, cov_lc, cov_tc) -> cov_blk.blk_state <- Single cov_tc
     | _ -> assert false
+*)
 
   (* Find the inner cover of (rs, cs) spanning exactly rs. *)
   let rec cover_at_rs rs cs =
@@ -845,6 +850,7 @@ module Tabular = struct
       | None, None | Some _, Some _ -> ()
   end
 
+(*
   let get_tc tab rs cs =
     let rsn, csn = Dltree.(get rs, get cs) in
     try
@@ -855,6 +861,7 @@ module Tabular = struct
         invalid_arg "Tabular.get_tc: This cell is refined."
     with Not_found ->
       invalid_arg "Tabular.get_tc: Not refined at this cell."
+*)
 
   let set_tc tab rs cs tc' =
     let rsn, csn = Dltree.(get rs, get cs) in

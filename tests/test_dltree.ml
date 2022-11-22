@@ -91,7 +91,7 @@ let test_delete c =
   | Some u, None, None -> assert (Dltree.first u = None)
   | Some u, None, Some n -> assert (Dltree.first u =? n)
   | Some u, Some p, None -> assert (Dltree.last u =? p)
-  | Some u, Some p, Some n -> ()
+  | Some _, Some _, Some _ -> ()
 
 let rec nth i c = if i = 0 then c else nth (i - 1) (Option.get (Dltree.next c))
 
@@ -165,13 +165,13 @@ let rec enumerate i c =
   Dltree.iter (enumerate i) c
 
 let test_random () =
-  for i = 0 to 99 do
+  for _ = 0 to 99 do
     let c = Dltree.make 0 in
-    for j = 0 to 99 do
+    for _ = 0 to 99 do
       mutate c
     done;
     enumerate (ref 0) c;
-    for j = 0 to 99 do
+    for _ = 0 to 99 do
       let a = pick_random c in
       let b = pick_random c in
       assert (Dltree.left_compare a b = compare (Dltree.get a) (Dltree.get b))

@@ -16,8 +16,6 @@
  *)
 
 open Printf
-open Unprime
-open Unprime_char
 open Unprime_list
 open Unprime_string
 
@@ -87,7 +85,7 @@ module Twine = struct
   let sym_diff = Lang_map.split_union (fun _ a b -> a, b)
 
   let sym_patch_theirs (mR, mA, mM) tw =
-    tw |> Lang_map.fold (fun l s -> Lang_map.remove l) mR
+    tw |> Lang_map.fold (fun l _ -> Lang_map.remove l) mR
        |> Lang_map.fold (fun l (_, s) -> Lang_map.add l s) mM
        |> Lang_map.fold (fun l s -> Lang_map.add l s) mA
 

@@ -18,8 +18,6 @@
 [%%shared
   open Eliom_content.Html
   open Eliom_lib
-  open Unprime_list
-  open Unprime_option
 ]
 
 [%%server

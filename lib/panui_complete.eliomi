@@ -19,7 +19,6 @@
 
 [%%shared.start]
 open Eliom_content.Html
-open Panograph_types
 
 [%%server.start]
 

@@ -42,28 +42,28 @@ end = struct
   let ul c = (C.node c : [`Ul] elt :> [> `Ul] elt)
 end
 
-let create_test_c_div name (f : (unit -> [< `Div] elt) Eliom_client_value.t) =
-  Test_app.create_test name (fun () () -> Lwt.return [C.div [%client ~%f ()]])
-let create_test_c_table name (f : (unit -> [< `Table] elt) Eliom_client_value.t) =
-  Test_app.create_test name (fun () () -> Lwt.return [C.table [%client ~%f ()]])
-let create_test_c_ul name (f : (unit -> [< `Ul] elt) Eliom_client_value.t) =
-  Test_app.create_test name (fun () () -> Lwt.return [C.ul [%client ~%f ()]])
+let create_test_c_div ~name (f : (unit -> [< `Div] elt) Eliom_client_value.t) =
+  Test_app.create_test ~name (fun () () -> Lwt.return [C.div [%client ~%f ()]])
+let create_test_c_table ~name (f : (unit -> [< `Table] elt) Eliom_client_value.t) =
+  Test_app.create_test ~name (fun () () -> Lwt.return [C.table [%client ~%f ()]])
+let create_test_c_ul ~name (f : (unit -> [< `Ul] elt) Eliom_client_value.t) =
+  Test_app.create_test ~name (fun () () -> Lwt.return [C.ul [%client ~%f ()]])
 
 let test_services = Test_app.[
-  create_test "complete" Test_complete.handler;
-  create_test "content_with_edit" Test_content_with_edit.handler;
-  create_test "dialogs" Test_dialogs.handler;
-  create_test_c_div "finalizer" [%client Test_finalizer.render];
-  create_test_c_div "inputs" [%client Test_inputs.render];
-  create_test_c_table "tabular1" [%client Test_tabular1.render];
-  create_test_c_table "tabular2" [%client Test_tabular2.render];
-  create_test_c_table "tabular3" [%client Test_tabular3.render];
-  create_test "operated" Test_operated.handler;
-  create_test "pinboard" Test_pinboard.handler;
-  create_test "scalar" Test_scalar.handler;
-  create_test_c_ul "weakchan" [%client Test_weakchan.render];
-  create_test_c_div "weaktbl" [%client Test_weaktbl.render];
-  create_test "twine_editor" Test_twine_editor.handler;
+  create_test ~name:"complete" Test_complete.handler;
+  create_test ~name:"content_with_edit" Test_content_with_edit.handler;
+  create_test ~name:"dialogs" Test_dialogs.handler;
+  create_test_c_div ~name:"finalizer" [%client Test_finalizer.render];
+  create_test_c_div ~name:"inputs" [%client Test_inputs.render];
+  create_test_c_table ~name:"tabular1" [%client Test_tabular1.render];
+  create_test_c_table ~name:"tabular2" [%client Test_tabular2.render];
+  create_test_c_table ~name:"tabular3" [%client Test_tabular3.render];
+  create_test ~name:"operated" Test_operated.handler;
+  create_test ~name:"pinboard" Test_pinboard.handler;
+  create_test ~name:"scalar" Test_scalar.handler;
+  create_test_c_ul ~name:"weakchan" [%client Test_weakchan.render];
+  create_test_c_div ~name:"weaktbl" [%client Test_weaktbl.render];
+  create_test ~name:"twine_editor" Test_twine_editor.handler;
 ]
 
 let main_handler () () =

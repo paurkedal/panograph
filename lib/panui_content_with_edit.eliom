@@ -16,9 +16,7 @@
  *)
 
 [%%shared
-open Eliom_content
 open Eliom_content.Html
-open Panograph_types
 ]
 
 [%%client

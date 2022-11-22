@@ -16,9 +16,7 @@
  *)
 
 open Eliom_content
-open Js_of_ocaml
 open Panograph_tabular
-open Printf
 open Unprime
 open Unprime_list
 
@@ -32,14 +30,14 @@ let tile ns ms =
   let rec add_rows rs = function
     | [] -> ()
     | n :: ns ->
-      for i = 0 to n - 1 do
+      for _ = 0 to n - 1 do
         let rs' = Tabular.Rowspan.add_last tab rs in
         add_rows rs' ns
       done in
   let rec add_cols cs = function
     | [] -> ()
     | m :: ms ->
-      for j = 0 to m - 1 do
+      for _ = 0 to m - 1 do
         let cs' = Tabular.Colspan.add_last tab cs in
         add_cols cs' ms
       done in
@@ -63,13 +61,12 @@ let tile ns ms =
   Tabular.ui tab
 
 let render () =
-  let open Html in
   let tab = Tabular.create () in
   let rs = Tabular.root_rowspan tab in
   let cs = Tabular.root_colspan tab in
   Tabular.refine tab 1 1 rs cs;
-  for lr = 0 to 3 do ignore (Tabular.Rowspan.add_last tab rs) done;
-  for lc = 0 to 3 do ignore (Tabular.Colspan.add_last tab cs) done;
+  for _lr = 0 to 3 do ignore (Tabular.Rowspan.add_last tab rs) done;
+  for _lc = 0 to 3 do ignore (Tabular.Colspan.add_last tab cs) done;
   Tabular.Rowspan.iteri
     (fun n rs ->
       Tabular.Colspan.iteri

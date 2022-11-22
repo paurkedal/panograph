@@ -17,14 +17,12 @@
 
 [%%shared.start]
 open Eliom_content.Html
-open Panograph_types
 
 [%%client.start]
 open Js_of_ocaml_lwt
 open Lwt.Infix
 open Unprime_char
 open Unprime_string
-open Printf
 
 module Dep = Panui_complete
 
@@ -140,9 +138,9 @@ let handler () () =
       labelled_int_elem; labelled_int_log_elem; D.br ();
       labelled_int_option_elem; labelled_int_option_log_elem
     ];
-    D.Form.get_form get_service
+    D.Form.get_form ~service:get_service
       (fun arg_name ->
-        let elt, h =
+        let elt, _h =
           Panui_complete.labelled_int32_option
             ~complete:[%client labelled_int32_complete]
             ~name:arg_name (Some ("one", 1l)) in

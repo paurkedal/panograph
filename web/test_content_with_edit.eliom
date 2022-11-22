@@ -15,16 +15,12 @@
  * <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.
  *)
 
-[%%shared
-open Eliom_content
 open Eliom_content.Html
-open Lwt.Infix
 open Panograph_prereq
-open Panograph_types
 open Panui_content_with_edit
-]
 
 [%%client
+  open Lwt.Infix
   open Js_of_ocaml_lwt
   module Dep_content_with_edit = Panui_content_with_edit
 

@@ -17,7 +17,6 @@
 
 [%%shared
 
-  open Panui_content_intf
   open Unprime
 
   module type Make_selection_param = sig

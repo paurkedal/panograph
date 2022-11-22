@@ -15,20 +15,18 @@
  * <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.
  *)
 
-[%%server
-  open Panograph_prereq
-]
-[%%shared
-  open Lwt.Infix
-  open Eliom_content.Html
-]
+open Panograph_prereq
 
 [%%client
+  open Lwt.Infix
+  open Eliom_content.Html
   open Js_of_ocaml_lwt
 
   let pcdata_f fmt = Printf.kprintf F.txt fmt
 
-  let levels = Lwt_log_js.[|Debug; Info; Notice; Warning; Error; Fatal|]
+  let levels =
+    Lwt_log_js.[|Debug; Info; Notice; Warning; Error; Fatal|]
+    [@@warning "-45"]
 
   let rec populate pinboard i =
     let timeout = Random.float 4.0 in

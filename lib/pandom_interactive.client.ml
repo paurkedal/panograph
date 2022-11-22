@@ -19,7 +19,6 @@ open Js_of_ocaml
 open Js_of_ocaml_lwt
 open Pandom_style
 open Panograph_common
-open Panograph_types
 open Unprime_option
 
 class type basicInteractiveElement = object

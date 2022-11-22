@@ -16,7 +16,6 @@
  *)
 
 open Eliom_content
-open Js_of_ocaml
 open Js_of_ocaml_lwt
 open Panograph_tabular
 

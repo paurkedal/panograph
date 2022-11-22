@@ -15,14 +15,10 @@
  * <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.
  *)
 
-[%%server
-  open Eliom_client
-]
-[%%shared
-  open Eliom_content
-  open Panograph_twine_editor
-  open Panograph_types
-]
+open Eliom_client
+open Eliom_content
+open Panograph_twine_editor
+
 [%%client
   module Dep_pte = Panograph_twine_editor
 ]

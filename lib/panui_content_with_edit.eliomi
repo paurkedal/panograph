@@ -21,7 +21,6 @@
 
 open Eliom_content
 open Html_types
-open Panograph_types
 
 val span_with_input :
   ?a: [< span_attrib > `Class] Html.attrib list ->

@@ -18,7 +18,6 @@
 (** Experimental functorial widget construction. *)
 
 open Eliom_content.Html
-open Panograph_types
 
 exception Invalid_input of string
 

@@ -19,8 +19,6 @@ open Eliom_content
 open Eliom_lib
 open Panograph_common
 open Panograph_intf
-open Panograph_types
-open Unprime
 open Unprime_list
 open Unprime_option
 
@@ -133,6 +131,8 @@ struct
     List.iter (add_binding w) init;
     w, container_ui
 end
+
+[@@@warning "-27"] (* TODO: ?shape and ?static arguments below not used *)
 
 module Ul_mapped_container = struct
   include Basic_shape

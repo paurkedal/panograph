@@ -17,16 +17,13 @@
 
 [%%shared
   open Eliom_content.Html
-  open Lwt.Infix
-  open Panograph_prereq
-  open Panograph_types
-  open Printf
-  open Unprime
   open Unprime_option
 ]
 [%%client
   open Js_of_ocaml
   open Js_of_ocaml_lwt
+  open Lwt.Infix
+  open Panograph_prereq
 ]
 
 class type%client ['a] handle = object

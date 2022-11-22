@@ -18,11 +18,9 @@
 open Eliom_content
 open Js_of_ocaml_lwt
 open Lwt.Infix
-open Panograph_intf
 open Panograph_simple
 open Panograph_mapped
 open Panograph_collection
-open Panograph_types
 
 module Int_order = struct
   type t = int
@@ -36,7 +34,6 @@ module Int_ul_MPE =
 
 let test_int_editor () =
   let ev, send_ev = React.E.create () in
-  let open Html in
   let on_patch p =
     Lwt_js.sleep 1.0 >>= fun () ->
     send_ev p;
@@ -49,7 +46,6 @@ let test_int_editor () =
 
 let test_float_editor () =
   let ev, send_ev = React.E.create () in
-  let open Html in
   let on_patch p =
     Lwt_js.sleep 1.0 >>= fun () ->
     send_ev p;
@@ -65,7 +61,7 @@ let test_int_ul () =
     Lwt.return_ok () in
   let init = [5; 7; 3; 11; 17; 13] in
   let coll_pe, coll_ui = Int_ul_CPE.create ~on_patch init in
-  let on_mapped_patch (`Patch (k, (`Change (v, v')))) =
+  let on_mapped_patch (`Patch (k, (`Change (_, v')))) =
     send_ev (`Patch (`Change (k, - v')));
     Lwt.return_ok () in
   let mapped_pe, mapped_ui =

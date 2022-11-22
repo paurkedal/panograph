@@ -19,10 +19,9 @@ open%client Js_of_ocaml_lwt
 
 [%%shared.start]
 open Eliom_content.Html
-open Lwt.Infix
 open Panograph_prereq
-open Unprime
-open Unprime_option
+open%client Lwt.Infix
+open%client Unprime
 
 type item = Html_types.tr elt
 

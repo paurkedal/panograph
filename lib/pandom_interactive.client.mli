@@ -18,7 +18,6 @@
 (** Helpers for interactive elements (internal). *)
 
 open Js_of_ocaml
-open Panograph_types
 
 class type basicInteractiveElement = object
   inherit Dom_html.element

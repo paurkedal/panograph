@@ -17,7 +17,6 @@
 
 open Panograph_common
 open Panograph_intf
-open Panograph_types
 open Eliom_content
 open Eliom_lib
 open Unprime_option
@@ -80,8 +79,8 @@ struct
     else begin
       let on_elt_patch on_patch p =
         match Elt_PE.key_of_patch_out p with
-        | k, None -> on_patch (`Patch p)
-        | k, Some k' ->
+        | _k, None -> on_patch (`Patch p)
+        | _k, Some k' ->
           if Set.mem k' w.w_set then
             Lwt.return @@ Panui_result.error
               "The changed item conflicts with another item."
@@ -150,6 +149,8 @@ struct
     w, container_ui
 
 end
+
+[@@@warning "-27"] (* TODO: shape arguments below not implemented *)
 
 module Ul_collection_container = struct
   include Basic_shape

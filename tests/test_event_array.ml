@@ -41,7 +41,7 @@ let run _ctxt =
     let count_sn = React.S.fold (fun c _ -> succ c) 0 (Event_array.get ea i) in
     {value_sn; count_sn; value_ck = -1; count_ck = 0} in
   let watches = Array.init n_watch mk_watch in
-  for round = 1 to 500 do
+  for _ = 1 to 500 do
     let d = Random.int (d_max + 1) in
     set_depth d;
     let repeat = Random.int (1 lsl (Random.int (d + 1))) in
