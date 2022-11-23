@@ -458,7 +458,7 @@ module Tabular = struct
     let blk = Hashtbl.find rsn.rsn_blocks csn.csn_id in
     begin match blk.blk_state with
     | Refined (lr, lc) -> drop_refinement tab blk
-    | _ -> ()
+    | Empty _ | Single _ | Refining _ -> ()
     end;
     unfill_cell tab rs cs
 
