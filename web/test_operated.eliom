@@ -26,8 +26,8 @@
   module String_set = struct
     include Prime_enumset.Make (String)
     type rep = string list [@@deriving json]
-    let to_json buf xs = rep_to_json buf (elements xs)
-    let of_json json = of_ordered_elements (rep_of_json json)
+    let to_json buf xs = rep_to_json buf (elements xs) [@@warning "-32"]
+    let of_json json = of_ordered_elements (rep_of_json json) [@@warning "-32"]
   end
   module String_set_p = Presenting_set.Make (String_set)
 

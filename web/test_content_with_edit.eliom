@@ -22,7 +22,6 @@ open Panui_content_with_edit
 [%%client
   open Lwt.Infix
   open Js_of_ocaml_lwt
-  module Dep_content_with_edit = Panui_content_with_edit
 
   let (a_ev, emit_a) : string React.E.t * _ = React.E.create ()
   let (b_ev, emit_b) : string React.E.t * _ = React.E.create ()
@@ -46,3 +45,7 @@ let handler () () =
     D.p [elem_a; D.txt ", "; elem_b];
     elem_c;
   ]
+
+[%%client.start]
+[@@@warning "-33"]
+open Panui_content_with_edit

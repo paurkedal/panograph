@@ -17,19 +17,6 @@
 
 open Eliom_content.Html
 
-module%client Linked = struct
-  module Test_complete = Test_complete
-  module Test_content_with_edit = Test_content_with_edit
-  module Test_dialogs = Test_dialogs
-  module Test_finalizer = Test_finalizer
-  module Test_twine_editor = Test_twine_editor
-  module Test_operated = Test_operated
-  module Test_pinboard = Test_pinboard
-  module Test_scalar = Test_scalar
-  module Test_weakchan = Test_weakchan
-  module Test_weaktbl = Test_weaktbl
-end
-
 module C : sig
   include module type of C
   val div : [`Div] elt Eliom_client_value.t -> [> `Div] elt
@@ -71,8 +58,21 @@ let main_handler () () =
     F.li [F.a ~service [F.txt name] ()] in
   Lwt.return [F.ul (List.map test_service_item test_services)]
 
-let main_service =
+let _main_service =
   let open Eliom_service in
   Test_app.create_page
     ~path:(Path []) ~meth:(Get Eliom_parameter.unit)
     ~title:"Panograph Tests" main_handler
+
+[%%client.start]
+[@@@warning "-33"]
+open Test_complete
+open Test_content_with_edit
+open Test_dialogs
+open Test_finalizer
+open Test_twine_editor
+open Test_operated
+open Test_pinboard
+open Test_scalar
+open Test_weakchan
+open Test_weaktbl

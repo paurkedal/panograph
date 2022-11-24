@@ -24,8 +24,6 @@ open Lwt.Infix
 open Unprime_char
 open Unprime_string
 
-module Dep = Panui_complete
-
 let rec ordinal = function
  | 0 -> "zero"
  | 1 -> "one"
@@ -146,3 +144,7 @@ let handler () () =
             ~name:arg_name (Some ("one", 1l)) in
         [elt; D.Form.input ~input_type:`Submit D.Form.string]);
   ]
+
+[%%client.start]
+[@@@warning "-33"]
+open Panui_complete

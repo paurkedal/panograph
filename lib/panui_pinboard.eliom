@@ -28,7 +28,7 @@ type item = Html_types.tr elt
 type t = {
   table: 'a. ([> Html_types.table] as 'a) elt;
   hover_mutex: Lwt_mutex.t Eliom_client_value.t;
-}
+} [@@warning "-69"]
 
 type subject_content = Html_types.flow5
 

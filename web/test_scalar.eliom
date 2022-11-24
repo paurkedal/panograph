@@ -21,10 +21,6 @@ open Lwt.Infix
 open Panograph_prereq
 open Unprime_option
 
-[%%client
-  module Dep_sca = Panui_scalar
-]
-
 let string_stream, string_out' = Lwt_stream.create ()
 let string_comet = Eliom_comet.Channel.create ~scope:`Site string_stream
 let string_out = server_function [%json: string] @@ fun x ->
@@ -172,3 +168,7 @@ let handler () () =
     D.h3 [D.txt "Text Area"];
     textarea_ed;
   ]
+
+[%%client.start]
+[@@@warning "-33"]
+open Panui_scalar

@@ -22,7 +22,7 @@ let ord_step = 256
 module Dltree = struct
 
   type 'a t = {
-    mutable up: 'a t;
+    up: 'a t;
     mutable down: 'a t;
     mutable prev: 'a t;
     mutable next: 'a t;

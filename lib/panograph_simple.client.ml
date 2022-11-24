@@ -57,7 +57,7 @@ end
 module Simple_shape = struct
   type t = {
     input_a: Html_types.input_attrib attrib list;
-  }
+  } [@@warning "-69"]
   let make ?(a = []) () = {input_a = a}
 end
 

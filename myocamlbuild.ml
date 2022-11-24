@@ -65,6 +65,6 @@ let () = Ocamlbuild_plugin.dispatch @@ fun hook ->
     dep ["ocaml"; "ocamldep"; "package(lib.server)"] ["lib/server.otarget"];
     dep ["ocaml"; "ocamldep"; "package(lib.client)"] ["lib/client.otarget"];
     flag ["ocaml"; "compile"] & S[A"-w"; A"+A-39-42-44-48"];
-    if js_of_ocaml_version >= (3, 6) then
+    if js_of_ocaml_version >= (3, 6) && js_of_ocaml_version < (4, 0) then
       flag ["js_of_ocaml"] & S[A"+js_of_ocaml-compiler/runtime.js"]
   | _ -> ()

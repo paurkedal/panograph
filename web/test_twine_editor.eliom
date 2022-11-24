@@ -19,10 +19,6 @@ open Eliom_client
 open Eliom_content
 open Panograph_twine_editor
 
-[%%client
-  module Dep_pte = Panograph_twine_editor
-]
-
 open Eliom_lib
 open Panograph_i18n
 open Panograph_prereq
@@ -53,3 +49,7 @@ let handler () () =
     D.h2 [D.txt "Server Side"];
     twe_el
   ]
+
+[%%client.start]
+[@@@warning "-33"]
+open Panograph_twine_editor
