@@ -1,4 +1,4 @@
-(* Copyright (C) 2015--2022  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2015--2023  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -22,15 +22,15 @@ let rec fold_s f = function
   | [] -> return
   | x :: xs -> fun acc -> bind (f x acc) (fold_s f xs)
 
-let rec search_s f = function
+let rec find_map_s f = function
   | [] -> return None
   | x :: xs ->
-    bind (f x) (function Some _ as r -> return r | None -> search_s f xs)
+    bind (f x) (function Some _ as r -> return r | None -> find_map_s f xs)
 
-let rec search_p f = function
+let rec find_map_p f = function
   | [] -> return None
   | x :: xs ->
-    let m = search_s f xs in
+    let m = find_map_s f xs in
     bind (f x) (function Some _ as r -> return r | None -> m)
 
 let flatten_map_s f xs =
@@ -43,3 +43,7 @@ let flatten_map_s f xs =
 
 let flatten_map_p f xs =
   Lwt_list.rev_map_p f xs >|= fun yss -> List.(fold rev_append) yss []
+
+(* deprecated *)
+let search_s = find_map_s
+let search_p = find_map_p
