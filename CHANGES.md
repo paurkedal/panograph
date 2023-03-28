@@ -1,3 +1,9 @@
+## v0.10.1 - 2023-03-28
+
+  - Rename `Pwt_list.search_*` to `Pwt_list.find_map_*`.
+  - Switch to LGPL-3.0 Linking Exception.
+  - Update dependencies and enforce and fix more warnings.
+
 ## v0.10.0 - 2021-10-11
 
 - Drop charset check when rendering text; checking input is sufficient.
