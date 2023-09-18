@@ -900,6 +900,16 @@ module Tabular = struct
     let th = Html.D.th ?a content in
     set_tc tab rs cs (coerce_to_tc (Html.To_dom.of_th th))
 
+  let find_tr tab rs =
+    (match Rs_map.find_opt rs tab.tab_tns with
+     | None -> None
+     | Some tn -> Some tn.tn_tr)
+
+  let find_td tab rs cs =
+    (match Rs_map.find_opt rs tab.tab_tns with
+     | None -> None
+     | Some tn -> Cs_map.find_opt cs tn.tn_tcs)
+
   let create ?a ?root_css_class () =
     let table = Html.D.table ?a [] in
     let root_rsn =

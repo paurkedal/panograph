@@ -16,8 +16,14 @@
  *)
 
 open Eliom_content
+open Js_of_ocaml
 open Js_of_ocaml_lwt
 open Panograph_tabular
+
+let add_tr_class tab rs cls =
+  (match Tabular.find_tr tab rs with
+   | None -> assert false
+   | Some tr -> tr##.classList##add (Js.string cls))
 
 let render () =
   let open Html in
@@ -45,6 +51,7 @@ let render () =
   let     rs1 = Tabular.Rowspan.add_first tab rs_body in
   let     rs2 = Tabular.Rowspan.add_last tab rs_body in
   let draw3 rs x y z =
+    add_tr_class tab rs "body";
     Tabular.draw_td tab rs csX [D.txt (string_of_float x)];
     Tabular.draw_td tab rs csY [D.txt (string_of_float y)];
     Tabular.draw_td tab rs csZ [D.txt (string_of_float z)] in

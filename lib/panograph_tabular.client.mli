@@ -18,6 +18,7 @@
 (** Dynamic table with nested row and column spans. *)
 
 open Eliom_content
+open Js_of_ocaml
 
 module type SPAN_TREE = sig
   type t
@@ -80,4 +81,9 @@ module Tabular : sig
   val draw_td : t -> Rowspan.t -> Colspan.t ->
                 ?a: [< Html_types.td_attrib] Html.attrib list ->
                 [< Html_types.td_content] Html.elt list -> unit
+
+  val find_tr :
+    t -> Rowspan.t -> Dom_html.tableRowElement Js.t option
+  val find_td :
+    t -> Rowspan.t -> Colspan.t -> Dom_html.tableCellElement Js.t option
 end
