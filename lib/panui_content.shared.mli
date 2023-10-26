@@ -15,9 +15,11 @@
  * <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.
  *)
 
-(** Prerequisites mainly for internal use. *)
+open Panui_content_intf
 
-[%%shared.start]
-val ignore_cv : unit Eliom_client_value.t -> unit
-val string_of_option : ('a -> string) -> 'a option -> string
-val option_of_string : (string -> 'a) -> string -> 'a option
+module Selection : sig
+  type ('a, +'tag) elt = private 'tag Eliom_content.Html.elt
+  type 'a t = ('a, Html_types.select_content_fun) elt list
+  module F : Selection with type ('a, 'tag) elt := ('a, 'tag) elt
+  module D : Selection with type ('a, 'tag) elt := ('a, 'tag) elt
+end

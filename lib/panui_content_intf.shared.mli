@@ -15,8 +15,6 @@
  * <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.
  *)
 
-[%%shared.start]
-
 open Html_types
 
 module type Selection = sig
