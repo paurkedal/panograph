@@ -1,3 +1,8 @@
+## v0.10.2 - 2023-10-31
+
+  - `Panograph_tabular`: Provide access to the `Dom_html` representations of
+    the generated `<tr/>` and `<td/>` elements.
+
 ## v0.10.1 - 2023-03-28
 
   - Rename `Pwt_list.search_*` to `Pwt_list.find_map_*`.
