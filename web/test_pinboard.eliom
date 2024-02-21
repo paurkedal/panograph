@@ -1,4 +1,4 @@
-(* Copyright (C) 2016--2022  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2016--2024  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -22,7 +22,7 @@ open Panograph_prereq
   open Eliom_content.Html
   open Js_of_ocaml_lwt
 
-  let pcdata_f fmt = Printf.kprintf F.txt fmt
+  let pcdata_f fmt = Printf.ksprintf F.txt fmt
 
   let levels =
     Lwt_log_js.[|Debug; Info; Notice; Warning; Error; Fatal|]
