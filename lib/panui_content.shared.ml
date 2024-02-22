@@ -17,29 +17,7 @@
 
 open Unprime
 
-module type Make_selection_param = sig
-
-  module Svg :
-    Svg_sigs.T
-      with module Xml := Eliom_content.Xml
-      with type +'a elt = 'a Eliom_content.Svg.elt
-       and type 'a wrap = 'a
-       and type 'a list_wrap = 'a list
-       and type +'a attrib = 'a Eliom_content.Svg.attrib
-
-  module Html :
-    Html_sigs.T
-      with module Xml := Eliom_content.Xml
-      with module Svg := Svg
-       and type +'a elt = 'a Eliom_content.Html.elt
-       and type 'a wrap = 'a
-       and type 'a list_wrap = 'a list
-       and type +'a attrib = 'a Eliom_content.Html.attrib
-end
-
-module Make_selection (Content : Make_selection_param) = struct
-  include Content
-
+module Make_selection (Html : module type of Eliom_content.Html.F.Raw) = struct
   let group ?(disabled = false) label opts =
     let a = if disabled then [Html.a_disabled ()] else [] in
     Html.optgroup ~label ~a opts
@@ -68,14 +46,6 @@ end
 module Selection = struct
   type ('a, 'tag) elt = 'tag Eliom_content.Html.elt
   type 'a t = ('a, Html_types.select_content_fun) elt list
-  module F =
-    Make_selection (struct
-      module Svg = Eliom_content.Svg.F
-      module Html = Eliom_content.Html.F.Raw
-    end)
-  module D =
-    Make_selection (struct
-      module Svg = Eliom_content.Svg.D
-      module Html = Eliom_content.Html.D.Raw
-    end)
+  module F = Make_selection (Eliom_content.Html.F.Raw)
+  module D = Make_selection (Eliom_content.Html.D.Raw)
 end
