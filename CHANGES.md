@@ -1,3 +1,7 @@
+## v0.11.0 - 2025-10-06
+
+  - Update to work with recent Eliom releases.
+
 ## v0.10.2 - 2023-10-31
 
   - `Panograph_tabular`: Provide access to the `Dom_html` representations of
