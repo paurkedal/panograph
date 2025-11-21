@@ -20,6 +20,8 @@ open Lwt.Infix
 open Panograph_tabular
 open Unprime_option
 
+module Log = (val Logs.src_log (Logs.Src.create "panograph:test"))
+
 let rec nth_rs i rs =
   if i = 0 then rs else
   nth_rs (i - 1) (Option.get (Tabular.Rowspan.next rs))
@@ -67,7 +69,7 @@ let colspan_path cs =
 
 let add_row tab =
   let rs = random_rowspan (Tabular.root_rowspan tab) in
-  let debug fn = Eliom_lib.debug "** %s %s" fn (rowspan_path rs) in
+  let debug fn = Log.debug (fun f -> f "** %s %s" fn (rowspan_path rs)) in
   match Random.int (if Tabular.Rowspan.is_root rs then 2 else 4) with
   | 0 -> debug "Rowspan.add_first";  Tabular.Rowspan.add_first tab rs
   | 1 -> debug "Rowspan.add_last";   Tabular.Rowspan.add_last tab rs
@@ -77,7 +79,7 @@ let add_row tab =
 
 let add_column tab =
   let cs = random_colspan (Tabular.root_colspan tab) in
-  let debug fn = Eliom_lib.debug "** %s %s" fn (colspan_path cs) in
+  let debug fn = Log.debug (fun f -> f "** %s %s" fn (colspan_path cs)) in
   match Random.int (if Tabular.Colspan.is_root cs then 2 else 4) with
   | 0 -> debug "Colspan.add_first";  Tabular.Colspan.add_first tab cs
   | 1 -> debug "Colspan.add_last";   Tabular.Colspan.add_last tab cs
@@ -88,14 +90,14 @@ let add_column tab =
 let remove_row tab =
   let rs = random_rowspan (Tabular.root_rowspan tab) in
   if not (Tabular.Rowspan.is_root rs) then begin
-    Eliom_lib.debug "** remove rowspan %s" (rowspan_path rs);
+    Log.debug (fun f -> f "** remove rowspan %s" (rowspan_path rs));
     Tabular.Rowspan.delete tab rs
   end
 
 let remove_column tab =
   let cs = random_colspan (Tabular.root_colspan tab) in
   if not (Tabular.Colspan.is_root cs) then begin
-    Eliom_lib.debug "** remove colspan %s" (colspan_path cs);
+    Log.debug (fun f -> f "** remove colspan %s" (colspan_path cs));
     Tabular.Colspan.delete tab cs
   end
 
@@ -106,7 +108,7 @@ let refine tab =
   | Tabular.Leaf ->
     let lr, lc = Random.int 3, Random.int 3 in
     if lr <> 0 || lc <> 0 then begin
-      Eliom_lib.debug "** refine %d %d" lr lc;
+      Log.debug (fun f -> f "** refine %d %d" lr lc);
       Tabular.refine tab lr lc rs cs
     end
   | Tabular.Split _ | Tabular.Invalid -> ()

@@ -20,6 +20,7 @@
   open Eliom_lib
 ]
 
+(*
 [%%server
   let lwt_log_rules =
     try Some (Sys.getenv "LWT_LOG_JS") with Not_found ->
@@ -31,6 +32,7 @@
     Lwt_log.(Section.set_level (Section.make "eliom:client") Warning);
     Option.iter Lwt_log.load_rules ~%lwt_log_rules
 ]
+*)
 
 include Eliom_registration.App
   (struct

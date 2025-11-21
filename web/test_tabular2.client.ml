@@ -20,13 +20,16 @@ open Panograph_tabular
 open Unprime
 open Unprime_list
 
+module Log = (val Logs.src_log (Logs.Src.create "panograph:test"))
+
 let tile ns ms =
   let tab = Tabular.create () in
   let rs = Tabular.root_rowspan tab in
   let cs = Tabular.root_colspan tab in
-  Eliom_lib.debug "** Tiling [%s], [%s]"
-                  (String.concat ", " (List.map string_of_int ns))
-                  (String.concat ", " (List.map string_of_int ms));
+  Log.debug (fun f ->
+    f "** Tiling [%a], [%a]"
+      Fmt.(list ~sep:comma int) ns
+      Fmt.(list ~sep:comma int) ms);
   let rec add_rows rs = function
     | [] -> ()
     | n :: ns ->
@@ -41,12 +44,12 @@ let tile ns ms =
         let cs' = Tabular.Colspan.add_last tab cs in
         add_cols cs' ms
       done in
-  Eliom_lib.debug "** Adding rows and columns.";
+  Log.debug (fun f -> f "** Adding rows and columns.");
   add_rows rs ns;
   add_cols cs ms;
-  Eliom_lib.debug "** Refining.";
+  Log.debug (fun f -> f "** Refining.");
   Tabular.refine tab (List.length ns) (List.length ms) rs cs;
-  Eliom_lib.debug "** Drawing.";
+  Log.debug (fun f -> f "** Drawing.");
   Tabular.Rowspan.iterp ~depth:(List.length ns)
     (fun pr rs ->
       Tabular.Colspan.iterp ~depth:(List.length ms)

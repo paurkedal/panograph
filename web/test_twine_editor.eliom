@@ -23,15 +23,17 @@ open Eliom_lib
 open Panograph_i18n
 open Panograph_prereq
 
+module Log = (val Logs_lwt.src_log (Logs.Src.create "panograph:test"))
+
 let stream, emit = Lwt_stream.create ()
 let comet = Eliom_comet.Channel.create ~scope:`Site stream
 
 let on_update' p =
   begin match p with
   | `Add (lang, msg) ->
-    Lwt_log.debug_f "Received add %s => %s" (Lang.to_string lang) msg
+    Log.debug (fun f -> f "Received add %s => %s" (Lang.to_string lang) msg)
   | `Remove lang ->
-    Lwt_log.debug_f "Received remove %s" (Lang.to_string lang)
+    Log.debug (fun f -> f "Received remove %s" (Lang.to_string lang))
   end >>= fun () ->
   Lwt_unix.sleep 1.0 >>= fun () ->
   emit (Some p);

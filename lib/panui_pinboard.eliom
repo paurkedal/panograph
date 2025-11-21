@@ -60,13 +60,21 @@ let ui (pinboard : t) = pinboard.table
 
 [%%client.start]
 
+type level = Error | Warning | Info | Debug
+
+let show_level : level -> string = function
+ | Error -> "error"
+ | Warning -> "warning"
+ | Info -> "info"
+ | Debug -> "debug"
+
 let unpin item pinboard = Manip.removeChild pinboard.table item
 
 let pin ~(subject : [< subject_content] elt list)
-        ?(level = Lwt_log_js.Info) ?timeout pinboard =
+        ?(level = Info) ?timeout pinboard =
   let unpin_button = D.button [D.txt "✗"] in
   let item = D.tr [
-    D.td ~a:[D.a_class [Lwt_log_js.string_of_level level]] [unpin_button];
+    D.td ~a:[D.a_class [show_level level]] [unpin_button];
     D.td subject
   ] in
   Manip.appendChild pinboard.table item;

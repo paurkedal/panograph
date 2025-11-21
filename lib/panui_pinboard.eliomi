@@ -31,9 +31,12 @@ val ui : t -> [> Html_types.table] elt
 
 [%%client.start]
 
-val pin : subject: [< subject_content] elt list ->
-          ?level: Lwt_log_js.level ->
-          ?timeout: float ->
-          t -> item
+type level = Error | Warning | Info | Debug
+
+val pin :
+  subject: [< subject_content] elt list ->
+  ?level: level ->
+  ?timeout: float ->
+  t -> item
 
 val unpin : item -> t -> unit

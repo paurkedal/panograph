@@ -24,9 +24,7 @@ open Panograph_prereq
 
   let pcdata_f fmt = Printf.ksprintf F.txt fmt
 
-  let levels =
-    Lwt_log_js.[|Debug; Info; Notice; Warning; Error; Fatal|]
-    [@@warning "-45"]
+  let levels = Panui_pinboard.[|Debug; Info; Warning; Error|] [@@warning "-45"]
 
   let rec populate pinboard i =
     let timeout = Random.float 4.0 in

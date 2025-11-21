@@ -20,6 +20,8 @@ open Js_of_ocaml
 open Js_of_ocaml_lwt
 open Panograph_tabular
 
+module Log = (val Logs.src_log (Logs.Src.create "panograph:test"))
+
 let add_tr_class tab rs cls =
   (match Tabular.find_tr tab rs with
    | None -> assert false
@@ -64,7 +66,7 @@ let render () =
   Tabular.draw_td tab rs1 csT [D.txt "a"];
   Tabular.draw_td tab rs2 csT [D.txt "b"];
 
-  Eliom_lib.debug "here";
+  Log.debug (fun f -> f "here");
   let rs3 = Tabular.Rowspan.add_last tab rs_body in
   draw3 rs3 ~-.0.1 ~-.0.2 1.0;
   let csT0 = Tabular.Colspan.add_last tab csT in

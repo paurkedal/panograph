@@ -21,6 +21,8 @@ open Eliom_content
 open Eliom_lib
 open Unprime_option
 
+module Log = (val Logs.src_log (Logs.Src.create "panograph:collection"))
+
 let label_for_remove = [Html.F.(b [txt "−"])]
 let label_for_add = [Html.F.(b [txt "+"])]
 
@@ -75,7 +77,7 @@ struct
 
   let add_value w v =
     if Set.mem (Elt_PE.key_of_value v) w.w_set then
-      error "Collection_editor: Conflicting add."
+      Log.err (fun f -> f "Collection_editor: Conflicting add.")
     else begin
       let on_elt_patch on_patch p =
         match Elt_PE.key_of_patch_out p with
@@ -114,7 +116,7 @@ struct
       | k, Some k' ->
         let (elt, item) = Set.find k w.w_set in
         if Set.mem k' w.w_set then
-          error "Collection_editor: Conflict for incoming patch."
+          Log.err (fun f -> f "Collection_editor: Conflict for incoming patch.")
         else begin
           Container.remove w.w_container item;
           w.w_set <- Set.remove k w.w_set;
@@ -122,7 +124,7 @@ struct
           add_elt w (elt, item)
         end
     with Not_found ->
-      error "Collection_editor: Element to patch not found."
+      Log.err (fun f -> f "Collection_editor: Element to patch not found.")
 
   let patch w = function
     | `Add elt -> add_value w elt

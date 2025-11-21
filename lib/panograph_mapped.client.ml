@@ -16,11 +16,12 @@
  *)
 
 open Eliom_content
-open Eliom_lib
 open Panograph_common
 open Panograph_intf
 open Unprime_list
 open Unprime_option
+
+module Log = (val Logs.src_log (Logs.Src.create "panograph:mapped"))
 
 module Mapped_PE
         (Key : Map.OrderedType)
@@ -74,7 +75,7 @@ struct
 
   let add_binding w (k, v) =
     if Map.mem k w.w_map then
-      error "Conflicting add to mapped collection."
+      Log.err (fun f -> f "Conflicting add to mapped collection.")
     else begin
       let e_key = ref k in
       let on_elt_patch on_patch p = on_patch (`Patch (!e_key, p)) in
@@ -94,7 +95,8 @@ struct
       w.w_map <- Map.remove k w.w_map;
       Container.remove w.w_container elt.e_item
     with Not_found ->
-      error "Cannot find element to remove from mapped collection."
+      Log.err (fun f ->
+        f "Cannot find element to remove from mapped collection.")
 
   let patch_elt w k k' p =
     try
@@ -103,7 +105,8 @@ struct
       | Some k' ->
         let elt = Map.find k w.w_map in
         if Map.mem k' w.w_map then
-          error "Conflict for incomping patch to mapped collection."
+          Log.err (fun f ->
+            f "Conflict for incomping patch to mapped collection.")
         else begin
           Container.remove w.w_container elt.e_item;
           w.w_map <- Map.remove k w.w_map;
@@ -113,7 +116,7 @@ struct
           add_elt w k' elt
         end
     with Not_found ->
-      error "Cannot find element to patch in mapped collection."
+      Log.err (fun f -> f "Cannot find element to patch in mapped collection.")
 
   let patch w = function
     | `Add (k, v) -> add_binding w (k, v)

@@ -16,12 +16,13 @@
  *)
 
 open Eliom_content.Html
-open Eliom_lib
+
+module Log = (val Logs.src_log (Logs.Src.create "panograph:test"))
 
 let wt = Pandom_weaktbl.create ()
 
 let do_iter _ =
-  Pandom_weaktbl.iter (fun _ i -> Lwt_log.ign_info_f "Found item %d" i) wt
+  Pandom_weaktbl.iter (fun _ i -> Log.info (fun f -> f "Found item %d" i)) wt
 
 let render () =
   let item0 = D.li [D.txt "item 11"] in

@@ -22,6 +22,8 @@ open Js_of_ocaml
 open Panograph_dltree
 open Unprime_option
 
+module Log = (val Logs.src_log (Logs.Src.create "panograph:test"))
+
 module type SPAN_TREE = sig
   type t
   type tabular
@@ -148,9 +150,9 @@ module Tabular = struct
       incr i in
     Rs_map.iter validate_tn tab.tab_tns;
     if Prime_array.exists ((<>) root_csn.csn_span) widths then begin
-      Eliom_lib.debug "Wrong width, should be %d:" root_csn.csn_span;
+      Log.debug (fun f -> f "Wrong width, should be %d:" root_csn.csn_span);
       for i = 0 to Array.length widths - 1 do
-        Eliom_lib.debug "widths.(%d) = %d" i widths.(i)
+        Log.debug (fun f -> f "widths.(%d) = %d" i widths.(i))
       done;
       assert false
     end;

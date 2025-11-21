@@ -17,7 +17,7 @@
 
 open Js_of_ocaml
 
-let section = Lwt_log_js.Section.make "panograph:finalizer"
+module Log = (val Logs.src_log (Logs.Src.create "panograph:finalizer"))
 
 let magic = "-pan-finalized-"
 let magic_js = Js.string magic
@@ -58,8 +58,8 @@ let run () =
     end in
   let finalized_count = finalize_unmarked chain 0 in
 
-  Lwt_log_js.ign_info_f ~section "Ran %d of %d finalizers."
-                        finalized_count finalizer_count
+  Log.debug (fun f ->
+    f "Ran %d of %d finalizers." finalized_count finalizer_count)
 
 let triggered = ref false
 
