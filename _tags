@@ -15,7 +15,6 @@ true: warn(-58)
 
 <lib/*/operated_types.*>: package(ppx_deriving), package(ppx_deriving.std), package(js_of_ocaml-ppx_deriving_json)
 <lib/panograph_i18n.*>: package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
-<lib/panograph_types.*>: package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
 <lib/presentation_types.*>: package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
 <lib/*/panograph_twine_editor.*>: package(ppx_deriving), package(js_of_ocaml-ppx_deriving_json)
 

@@ -17,7 +17,6 @@ Panograph_signal_table	{shared}
 Panograph_simple	{client}
 Panograph_tabular	{client}
 Panograph_twine_editor	{server, client}
-Panograph_types		{shared}
 
 Panreact_event_array	{shared}
 
