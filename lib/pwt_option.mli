@@ -24,4 +24,3 @@ val exists_s : ('a -> bool Lwt.t) -> 'a option -> bool Lwt.t
 val filter_s : ('a -> bool Lwt.t) -> 'a option -> 'a option Lwt.t
 val map_s : ('a -> 'b Lwt.t) -> 'a option -> 'b option Lwt.t
 val fmap_s : ('a -> 'b option Lwt.t) -> 'a option -> 'b option Lwt.t
-(* search_s = fmap_s *)

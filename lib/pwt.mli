@@ -17,15 +17,6 @@
 
 (** Basic additions to Lwt. *)
 
-open Lwt
-
-val when_s : bool -> (unit -> unit t) -> unit t
-
-val failwith : string -> 'a t
-val failwith_f : ('a, unit, string, 'b Lwt.t) format4 -> 'a
-val invalid_arg : string -> 'a t
-val invalid_arg_f : ('a, unit, string, 'b Lwt.t) format4 -> 'a
-
 val async_updater : ('a -> unit Lwt.t) -> 'a -> unit
 (** [async_updater f] is a function [g] such that [g x] will invoke [f x] if
     [f] is not already running with a previous value, otherwise when the last

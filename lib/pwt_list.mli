@@ -22,10 +22,3 @@ val find_map_s : ('a -> 'b option Lwt.t) -> 'a list -> 'b option Lwt.t
 val find_map_p : ('a -> 'b option Lwt.t) -> 'a list -> 'b option Lwt.t
 val flatten_map_s : ('a -> 'b list Lwt.t) -> 'a list -> 'b list Lwt.t
 val flatten_map_p : ('a -> 'b list Lwt.t) -> 'a list -> 'b list Lwt.t
-
-(**/**)
-
-val search_s : ('a -> 'b option Lwt.t) -> 'a list -> 'b option Lwt.t
-[@@deprecated "Renamed to find_map_s"]
-val search_p : ('a -> 'b option Lwt.t) -> 'a list -> 'b option Lwt.t
-[@@deprecated "Renamed to find_map_p"]

@@ -16,14 +16,6 @@
  *)
 
 open Lwt.Infix
-open Printf
-
-let when_s c f = if c then f () else Lwt.return_unit
-
-let failwith s = Lwt.fail (Failure s)
-let failwith_f fmt = ksprintf failwith fmt
-let invalid_arg s = Lwt.fail (Invalid_argument s)
-let invalid_arg_f fmt = ksprintf invalid_arg fmt
 
 let async_updater f =
   let cond = Lwt_condition.create () in

@@ -43,7 +43,3 @@ let flatten_map_s f xs =
 
 let flatten_map_p f xs =
   Lwt_list.rev_map_p f xs >|= fun yss -> List.(fold rev_append) yss []
-
-(* deprecated *)
-let search_s = find_map_s
-let search_p = find_map_p
