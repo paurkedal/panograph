@@ -1,3 +1,9 @@
+## v0.12.0 - 2026-07-14
+
+  - Drop `Lwt_log` in favour of logs.
+  - Remove `Panui_content*`, `Panui_basic_selectors`, `Panograph_types`,
+    `Pwd_hashtbl`, and `Pwt_emitter`, and trim some other `Pwt*` modules.
+
 ## v0.11.0 - 2025-10-06
 
   - Update to work with recent Eliom releases.
