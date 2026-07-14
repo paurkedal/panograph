@@ -27,8 +27,6 @@ Pandom_weakchan		{client}
 Pandom_weaktbl		{client}
 
 Panui_complete		{server, client}
-Panui_content		{server, client}
-Panui_content_intf	{server, client}
 Panui_content_with_edit	{server, client}
 Panui_dialogs		{client}
 Panui_error		{shared}
